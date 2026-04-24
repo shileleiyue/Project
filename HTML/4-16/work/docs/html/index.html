@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>HTML课程</title>
+        <link rel="stylesheet" href="css/styles.css">
+    </head>
+    <body>
+        <div class="container">
+            <header>
+                <h1>HTML课程</h1>
+                <p>欢迎学习HTML基础课程</p>
+            </header>
+            
+            <nav>
+                <ul>
+                    <li><a href="index.html">首页</a></li>
+                    <li><a href="other/als.html">爱莲说</a></li>
+                    <li><a href="web/img.html">图片链接</a></li>
+                    <li><a href="other/form.html">个人表单</a></li>
+                </ul>
+            </nav>
+            
+            <main>
+                <h2>首页</h2>
+                <p>请选择以下学习内容：</p>
+                
+                <div class="home-link">
+                    <a href="other/als.html"><h3>爱莲说</h3></a>
+                    <p>阅读经典文学作品</p>
+                </div>
+                
+                <div class="home-link">
+                    <a href="web/img.html"><h3>图片链接</h3></a>
+                    <p>学习图片标签的使用</p>
+                </div>
+                
+                <div class="home-link">
+                    <a href="other/form.html"><h3>个人表单</h3></a>
+                    <p>学习表单的创建和验证</p>
+                </div>
+            </main>
+        </div>
+        
+        <script>
+            // 导航栏active状态切换
+            document.addEventListener('DOMContentLoaded', function() {
+                const navLinks = document.querySelectorAll('nav a');
+                const currentUrl = window.location.href;
+                
+                navLinks.forEach(link => {
+                    if (link.href === currentUrl) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+        </script>
+    </body>
+</html>

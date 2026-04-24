@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>爱莲说 - HTML课程</title>
+        <link rel="stylesheet" href="../css/styles.css">
+    </head>
+    <body>
+        <div class="container">
+            <header>
+                <h1>爱莲说</h1>
+                <p>周敦颐</p>
+            </header>
+            
+            <nav>
+                <ul>
+                    <li><a href="../index.html">首页</a></li>
+                    <li><a href="als.html">爱莲说</a></li>
+                    <li><a href="../web/img.html">图片链接</a></li>
+                    <li><a href="form.html">个人表单</a></li>
+                </ul>
+            </nav>
+            
+            <main>
+                <div class="breadcrumb">
+                    <a href="../index.html">首页</a> &gt; 爱莲说
+                </div>
+                
+                <div class="pre-container">
+                    <pre>
+           爱莲说
+    水陆草木之花，可爱者甚蕃。晋陶渊明独爱菊。自李唐来，世人甚爱牡丹。
+予独爱莲之出淤泥而不染，濯清涟而不妖，中通外直，不蔓不枝，香远益清，亭
+亭净植，可远观而不可亵玩焉。
+    予谓菊，花之隐逸者也；牡丹，花之富贵者也；莲，花之君子者也。噫！菊
+之爱，陶后鲜有闻。莲之爱，同予者何人？牡丹之爱，宜乎众矣。
+                    </pre>
+                </div>
+                
+                <div style="margin-top: 30px;">
+                    <h3>作品赏析</h3>
+                    <p>《爱莲说》是北宋理学家周敦颐创作的一篇散文。这篇文章通过对莲的形象和品质的描写，歌颂了莲花坚贞的品格，从而也表现了作者洁身自爱的高洁人格和洒落的胸襟。</p>
+                </div>
+            </main>
+            
+            <button class="back-btn" onclick="goBack()">返回首页</button>
+        </div>
+        
+        <script>
+            function goBack() {
+                window.location.href = '../index.html';
+            }
+            
+            // 导航栏active状态切换
+            document.addEventListener('DOMContentLoaded', function() {
+                const navLinks = document.querySelectorAll('nav a');
+                const currentUrl = window.location.href;
+                
+                navLinks.forEach(link => {
+                    if (link.href === currentUrl) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+        </script>
+    </body>
+</html>

@@ -1,0 +1,273 @@
+/* 全局样式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Microsoft YaHei', Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f5f5f5;
+    scroll-behavior: smooth;
+}
+
+/* 容器样式 */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* 头部样式 */
+header {
+    background-color: #3498db;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+header h1 {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+}
+
+/* 导航栏样式 */
+nav {
+    background-color: #2c3e50;
+    padding: 10px 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+nav a:hover {
+    background-color: #34495e;
+    transform: translateY(-2px);
+}
+
+nav a.active {
+    background-color: #3498db;
+    font-weight: bold;
+}
+
+nav a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background-color: white;
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+nav a:hover::after {
+    width: 80%;
+}
+
+/* 主内容样式 */
+main {
+    background-color: white;
+    padding: 30px;
+    margin: 20px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* 链接样式 */
+a {
+    color: #3498db;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+a:hover {
+    color: #2980b9;
+    text-decoration: underline;
+}
+
+/* 按钮样式 */
+button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+/* 表单样式 */
+form {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+select,
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+input[type="submit"] {
+    background-color: #27ae60;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+input[type="submit"]:hover {
+    background-color: #229954;
+}
+
+/* 图片样式 */
+img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    margin: 10px 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.3s;
+}
+
+img:hover {
+    transform: scale(1.02);
+}
+
+/* 爱莲说页面样式 */
+.pre-container {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #3498db;
+    font-family: 'SimSun', serif;
+    line-height: 1.8;
+}
+
+/* 面包屑导航 */
+.breadcrumb {
+    margin: 20px 0;
+    font-size: 14px;
+}
+
+.breadcrumb a {
+    color: #666;
+}
+
+.breadcrumb a:hover {
+    color: #3498db;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    nav ul {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .container {
+        padding: 10px;
+    }
+    
+    main {
+        padding: 20px;
+    }
+    
+    header h1 {
+        font-size: 2em;
+    }
+}
+
+/* 动画效果 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+main {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* 返回按钮样式 */
+.back-btn {
+    margin-top: 20px;
+    background-color: #95a5a6;
+}
+
+.back-btn:hover {
+    background-color: #7f8c8d;
+}
+
+/* 错误信息样式 */
+.error {
+    color: #e74c3c;
+    font-size: 14px;
+    margin-top: 5px;
+    display: block;
+}
+
+/* 首页链接样式 */
+.home-link {
+    display: block;
+    text-align: center;
+    margin: 20px 0;
+    padding: 15px;
+    background-color: #ecf0f1;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+}
+
+.home-link:hover {
+    background-color: #d5dbdb;
+    text-decoration: none;
+}

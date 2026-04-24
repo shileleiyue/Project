@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>角色列表</h2>
+<a href="{{ url_for('character_add') }}" class="btn btn-primary mb-3">添加角色</a>
+<table class="table table-bordered">
+    <thead>
+        <tr><th>ID</th><th>姓名</th><th>别名</th><th>性别</th><th>年龄</th><th>操作</th></tr>
+    </thead>
+    <tbody>
+        {% for c in characters %}
+        <tr>
+            <td>{{ c.id }}</td>
+            <td>{{ c.name }}</td>
+            <td>{{ c.alias or '' }}</td>
+            <td>{{ c.gender or '' }}</td>
+            <td>{{ c.age or '' }}</td>
+            <td>
+                <a href="{{ url_for('character_edit', char_id=c.id) }}" class="btn btn-sm btn-warning">编辑</a>
+                <a href="{{ url_for('character_delete', char_id=c.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('确定删除？')">删除</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

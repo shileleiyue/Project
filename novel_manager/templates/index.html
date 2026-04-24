@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row">
+    <div class="col-md-3 mb-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h5 class="card-title">角色</h5>
+                <p class="card-text display-6">{{ char_count }}</p>
+                <a href="{{ url_for('characters') }}" class="btn btn-light">管理</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5 class="card-title">关系</h5>
+                <p class="card-text display-6">{{ rel_count }}</p>
+                <a href="{{ url_for('relationships') }}" class="btn btn-light">管理</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <h5 class="card-title">事件</h5>
+                <p class="card-text display-6">{{ event_count }}</p>
+                <a href="{{ url_for('timeline') }}" class="btn btn-light">管理</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <h5 class="card-title">科技节点</h5>
+                <p class="card-text display-6">{{ tech_count }}</p>
+                <a href="{{ url_for('tech_tree') }}" class="btn btn-light">管理</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

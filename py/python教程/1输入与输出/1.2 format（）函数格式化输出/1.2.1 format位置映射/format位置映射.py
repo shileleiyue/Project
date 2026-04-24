@@ -1,0 +1,5 @@
+print("{}年{}月{}日".format('2023', 11, 11))
+n = input('')
+y = input('')
+r = input('')
+print("{}年{}月{}日".format(n, y, r))

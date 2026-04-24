@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>时间线事件</h2>
+<a href="{{ url_for('timeline_add') }}" class="btn btn-primary mb-3">添加事件</a>
+<table class="table table-bordered">
+    <thead>
+        <tr><th>日期</th><th>标题</th><th>描述</th><th>涉及角色</th><th>操作</th></tr>
+    </thead>
+    <tbody>
+        {% for e in events %}
+        <tr>
+            <td>{{ e.date or '' }}</td>
+            <td>{{ e.title }}</td>
+            <td>{{ e.description or '' }}</td>
+            <td>
+                {% for ec in e.characters %}
+                    {{ ec.character.name }}{% if not loop.last %}, {% endif %}
+                {% endfor %}
+            </td>
+            <td>
+                <a href="{{ url_for('timeline_edit', event_id=e.id) }}" class="btn btn-sm btn-warning">编辑</a>
+                <a href="{{ url_for('timeline_delete', event_id=e.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('确定删除？')">删除</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

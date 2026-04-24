@@ -1,0 +1,28 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    {% if works %}
+        <div>
+            <h3>{{ work.title }}</h3>
+            {% if work.cover_image %}
+                <img src="{{ work.cover_image }}" alt="封面" style="max-width:100px;">
+            {% else %}
+                <p>[暂无封面]</p>
+            {% endif %}
+                <p>创建于：{{ work.created_at }}</p>
+        </div>
+    {% else %}
+    <form method="post" action="">
+        {% csrf_token %}
+            <p>章节名称：<input type="text" name="title" placeholder="作品名称"></p>
+            <button >新建作品</button>
+    </form>
+    
+</body>
+</html>

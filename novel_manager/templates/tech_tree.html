@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>科技树</h2>
+<a href="{{ url_for('tech_add') }}" class="btn btn-primary mb-3">添加节点</a>
+<ul class="list-group">
+    {% for node in tree %}
+        {% include '_tech_node.html' %}
+    {% endfor %}
+</ul>
+{% endblock %}

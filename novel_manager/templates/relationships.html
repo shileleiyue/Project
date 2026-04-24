@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>角色关系</h2>
+<a href="{{ url_for('relationship_add') }}" class="btn btn-primary mb-3">添加关系</a>
+<table class="table table-bordered">
+    <thead>
+        <tr><th>角色A</th><th>角色B</th><th>关系类型</th><th>描述</th><th>操作</th></tr>
+    </thead>
+    <tbody>
+        {% for r in relationships %}
+        <tr>
+            <td>{{ r.character_a.name }}</td>
+            <td>{{ r.character_b.name }}</td>
+            <td>{{ r.relation_type }}</td>
+            <td>{{ r.description or '' }}</td>
+            <td>
+                <a href="{{ url_for('relationship_edit', rel_id=r.id) }}" class="btn btn-sm btn-warning">编辑</a>
+                <a href="{{ url_for('relationship_delete', rel_id=r.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('确定删除？')">删除</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

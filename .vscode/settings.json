@@ -1,0 +1,15 @@
+{
+    "files.associations": {
+        "max": "c"
+    },
+    "python-envs.defaultEnvManager": "ms-python.python:system",
+    "C_Cpp.errorSquiggles": "disabled",
+    "liveServer.settings.port": 5501,
+    "python-envs.pythonProjects": [
+        {
+            "path": ".",
+            "envManager": "ms-python.python:system",
+            "packageManager": "ms-python.python:pip"
+        }
+    ]
+}

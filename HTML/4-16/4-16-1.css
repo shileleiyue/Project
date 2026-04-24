@@ -1,0 +1,57 @@
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+.head{
+    width: 95%;
+    height: 50px;
+    line-height: 50px;
+    margin: 10px;
+    padding: 0 20px;
+    border: 3px solid #dc2525;
+    border-radius: 10px;
+    background-color: #7340d1;
+    text-align: center;
+    list-style: none;
+}
+.head ul{
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.head li{
+    width: 30%;
+    float: left;
+    text-align: center;
+}
+.head li a{
+    display: block;
+    padding: 0 10px;
+    text-decoration: none;
+    color: #290fea;
+}
+.head li a:hover{
+    color: red;
+}
+.head li{
+    float: left;
+    text-align: center;
+}
+.suoxiao img:hover{
+    width: 95%;
+    height: 95%;
+}
+.suoxiao h1:hover{
+    font-size: 30px;
+}
+.suoxiao{
+    width: 95%;
+    margin: 10px;
+    padding: 0 20px;
+    border: 3px solid #31ea2b;
+    border-radius: 10px;
+    background-color: #c5ddc3;
+    text-align: center;
+    list-style: none;
+}

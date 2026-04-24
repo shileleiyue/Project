@@ -1,0 +1,14 @@
+<li class="list-group-item">
+    <strong>{{ node.name }}</strong> - {{ node.description or '' }}
+    <a href="{{ url_for('tech_edit', node_id=node.id) }}" class="btn btn-sm btn-warning float-end me-2">编辑</a>
+    <a href="{{ url_for('tech_delete', node_id=node.id) }}" class="btn btn-sm btn-danger float-end me-2" onclick="return confirm('确定删除？')">删除</a>
+    {% if node.children_list %}
+        <ul class="list-group mt-2">
+            {% for child in node.children_list %}
+                {% with node=child %}
+                    {% include '_tech_node.html' %}
+                {% endwith %}
+            {% endfor %}
+        </ul>
+    {% endif %}
+</li>
