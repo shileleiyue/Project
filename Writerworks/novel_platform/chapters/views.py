@@ -1,6 +1,6 @@
+from django.http import JsonResponse
 from django.shortcuts import render, redirect,get_object_or_404
 from .models import Work,Chapter
-
 # Create your views here.
 def work_list(request):
     if request.method == 'POST':
@@ -11,6 +11,7 @@ def work_list(request):
         return redirect('work_list')
     works = Work.objects.all()
     return render(request, 'chapters/work_list.html', {'works': works})
+
 def work_detail(request, work_id):
     work = get_object_or_404(Work, id=work_id)
     chapters = work.chapters.order_by('-created_at')
@@ -26,3 +27,22 @@ def work_detail(request, work_id):
         'chapters': chapters,
     }
     return render(request, 'chapters/work_detail.html', context)
+
+def chapter_read(request, work_id, chapter_id):
+    chapter = get_object_or_404(Chapter, id=chapter_id, work_id=work_id)
+    work = chapter.work
+    context = {
+        'chapter': chapter,
+        'work': work,
+    }
+    return render(request, 'chapters/chapter_read.html', context)
+
+def chapter_save(request, work_id, chapter_id):
+    if request.method == 'POST':
+        chapter = get_object_or_404(Chapter, id=chapter_id, work_id=work_id)
+        content = request.POST.get('content')
+        if content is not None:
+            chapter.content = content
+            chapter.save()
+            return JsonResponse({'success': True, 'updated_at': chapter.updated_at.isoformat()})
+    return JsonResponse({'error': 'Invalid method'}, status=405)

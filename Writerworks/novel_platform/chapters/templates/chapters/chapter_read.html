@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>章节 {{ chapter.title }}</title>
+</head>
+<body>
+    <h1>{{ chapter.title }}</h1>
+    <div id="reading-content">
+        <pre id="reading-content">{{ chapter.content }}</pre>
+        <a id="edit-btn">编辑</a>
+    </div>
+    <div id="editing-area">
+        <h3>{{ chapter.title }}</h3>
+        <textarea name="" id="content-editor" style="display: none;" rows="10" cols="50">{{ chapter.content }}</textarea>
+        <button id="save-btn" style="display: none;">保存</button><button id="cancel-btn" style="display: none;">取消</button>
+        <span id="save-status"></span>
+    </div>
+    <div>
+        <a href="{% url 'work_detail' work.id %}">返回作品详情</a>
+    </div>
+</body>
+</html>
+
+<script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+const csrftoken = getCookie('csrftoken');
+
+</script>
