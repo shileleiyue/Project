@@ -1,51 +1,39 @@
 #include<stdio.h>
+#include<string.h>
 
+int flt_len(char *flt){
+    int len = 0;
+    while(flt[len] != '.'){
+        len++;
+    }
+    return len;
+}
+int maxlen(int *fltlen,int n){
+    int max = 0;
+    for(int i=0;i<n;i++){
+        if(fltlen[i] > max){
+            max = fltlen[i];
+        }
+    }
+    return max;
+}
 int main(){
-    int n,t,i,j,l,li,p=0,q=0;
-    char num[10000][50];
-
+    int n;
+    char flt[10000][51];
+    int fltlen[10000];
     scanf("%d",&n);
-    for ( i = 0; i < n; i++)
+    for(int i=0;i<n;i++){
+        scanf("%s",flt[i]);
+        fltlen[i] = flt_len(flt[i]);
+    }
+    int max = maxlen(fltlen,n);
+    for (int i = 0; i < n; i++)
     {
-        scanf("%lf",&num[i]);
+        for(int j=0;j<max-fltlen[i];j++)
+        printf(" ");
+        printf("%s\n",flt[i]);
     }
-    for ( i = 0; i < n; i++)
-    {
-        if(num[i]>0){
-             if (num[i]>num[p])p=i;
-        }
-        else   {
-            if (num[i]<num[q])q=i;
-        }
-    }
-    if(num[p]>-num[q]){
-        l=0;
-    }
-    else{
-        l=1;
-        p=q;
-    }
-    for (t=(int)num[p]/10; t!=0; t=t/10)
-    {
-        l++;
-    }
-    for ( i = 0; i < n; i++)
-    {
-        li=0;
-        for (t=(int)num[i]/10; t!=0; t=t/10)
-        {
-            li++;
-        }
-        if(num[i]>=0){
-            for(j=0;j<l-li;j++)
-                printf(" ");
-            printf("%.10g\n",num[i]);
-        }
-        else{
-            for(j=0;j<l-li-1;j++)
-                printf(" ");
-            printf("%.10g\n",num[i]);
-        }
-    }
+    
+
     return 0;
 }

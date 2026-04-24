@@ -1,28 +1,42 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>{{ work.title }} - 作品详情</title>
 </head>
 <body>
-    {% if works %}
-        <div>
-            <h3>{{ work.title }}</h3>
-            {% if work.cover_image %}
-                <img src="{{ work.cover_image }}" alt="封面" style="max-width:100px;">
-            {% else %}
-                <p>[暂无封面]</p>
-            {% endif %}
-                <p>创建于：{{ work.created_at }}</p>
-        </div>
+    <h1>{{ work.title }}</h1>
+    {% if work.cover_image %}
+        <img src="{{ work.cover_image }}" alt="封面" style="max-width:200px;">
     {% else %}
+        <p>[暂无封面]</p>
+    {% endif %}
+    <p>{{ work.description }}</p>
+    <p>创建于：{{ work.created_at }}</p>
+    <hr>
+    <h2>新建章节</h2>
     <form method="post" action="">
         {% csrf_token %}
-            <p>章节名称：<input type="text" name="title" placeholder="作品名称"></p>
-            <button >新建作品</button>
+        <p>章节名称：<input type="text" name="title" placeholder="章节名称"></p>
+        <button type="submit">新建章节</button>
     </form>
-    
+    <hr>
+    <h2>章节列表</h2>
+    {% if chapters %}
+        {% for chapter in chapters %}
+            <div>
+                <h3>
+                    <a href="{% url 'chapter_read' work.id chapter.id %}">{{ chapter.title }}</a>
+                </h3>
+                <p>创建于：{{ chapter.created_at }} | 最后修改：{{ chapter.updated_at }}</p>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>暂无章节</p>
+    {% endif %}
+    <hr>
+    <a href="{% url 'work_list' %}">← 返回作品列表</a>
 </body>
 </html>

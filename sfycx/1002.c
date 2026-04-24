@@ -1,10 +1,9 @@
 #include<stdio.h>
-int main()
-{
-    //freopen("1002in.txt","r",stdin);
-    //freopen("1002out.txt","w",stdout);
+int main(){
     int a,b;
-    while(scanf("%d %d",&a,&b)!=EOF)
-        printf("%d\n",a+b);
+    while(scanf("%d %d",&a,&b)!=EOF){
+        int sum=a+b;
+        printf("%d\n",sum);
+    }
     return 0;
 }
