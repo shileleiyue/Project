@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,33 +8,35 @@
     <link rel="stylesheet" href="{% static 'chapters/work_list.css' %}">
 </head>
 <body class="body">
-    <div class="head">
+    <div class="header">
         <p1>作家工厂</p1><br>
         <p2>开发时间2026年4月19日 开发人：韩磊</p2><br>
-        <strong><a href="./new_work.html"><button type="submit">新建作品</button></a></strong>
+        <strong><p3>欢迎来到作家工厂！在这里，你可以创建和管理你的小说作品。点击下方的“新建作品”按钮，开始你的创作之旅吧！</p3></strong>
     </div>
-    <form method="post" action="">
-        {% csrf_token %}
-            <p>作品名称：<input type="text" name="title" placeholder="作品名称"></p><br><br>
-            <p>简介：<textarea name="description" id="" placeholder="简介"></textarea></p><br><br>
-            <button >新建作品</button>
-    </form>
-{% if works %}
-    {% for work in works %}
-        <div>
-            <h3><a href="{% url 'work_detail' work.id %}">{{ work.title }}</a></h3>
-            {% if work.cover_image %}
-                <img src="{{ work.cover_image }}" alt="封面" style="max-width:100px;">
-            {% else %}
-                <p>[暂无封面]</p>
-            {% endif %}
-                <p>创建于：{{ work.created_at }}</p>
-        </div>
-    {% endfor %}
-{% else %}
-    <p>暂无作品，请新建。</p>
-    <button>新建</button>
-{% endif %}
+    <div class="bodier">
+        <form method="post" action="">
+            {% csrf_token %}
+                <p>作品名称：<input type="text" name="title" placeholder="作品名称"></p><br><br>
+                <p>简介：<textarea name="description" id="" placeholder="简介"></textarea></p><br><br>
+                <button >新建作品</button>
+        </form>
+    </div>
+    {% if works %}
+        {% for work in works %}
+            <div>
+                <h3><a href="{% url 'work_detail' work.id %}">{{ work.title }}</a></h3>
+                    {% if work.cover_image %}
+                        <img src="{{ work.cover_image }}" alt="封面" style="max-width:100px;">
+                    {% else %}
+                        <p>[暂无封面]</p>
+                    {% endif %}
+                        <p>创建于：{{ work.created_at }}</p>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>暂无作品，请新建。</p>
+        <button>新建</button>
+    {% endif %}
     
 </body>
 </html>
