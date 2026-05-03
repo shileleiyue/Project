@@ -1,18 +1,16 @@
-#include<stdio.h>
+#include <stdio.h>
 int main()
 {
-    //freopen("1004in.txt","r",stdin);
-    //freopen("1004out.txt","w",stdout);
-    int i,t,sum,n;
-    for (scanf("%d",&n); n!=0;scanf("%d",&n))
+    int n;
+    for (scanf("%d", &n); n != 0; scanf("%d", &n))
     {
-        sum=0;
-        for ( i = 0;i<n; i++)
+        int a, sum = 0;
+        for (int i = 0; i < n; i++)
         {
-            scanf("%d",&t);
-            sum+=t;
+            scanf("%d", &a);
+            sum += a;
         }
-        printf("%d\n",sum);
+        printf("%d\n", sum);
     }
     return 0;
 }
