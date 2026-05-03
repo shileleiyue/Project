@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>回收站</title>
+</head>
+<body>
+    <h1>回收站</h1>
+    <h2>已删除的作品</h2>
+    {% if works %}
+        {% for work in works %}
+            <div>
+                <h3>{{ work.title }}</h3>
+                <p>创建于：{{ work.created_at }}</p>
+                <form action="{% url 'work_restore' work.id %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit">恢复</button>
+                </form>
+                <form action="{% url 'work_hard_delete' work.id %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" onclick="return confirm('永久删除后无法恢复，确定？');">永久删除</button>
+                </form>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>回收站中没有已删除的作品。</p>
+    {% endif %}
+    <h2>已删除的章节</h2>
+    {% if chapters %}
+        {% for chapter in chapters %}
+        <div>
+            <h3>{{ chapter.title }} (属于《{{ chapter.work.title }}》)</h3>
+            <p>创建于：{{ chapter.created_at }}</p>
+            <form action="{% url 'chapter_restore' chapter.work.id chapter.id %}" method="post" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit">恢复</button>
+            </form>
+            <form action="{% url 'chapter_hard_delete' chapter.work.id chapter.id %}" method="post" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" onclick="return confirm('永久删除后无法恢复，确定？');">永久删除</button>
+            </form>
+        </div>
+    {% endfor %}
+    {% else %}
+        <p>回收站中没有已删除的章节。</p>
+    {% endif %}
+    <a href="{% url 'work_list' %}">← 返回作品列表</a>
+    
+</body>
+</html>

@@ -1,12 +1,13 @@
 
 body{
     width: 100%;
+    height: 100dvh;
     margin: 0px;
 }
 
 .header{
     width: 100%;
-    height: 150px;
+    height: 15dvh;
     border: #446bed;
     background-color: #4b69cc;
     text-align: center;
@@ -30,8 +31,8 @@ body{
     color: #ffffff;
     text-align: right;
 }
-.bodier{
-    width: 100px;
-    text-align: center;
-    background-color: #ffffff;
+.bodier {
+    width: 20%;
+    text-align: right;
+    background-color: #bfbfbf;
 }

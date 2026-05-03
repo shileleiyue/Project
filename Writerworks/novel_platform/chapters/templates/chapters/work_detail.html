@@ -28,9 +28,13 @@
         {% for chapter in chapters %}
             <div>
                 <h3>
-                    <a href="{% url 'chapter_read' work.id chapter.id %}">{{ chapter.title }}</a>
+                    <a href="{% url 'chapter_read' work.id chapter.id %}">第 {{ chapter.id }} 章 {{ chapter.title }}</a>
                 </h3>
                 <p>创建于：{{ chapter.created_at }} | 最后修改：{{ chapter.updated_at }}</p>
+                <form method="post" action="{% url 'chapter_delete' work.id chapter.id %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" onclick="return confirm('确定要删除这个章节吗？')">删除</button>
+                </form>
             </div>
         {% endfor %}
     {% else %}

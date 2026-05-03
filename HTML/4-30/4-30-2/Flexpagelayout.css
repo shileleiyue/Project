@@ -1,0 +1,56 @@
+body{
+    width: 100%;
+    height: 100dvh;
+    margin: 0px;
+}
+.header{
+    width: 100%;
+    height: 5dvh;
+    border: #446bed;
+    background-color: #6c6c6c;
+    text-align: center;
+}
+.header p{
+    font-size: 1.5dvh;
+    width: 100%;
+    line-height: 5dvh;
+    margin: 0px;
+    text-align: center;
+}
+.bodier {
+    width: 94dvw;
+    height: 84dvh;
+    padding-bottom: 3dvh;
+    padding-left: 3dvw;
+    padding-right: 3dvw;
+    padding-top: 3dvh;
+    text-align: left;
+    background-color: #bfbfbf;
+}
+.bodier p{
+    font-size: 1.5dvh;
+    width: 100%;
+    margin: 0px;
+}
+.footer{
+    width: 100%;
+    height: 5dvh;
+    border: #000000;
+    background-color: #ffffff;
+    text-align: center;
+}
+.footer ul {
+    display: flex;
+    justify-content: center;
+    gap: 30dvw;           /* 导航项之间固定间距，随视口变化 */
+    list-style: none;
+    margin: 0;
+    padding: 0px;
+}
+
+.footer ul li {
+    color: #ff0000;
+    font-size: 1.5dvh;
+    line-height: 5dvh;
+    text-align: center;
+}

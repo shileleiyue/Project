@@ -16,8 +16,8 @@
     <div class="bodier">
         <form method="post" action="">
             {% csrf_token %}
-                <p>作品名称：<input type="text" name="title" placeholder="作品名称"></p><br><br>
-                <p>简介：<textarea name="description" id="" placeholder="简介"></textarea></p><br><br>
+                <p>作品名称：<input type="text" name="title" placeholder="作品名称"></p>
+                <p>简介：<textarea name="description" id="" placeholder="简介"></textarea></p>
                 <button >新建作品</button>
         </form>
     </div>
@@ -31,8 +31,13 @@
                         <p>[暂无封面]</p>
                     {% endif %}
                         <p>创建于：{{ work.created_at }}</p>
+                        <form method="post" action="{% url 'work_delete' work.id %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" onclick="return confirm('确定要删除这个作品吗？')">删除</button>
+                        </form>
             </div>
         {% endfor %}
+        <a href="{% url 'trash' %}">🗑 回收站</a>
     {% else %}
         <p>暂无作品，请新建。</p>
         <button>新建</button>
