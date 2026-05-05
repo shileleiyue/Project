@@ -5,42 +5,208 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ work.title }} - 作品详情</title>
+    <link rel="stylesheet" href="{% static 'chapters/work_detail.css' %}">
 </head>
 <body>
-    <h1>{{ work.title }}</h1>
-    {% if work.cover_image %}
-        <img src="{{ work.cover_image }}" alt="封面" style="max-width:200px;">
-    {% else %}
-        <p>[暂无封面]</p>
-    {% endif %}
-    <p>{{ work.description }}</p>
-    <p>创建于：{{ work.created_at }}</p>
+    <a href="{% url 'work_list' %}"> 返回作品列表 </a><hr>
+    <div class="header">
+        <div id="work-title-area">
+            <span id="work-title-text">{{ work.title }}</span>
+            <button id="edit-work-title-btn">编辑</button>
+        </div>
+        <div id="work-title-edit" style="display: none;">
+            <input type="text" id="work-title-input" value="{{ work.title }}">
+            <button id="save-work-title-btn">确认</button>
+            <button id="cancel-work-title-btn">取消</button>
+        </div>
+        <div>
+            <a href="{% url 'outline_view' work.id %}">📋 查看大纲</a>
+        </div>
+        {% if work.cover_image %}
+            <img src="{{ work.cover_image }}" alt="封面" style="max-width:200px;">
+        {% else %}
+            <p>[暂无封面]</p>
+        {% endif %}
+        <p>{{ work.description }}</p>
+        <p>创建于：{{ work.created_at }}</p>
+    </div>
     <hr>
-    <h2>新建章节</h2>
-    <form method="post" action="">
-        {% csrf_token %}
-        <p>章节名称：<input type="text" name="title" placeholder="章节名称"></p>
-        <button type="submit">新建章节</button>
-    </form>
-    <hr>
-    <h2>章节列表</h2>
-    {% if chapters %}
-        {% for chapter in chapters %}
-            <div>
-                <h3>
-                    <a href="{% url 'chapter_read' work.id chapter.id %}">第 {{ chapter.id }} 章 {{ chapter.title }}</a>
-                </h3>
-                <p>创建于：{{ chapter.created_at }} | 最后修改：{{ chapter.updated_at }}</p>
-                <form method="post" action="{% url 'chapter_delete' work.id chapter.id %}" style="display: inline;">
+    <div class="">
+        <div class="dashboard">
+            <div class="content">
+                <h2>章节列表</h2>
+                {% if chapters %}
+                    {% for chapter in chapters %}
+                        <div class="chapter-item" 
+                            data-chapter-id="{{ chapter.id }}" 
+                            data-work-id="{{ work.id }}"
+                            data-rename-url="{% url 'chapter_rename' work.id chapter.id %}">
+                            <div class="chapter-title-area">
+                                <p>第 {{ chapter.order }} 章 
+                                    <a href="{% url 'chapter_read' work.id chapter.id %}">{{ chapter.title }}</a>
+                                    <button class="edit-chapter-title-btn">改名</button>
+                                </p>
+                            </div>
+                            <div class="chapter-title-edit" style="display: none;">
+                                <p>第 {{ chapter.order }} 章 
+                                <input type="text" class="chapter-title-input" value="{{ chapter.title }}">
+                                <button class="save-chapter-title-btn">确认</button>
+                                <button class="cancel-chapter-title-btn">取消</button>
+                                </p>
+                            </div>
+                            <p>创建于：{{ chapter.created_at }} | 最后修改：{{ chapter.updated_at }}</p>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>暂无章节</p>
+                {% endif %}
+            </div>
+            <div class="sidebar">
+                <h2>新建章节</h2>
+                <form method="post" action="">
                     {% csrf_token %}
-                    <button type="submit" onclick="return confirm('确定要删除这个章节吗？')">删除</button>
+                    <p>章节名称：<input type="text" name="title" placeholder="章节名称"></p>
+                    <button type="submit">新建章节</button>
                 </form>
             </div>
-        {% endfor %}
-    {% else %}
-        <p>暂无章节</p>
-    {% endif %}
+        </div>
+    </div>
     <hr>
-    <a href="{% url 'work_list' %}">← 返回作品列表</a>
+    <script>
+        // ============ 1. 获取 CSRF Token（核心） ============
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+        // ===============================================
+        // ==================== 作品名称编辑 ====================
+        const workTitleArea = document.getElementById('work-title-area');
+        const workTitleEdit = document.getElementById('work-title-edit');
+        const workTitleText = document.getElementById('work-title-text');
+        const editWorkTitleBtn = document.getElementById('edit-work-title-btn');
+        const saveWorkTitleBtn = document.getElementById('save-work-title-btn');
+        const cancelWorkTitleBtn = document.getElementById('cancel-work-title-btn');
+        const workTitleInput = document.getElementById('work-title-input');
+
+        const WORK_RENAME_URL = "{% url 'work_rename' work.id %}";
+
+        editWorkTitleBtn.addEventListener('click', () => {
+            workTitleArea.style.display = 'none';
+            workTitleEdit.style.display = 'block';
+            workTitleInput.value = workTitleText.textContent;
+            workTitleInput.focus();
+        });
+
+        cancelWorkTitleBtn.addEventListener('click', () => {
+            workTitleEdit.style.display = 'none';
+            workTitleArea.style.display = 'block';
+        });
+
+        saveWorkTitleBtn.addEventListener('click', async () => {
+            const newTitle = workTitleInput.value.trim();
+            if (!newTitle) {
+                alert('标题不能为空');
+                return;
+            }
+            const formData = new URLSearchParams();
+            formData.append('title', newTitle);
+            try {
+                const resp = await fetch(WORK_RENAME_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': csrftoken,
+                    },
+                    body: formData.toString(),
+                });
+                if (resp.ok) {
+                    const data = await resp.json();
+                    if (data.success) {
+                        workTitleText.textContent = data.title;
+                        document.title = data.title + ' - 详情';
+                    }
+                }
+            } catch (e) {
+                alert('修改失败');
+            }
+            workTitleEdit.style.display = 'none';
+            workTitleArea.style.display = 'block';
+        });
+        // ==================== 章节名称编辑（事件委托） ====================
+        
+
+        // 全局点击监听
+        document.addEventListener('click', async (e) => {
+            const btn = e.target;
+            const item = btn.closest('.chapter-item');
+            if (!item) return;
+            const chapterId = item.dataset.chapterId;
+
+            // 打开编辑
+            if (btn.classList.contains('edit-chapter-title-btn')) {
+                const area = item.querySelector('.chapter-title-area');
+                const edit = item.querySelector('.chapter-title-edit');
+                const input = edit.querySelector('.chapter-title-input');
+                area.style.display = 'none';
+                edit.style.display = 'block';
+                input.value = area.querySelector('a').textContent;
+                input.focus();
+            }
+
+            // 取消编辑
+            if (btn.classList.contains('cancel-chapter-title-btn')) {
+                const area = item.querySelector('.chapter-title-area');
+                const edit = item.querySelector('.chapter-title-edit');
+                edit.style.display = 'none';
+                area.style.display = 'block';
+            }
+
+            // 保存编辑
+            if (btn.classList.contains('save-chapter-title-btn')) {
+                const input = item.querySelector('.chapter-title-input');
+                const newTitle = input.value.trim();
+                if (!newTitle) {
+                    alert('标题不能为空');
+                    return;
+                }
+                const url = item.dataset.renameUrl;   // 直接使用预存的完整 URL
+                const formData = new URLSearchParams();
+                formData.append('title', newTitle);
+                try {
+                    const resp = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-CSRFToken': csrftoken,
+                        },
+                        body: formData.toString(),
+                    });
+                    if (resp.ok) {
+                        const data = await resp.json();
+                        if (data.success) {
+                            const link = item.querySelector('.chapter-title-area a');
+                            link.textContent = data.title;
+                        }
+                    }
+                } catch (e) {
+                    alert('修改失败');
+                }
+                // 切换回阅读视图
+                item.querySelector('.chapter-title-area').style.display = 'block';
+                item.querySelector('.chapter-title-edit').style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>

@@ -20,7 +20,7 @@
     {
       "id": "8e9c6b4e-862d-40c0-80fa-396953ea9f7a",
       "cell_type": "code",
-      "source": "",
+      "source": "venv\\Scripts\\activate\r\npython manage.py runserver ",
       "metadata": {
         "language": "java"
       },

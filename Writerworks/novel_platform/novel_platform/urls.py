@@ -16,7 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from chapters.views import work_list,work_detail,chapter_read,chapter_save,work_delete,chapter_delete,trash_view,work_restore,chapter_restore,work_hard_delete,chapter_hard_delete
+from django.conf import settings
+from django.conf.urls.static import static
+from chapters.views import work_list,work_detail,chapter_read,chapter_save,work_delete,chapter_delete,trash_view,work_restore,chapter_restore,work_hard_delete,chapter_hard_delete,work_rename,chapter_rename,outline_view,work_create
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', work_list, name='work_list'),
@@ -27,8 +29,14 @@ urlpatterns = [
     path('work/<int:work_id>/chapter/<int:chapter_id>/delete/', chapter_delete, name='chapter_delete'),
     path('trash/', trash_view, name='trash'),
     path('work/<int:work_id>/restore/', work_restore, name='work_restore'),
-    path('chapter/<int:chapter_id>/restore/', chapter_restore, name='chapter_restore'),
+    path('work/<int:work_id>/chapter/<int:chapter_id>/restore/', chapter_restore, name='chapter_restore'),
     path('work/<int:work_id>/hard_delete/', work_hard_delete, name='work_hard_delete'),
-    path('chapter/<int:chapter_id>/hard_delete/', chapter_hard_delete, name='chapter_hard_delete'),
+    path('work/<int:work_id>/chapter/<int:chapter_id>/hard_delete/', chapter_hard_delete, name='chapter_hard_delete'),
+    path('work/<int:work_id>/rename/', work_rename, name='work_rename'),
+    path('work/<int:work_id>/chapter/<int:chapter_id>/rename/', chapter_rename, name='chapter_rename'),
+    path('work/<int:work_id>/outline/', outline_view, name='outline_view'),
+    path('work/create/', work_create, name='work_create'),
 
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

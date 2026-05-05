@@ -1,0 +1,49 @@
+/* 大屏增大基准 */
+@media (min-width: 1920px) {
+  html { font-size: 18px; }
+}
+/* 小屏缩小基准 */
+@media (max-width: 768px) {
+  html { font-size: 14px; }
+}
+
+body{
+    width: 100dvw;
+    height: 100dvh;
+    margin: 0px;
+}
+
+.header{
+  font-size: large;
+    width: 100dvw;
+    height: 3dvh;
+    line-height: 3dvh;
+    background-color: #f4f4f4;
+    padding: 0px;
+}
+
+.bodier{
+    width: 100dvw;
+    height: 90dvh;
+}
+.bodier h3{
+    font-size: 2dvh;
+    margin: 0px;
+    padding: 0px;
+}
+.bodier .reading-content{
+    font-size: 1.5dvh;
+    margin-top: 1dvh;
+    margin-bottom: 1dvh;
+    margin-left: 1dvw;
+    margin-right: 1dvw;
+}
+.bodier .editing-area textarea{
+    width: 98dvw;
+    height: 78dvh;
+    font-size: 1.5dvh;
+    margin-top: 1dvh;
+    margin-bottom: 1dvh;
+    margin-left: 1dvw;
+    margin-right: 1dvw;
+}

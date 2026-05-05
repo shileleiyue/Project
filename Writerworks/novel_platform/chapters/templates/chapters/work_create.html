@@ -1,0 +1,21 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新建作品</title>
+    <link rel="stylesheet" href="{% static 'chapters/work_create.css' %}">
+</head>
+<body>
+    <h2>新建作品</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <p>作品名称: <input type="text" name="title" required></p>
+        <p>简介: <textarea name="description"></textarea></p>
+        <p>封面图: <input type="file" name="cover_image" accept="image/*"></p>
+        <button type="submit">创建</button>
+    </form>
+    <a href="{% url 'work_list' %}">取消</a>
+</body>
+</html>

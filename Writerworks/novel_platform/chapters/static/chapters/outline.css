@@ -1,0 +1,8 @@
+/* 大屏增大基准 */
+@media (min-width: 1920px) {
+  html { font-size: 18px; }
+}
+/* 小屏缩小基准 */
+@media (max-width: 768px) {
+  html { font-size: 14px; }
+}

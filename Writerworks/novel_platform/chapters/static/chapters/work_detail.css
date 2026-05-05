@@ -1,0 +1,35 @@
+/* 大屏增大基准 */
+@media (min-width: 1920px) {
+  html { font-size: 18px; }
+}
+/* 小屏缩小基准 */
+@media (max-width: 768px) {
+  html { font-size: 14px; }
+}
+
+body{
+    width: 100dvw;
+    height: 100dvh;
+    margin: 0px;
+}
+hr{
+    margin: 3px;
+    border: none;
+    border-top: 1px solid #ccc;
+}
+.dashboard {
+    display: flex;
+    min-height: 85dvh;          /* 占满视口高度 */
+}
+.sidebar {
+    padding: 1rem;
+    width: 10dvw;
+    background: #f4f4f4;
+    padding: 1rem;
+}
+.content {
+    width: 70dvw;
+    flex: 1;                    /* 占据剩余宽度 */
+    background: #fff;
+    padding: 1rem;
+}

@@ -1,0 +1,25 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ node.title }}</title>
+    <link rel="stylesheet" href="{% static 'chapters/outline_node.css' %}">
+</head>
+<body>
+    <li>
+        <div>
+            <strong>{{ node.title }}</strong>
+            <!-- 后续可在此添加“改名”、“删除”、“新建子节点”按钮 -->
+        </div>
+        {% if node.children.exists %}
+            <ul>
+                {% for child in node.children.all %}
+                    {% include 'chapters/outline_node.html' with node=child %}
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </li>
+</body>
+</html>

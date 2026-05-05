@@ -1,0 +1,25 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ work.title }} - 大纲</title>
+    <link rel="stylesheet" href="{% static 'chapters/outline.css' %}">
+</head>
+<body>
+    <a href="{% url 'work_detail' work.id %}">返回作品详情</a>
+    <h1>{{ work.title }} - 大纲</h1>
+
+        {% if root_nodes %}
+            <ul>
+                {% for node in root_nodes %}
+                    {% include 'chapters/outline_node.html' with node=node %}
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>暂无大纲，请新建。</p>
+        {% endif %}
+
+</body>
+</html>
