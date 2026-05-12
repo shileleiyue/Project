@@ -8,18 +8,112 @@
     <link rel="stylesheet" href="{% static 'chapters/outline.css' %}">
 </head>
 <body>
-    <a href="{% url 'work_detail' work.id %}">返回作品详情</a>
-    <h1>{{ work.title }} - 大纲</h1>
-
+    <a href="{% url 'work_detail' work.id %}" class="back-link">← 返回作品详情</a>
+    <div class="outline-container">
+        <h1>{{ work.title }} - 大纲</h1>
+        <form method="post" action="{% url 'outline_add_root' work.id %}" class="root-form">
+            {% csrf_token %}
+            <input type="text" name="title" placeholder="新建根节点标题" required>
+            <button type="submit" class="btn-primary">新建根节点</button>
+        </form>
         {% if root_nodes %}
-            <ul>
+            <ul class="outline-tree">
                 {% for node in root_nodes %}
                     {% include 'chapters/outline_node.html' with node=node %}
                 {% endfor %}
             </ul>
         {% else %}
-            <p>暂无大纲，请新建。</p>
+            <p class="empty-state">暂无大纲，请新建。</p>
         {% endif %}
+    </div>
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
 
+        // 子节点表单切换
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('toggle-child-form')) {
+                const form = e.target.closest('.node-header').nextElementSibling;
+                if (form.style.display === 'none') {
+                    form.style.display = 'block';
+                    form.querySelector('input').focus();
+                } else {
+                    form.style.display = 'none';
+                }
+            }
+        });
+
+        // 大纲节点重命名（适配新结构）
+        document.addEventListener('click', async (e) => {
+            const btn = e.target;
+            const node = btn.closest('.outline-node');
+            if (!node) return;
+
+            const header = node.querySelector('.node-header');
+            const displayDiv = header.querySelector('.node-title-display');
+            const editDiv = header.querySelector('.node-title-edit');
+            const titleStrong = displayDiv.querySelector('.node-title');
+
+            if (btn.classList.contains('rename-node-btn')) {
+                const input = editDiv.querySelector('.node-title-input');
+                displayDiv.style.display = 'none';
+                editDiv.style.display = 'flex';
+                input.value = titleStrong.textContent;
+                input.focus();
+            }
+            if (btn.classList.contains('cancel-node-rename-btn')) {
+                editDiv.style.display = 'none';
+                displayDiv.style.display = 'block';
+            }
+            if (btn.classList.contains('save-node-rename-btn')) {
+                const input = editDiv.querySelector('.node-title-input');
+                const newTitle = input.value.trim();
+                if (!newTitle) {
+                    alert('标题不能为空');
+                    return;
+                }
+                const url = node.dataset.renameUrl;
+                const formData = new URLSearchParams();
+                formData.append('title', newTitle);
+                try {
+                    const resp = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-CSRFToken': csrftoken,
+                        },
+                        body: formData.toString(),
+                    });
+                    if (resp.ok) {
+                        const data = await resp.json();
+                        if (data.success) {
+                            titleStrong.textContent = data.title;
+                        } else {
+                            alert('修改失败：' + (data.error || '未知错误'));
+                        }
+                    } else {
+                        alert('请求失败，状态码：' + resp.status);
+                    }
+                } catch (e) {
+                    alert('网络错误，修改失败');
+                }
+                editDiv.style.display = 'none';
+                displayDiv.style.display = 'block';
+            }
+        });
+    </script>
 </body>
 </html>

@@ -1,71 +1,91 @@
+{% extends 'chapters/base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>作家工厂</title>
-    <link rel="stylesheet" href="{% static 'chapters/work_list.css' %}">
-</head>
-<body >
-    <div class="header">
-        <h1>作家工厂</h1>
-        <h2>开发时间2026年4月19日 开发人：韩磊</h2>
-        <h3>欢迎来到作家工厂！在这里，你可以创建和管理你的小说作品。点击下方的“新建作品”按钮，开始你的创作之旅吧！</h3>
-    </div>
 
+{% block title %}作家工厂 - 我的作品{% endblock %}
+
+{% block extra_css %}
+    <!-- 作品列表页面专属样式 -->
+    <link rel="stylesheet" href="{% static 'chapters/work_list.css' %}">
+{% endblock %}
+
+{% block content %}
     <div class="bodier">
         <div class="dashboard">
+            <!-- 左侧导航（辅助，与顶部导航互补） -->
             <aside class="sidebar_left">
-                <nav>
-                    <ul>
-                        <li><a href="{% url 'work_list' %}">📚 我的作品</a></li>
-                        <li><a href="{% url 'trash' %}">🗑 回收站</a></li>
-                    </ul>
-                </nav>
-            </aside>
-            <main class="content">
-                    {% if works %}
-                        {% for work in works %}
-                            <div class="work-item">
-                                <div class="dashboard-item">
-                                    <aside class="sidebar-left">
-                                        <nav>
-                                            <ul>
-                                                <li><h3>{{ work.title }}<a href="{% url 'work_detail' work.id %}"> 详情</a></h3></li>
-                                                <li><p>创建于：{{ work.created_at }}</p></li>
-                                                <li>
-                                                    <form method="post" action="{% url 'work_delete' work.id %}" style="display: inline;">
-                                                        {% csrf_token %}
-                                                        <button type="submit" onclick="return confirm('确定要删除这个作品吗？')">删除</button>
-                                                    </form>
-                                                </li>
-                                            </ul>
-                                        </nav>
-                                    </aside>
-                                    <main>
-                                        {% if work.cover_image %}
-                                            <img src="{{ work.cover_image.url }}" alt="封面" style="max-width:100px;">
-                                        {% else %}
-                                            <p>[暂无封面]</p>
-                                        {% endif %}
-                                            
-                                    </main>
-                                </div>    
+                <div class="stats-dashboard">
+                    <h3>📊 工作概览</h3>
+                    <div class="stat-item">
+                        <span class="stat-label">今日码字</span>
+                        <span class="stat-value">{{ today_stats.words }}</span>
+                        <span class="stat-unit">字</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">今日时长</span>
+                        <span class="stat-value">{{ today_stats.minutes }}</span>
+                        <span class="stat-unit">分钟</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">工作强度</span>
+                        <span class="stat-value intensity-{{ today_stats.intensity_class }}">{{ today_stats.intensity }}</span>
+                    </div>
+                    {% if today_stats.rest_tip %}
+                        <div class="rest-tip">{{ today_stats.rest_tip }}</div>
+                    {% endif %}
+
+                    <h4>📅 近7日码字</h4>
+                    <div class="calendar-grid">
+                        {% for day in calendar_data %}
+                            <div class="day-cell" title="{{ day.date }}: {{ day.words }}字">
+                                <span class="day-label">{{ day.date }}</span>
+                                <span class="day-bar" style="height: {{ day.words|default:0|floatformat:0 }}%;">
+                                    {{ day.words|default:0 }}
+                                </span>
                             </div>
                         {% endfor %}
-                    {% else %}
-                        <p>暂无作品，请新建。</p>
-                    {% endif %}
+                    </div>
+                </div>
+            </aside>
+
+            <!-- 中央作品列表 -->
+            <main class="content">
+                {% if works %}
+                    {% for work in works %}
+                        <article class="bookshelf">
+                            <a href="{% url 'work_detail' work.id %}" class="card-link" aria-label="查看《{{ work.title }}》详情"></a>
+                            <div class="book-cover">
+                                {% if work.cover_image %}
+                                    <img src="{{ work.cover_image.url }}" alt="{{ work.title }} 封面">
+                                {% else %}
+                                    <p>[暂无封面]</p>
+                                {% endif %}
+                            </div>
+                            <div class="book-info">
+                                <div class="work-meta">
+                                    <h3 class="work-title">
+                                        <span class="title-text">{{ work.title }}</span>
+                                    </h3>
+                                    <p class="work-date">创建于：{{ work.created_at }}</p>
+                                    <p class="work-date">最后修改：{{ work.updated_at }}</p>
+                                </div>
+                                <div class="work-actions">
+                                    <form method="post" action="{% url 'work_delete' work.id %}" class="delete-form">
+                                        {% csrf_token %}
+                                        <button type="submit" onclick="return confirm('确定要删除这个作品吗？')">删除</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </article>
+                    {% endfor %}
+                {% else %}
+                    <p class="empty-state">暂无作品，请新建。</p>
+                {% endif %}
             </main>
+
+            <!-- 右侧操作栏（新建作品按钮） -->
             <aside class="sidebar_right">
                 <a href="{% url 'work_create' %}" class="create-button">+ 新建作品</a>
             </aside>
         </div>
     </div>
-
-    <div class="footer">
-        <p>&copy; 2026 作家工厂. 保留所有权利.</p>
-    </div>
-</body>
-</html>
+{% endblock %}

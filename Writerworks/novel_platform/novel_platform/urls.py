@@ -15,10 +15,11 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path,include
 from django.conf import settings
 from django.conf.urls.static import static
-from chapters.views import work_list,work_detail,chapter_read,chapter_save,work_delete,chapter_delete,trash_view,work_restore,chapter_restore,work_hard_delete,chapter_hard_delete,work_rename,chapter_rename,outline_view,work_create
+from chapters.views import work_list,work_detail,chapter_read,chapter_save,work_delete,chapter_delete,trash_view,work_restore,chapter_restore,work_hard_delete,chapter_hard_delete,work_rename,chapter_rename,work_create,outline_add_root,outline_add_child,outline_view
+from chapters.views import outline_rename,outline_delete,about
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', work_list, name='work_list'),
@@ -34,8 +35,13 @@ urlpatterns = [
     path('work/<int:work_id>/chapter/<int:chapter_id>/hard_delete/', chapter_hard_delete, name='chapter_hard_delete'),
     path('work/<int:work_id>/rename/', work_rename, name='work_rename'),
     path('work/<int:work_id>/chapter/<int:chapter_id>/rename/', chapter_rename, name='chapter_rename'),
-    path('work/<int:work_id>/outline/', outline_view, name='outline_view'),
+    path('work/<int:work_id>/outline/', outline_view, name='outline'),
     path('work/create/', work_create, name='work_create'),
+    path('work/<int:work_id>/outline/add_root/', outline_add_root, name='outline_add_root'),
+    path('work/<int:work_id>/outline/<int:node_id>/add_child/', outline_add_child, name='outline_add_child'),
+    path('work/<int:work_id>/outline/<int:node_id>/rename/', outline_rename, name='outline_rename'),
+    path('work/<int:work_id>/outline/<int:node_id>/delete/', outline_delete, name='outline_delete'),
+    path('about/', about, name='about'),
 
 ]
 if settings.DEBUG:

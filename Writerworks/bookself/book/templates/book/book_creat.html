@@ -1,0 +1,19 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>bookshelf</title>
+    <link rel="stylesheet" href="#">
+</head>
+<body>
+    <form method="post">
+        {% csrf_token %}
+        <p>书名: <input type="text" name="name" required></p>
+        <p>作者: <input type="text" name="author" required></input></p>
+        <p>价格: <input type="text" name="price" required></p>
+        <button type="submit">创建</button>
+    </form>
+</body>
+</html>

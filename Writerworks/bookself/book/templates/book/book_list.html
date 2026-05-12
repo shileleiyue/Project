@@ -1,0 +1,24 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>bookshelf</title>
+    <link rel="stylesheet" href="#">
+</head>
+<body>
+    <a href="{% url 'book_creat' %}">添加书籍</a><br>
+    {% if books %}
+        {% for book in books %}
+        <div>
+            <span >{{ book.name }}</span>
+            <span >{{ book.author }}</span>
+            <span >{{ book.price }}</span>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p>暂无作品，请新建。</p>
+    {% endif %}
+</body>
+</html>

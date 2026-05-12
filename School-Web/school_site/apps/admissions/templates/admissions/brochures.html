@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}招生简章 - {{ block.super }}{% endblock %}
+{% block content %}
+<h2>招生简章</h2>
+{% for bro in brochures %}
+<div class="card mb-3">
+    <div class="card-body">
+        <h5 class="card-title">{{ bro.title }}</h5>
+        <p class="text-muted">{{ bro.pub_date|date:"Y-m-d" }}</p>
+        {% if bro.content %}<p>{{ bro.content|linebreaksbr }}</p>{% endif %}
+        {% if bro.pdf_file %}
+        <a href="{{ bro.pdf_file.url }}" class="btn btn-primary">下载PDF</a>
+        {% endif %}
+    </div>
+</div>
+{% empty %}
+<p>暂无招生简章</p>
+{% endfor %}
+{% endblock %}

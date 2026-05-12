@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}校长信箱 - {{ block.super }}{% endblock %}
+{% block content %}
+<h2>校长信箱</h2>
+<p class="text-muted">您的信件将直接发送至校长办公室，仅管理员可见。</p>
+{% if error %}<div class="alert alert-warning">{{ error }}</div>{% endif %}
+<form method="post" data-aos="fade-up">
+    {% csrf_token %}
+    <div class="form-floating mb-3">
+        {{ form.sender_name }}
+        <label for="{{ form.sender_name.id_for_label }}">姓名 *</label>
+    </div>
+    <div class="form-floating mb-3">
+        {{ form.email }}
+        <label for="{{ form.email.id_for_label }}">邮箱 *</label>
+    </div>
+    <div class="form-floating mb-3">
+        {{ form.subject }}
+        <label for="{{ form.subject.id_for_label }}">主题 *</label>
+    </div>
+    <div class="form-floating mb-3">
+        {{ form.content }}
+        <label for="{{ form.content.id_for_label }}">内容 *</label>
+    </div>
+    <button type="submit" class="btn btn-primary">发送</button>
+</form>
+{% endblock %}

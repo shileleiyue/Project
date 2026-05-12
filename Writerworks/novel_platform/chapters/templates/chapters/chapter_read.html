@@ -4,37 +4,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>第{{ chapter.order }}章  {{ chapter.title }}</title>
+    <title>第{{ chapter.order }}章 {{ chapter.title }}</title>
     <link rel="stylesheet" href="{% static 'chapters/chapter_read.css' %}">
 </head>
 <body>
     <div class="header">
-        <a href="{% url 'work_detail' work.id %}">返回作品详情--{{ work.title }}</a>
+        <a href="{% url 'work_detail' work.id %}" class="back-link">返回作品详情 -- {{ work.title }}</a>
     </div>
-    <div class="bodier">
+    <div class="chapter-container">
         <div id="reading-area">
-            <h3>{{ chapter.title }} <button id="edit-btn"> 编辑</button></h3>
-            <pre class="reading-content" id="reading-content" style="white-space: pre-wrap;
-            font-family: monospace; margin: 0;"><br>{{ chapter.content }}</pre>
-            
+            <h3>{{ chapter.title }} <button id="edit-btn">编辑</button></h3>
+            <pre class="reading-content" id="reading-content">{{ chapter.content|default:"暂无正文" }}</pre>
         </div>
         <div class="editing-area" id="editing-area" style="display: none;">
             <h3>{{ chapter.title }}</h3>
-            <textarea id="content-editor" >{{ chapter.content }}</textarea>
+            <textarea id="content-editor">{{ chapter.content }}</textarea>
             <br>
-            <button id="save-btn" >手动保存</button>
-            <button id="cancel-btn" >取消</button>
+            <button id="save-btn">手动保存</button>
+            <button id="cancel-btn">取消</button>
             <span id="save-status"></span>
         </div>
     </div>
-    <script>//ai部分
+    <script>
         console.log('JS loaded');
-        // ==================== 1. 配置与工具函数 ====================
-
-        // 从模板获取保存 API 的 URL（由 Django url 标签生成）
         const SAVE_URL = "{% url 'chapter_save' work.id chapter.id %}";
-
-        // 获取 CSRF Token 的工具函数（从 Cookie 中读取）
         function getCookie(name) {
             let cookieValue = null;
             if (document.cookie && document.cookie !== '') {
@@ -51,7 +44,6 @@
         }
         const csrftoken = getCookie('csrftoken');
 
-        // ==================== 2. 获取 DOM 元素 ====================
         const readingArea = document.getElementById('reading-area');
         const editingArea = document.getElementById('editing-area');
         const editBtn = document.getElementById('edit-btn');
@@ -61,40 +53,46 @@
         const readingContent = document.getElementById('reading-content');
         const saveStatus = document.getElementById('save-status');
 
-        // ==================== 3. 视图切换逻辑 ====================
+        // 从服务器拉取最新内容并刷新阅读区
+        async function refreshContent() {
+            try {
+                const resp = await fetch(FETCH_CONTENT_URL, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                });
+                if (resp.ok) {
+                    const data = await resp.json();
+                    readingContent.textContent = data.content || '暂无正文';
+                } else {
+                    // 降级：重新加载页面
+                    window.location.reload();
+                }
+            } catch (e) {
+                window.location.reload();
+            }
+        }
 
-        // 切换到编辑视图
         function showEditor() {
             readingArea.style.display = 'none';
             editingArea.style.display = 'block';
-            // 每次打开编辑器时，将阅读区的文本同步到 textarea（以防上线后内容不一致）
+            // 编辑区内使用当前阅读区的内容（已经是最新）
             contentEditor.value = readingContent.textContent === '暂无正文' ? '' : readingContent.textContent;
-            saveStatus.textContent = '';  // 清空状态提示
+            saveStatus.textContent = '';
         }
 
-        // 切换回阅读视图
-        function showReader() {
+        async function showReader() {
+            // 取消编辑：放弃本地修改，从服务器重新获取
+            await refreshContent();
             editingArea.style.display = 'none';
             readingArea.style.display = 'block';
-            // 将 textarea 中的最新内容更新到阅读区显示
-            const newContent = contentEditor.value.trim();
-            const htmlContent = (newContent || '暂无正文').replace(/ /g, '\u00A0');
-            readingContent.innerHTML = htmlContent;
         }
 
-        // 绑定按钮事件
         editBtn.addEventListener('click', showEditor);
         cancelBtn.addEventListener('click', showReader);
 
-        // ==================== 4. 保存核心函数 ====================
-
         async function saveContent() {
             const content = contentEditor.value;
-
-            // 准备请求体（使用 URL 编码格式，简单可靠）
             const formData = new URLSearchParams();
             formData.append('content', content);
-
             try {
                 const response = await fetch(SAVE_URL, {
                     method: 'POST',
@@ -104,14 +102,11 @@
                     },
                     body: formData.toString(),
                 });
-
                 if (response.ok) {
                     const data = await response.json();
                     if (data.success) {
                         saveStatus.textContent = '已保存';
-                        // 同步更新阅读区的文本（即使在编辑状态下）
-                        const htmlContent = (newContent || '暂无正文').replace(/ /g, '\u00A0');
-                        readingContent.innerHTML = htmlContent;
+                        readingContent.textContent = content || '暂无正文';
                     } else {
                         saveStatus.textContent = '保存失败：' + (data.error || '未知错误');
                     }
@@ -124,38 +119,17 @@
             }
         }
 
-        // 手动保存按钮点击
         saveBtn.addEventListener('click', saveContent);
 
-        // ==================== 5. 自动保存（防抖） ====================
         let autoSaveTimer = null;
-        const AUTO_SAVE_DELAY = 1000; // 1秒
-
+        const AUTO_SAVE_DELAY = 1000;
         contentEditor.addEventListener('input', () => {
-            // 显示正在保存的状态
             saveStatus.textContent = '保存中...';
-
-            // 清除之前的定时器
-            if (autoSaveTimer) {
-                clearTimeout(autoSaveTimer);
-            }
-
-            // 设置新的定时器
+            if (autoSaveTimer) clearTimeout(autoSaveTimer);
             autoSaveTimer = setTimeout(() => {
-                saveContent().then(() => {
-                    // 自动保存成功后，状态会由 saveContent 自动更新为“已保存”
-                    // 可在此额外处理，如不想要重复提示则忽略
-                });
+                saveContent();
             }, AUTO_SAVE_DELAY);
         });
-
-        // 当用户手动保存后，取消正在等待的自动保存定时器（避免重复保存）
-        saveBtn.addEventListener('click', () => {
-            if (autoSaveTimer) {
-                clearTimeout(autoSaveTimer);
-                autoSaveTimer = null;
-            }
-        });
-</script>
+    </script>
 </body>
 </html>

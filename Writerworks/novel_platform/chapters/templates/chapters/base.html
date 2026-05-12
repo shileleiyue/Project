@@ -1,0 +1,84 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}作家工厂{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'chapters/nav.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- 占位 -->
+    <div class="nav-placeholder"></div>
+
+    <!-- 固定导航栏 -->
+    <div class="pc_hb">
+        <div class="pc_h">
+            <div class="wp flex">
+                <!-- Logo -->
+                <div class="logo">
+                    <a href="{% url 'work_list' %}">
+                        <span class="logo-text">📚 作家工厂</span>
+                    </a>
+                </div>
+                <!-- 右侧区域 -->
+                <div class="right">
+                    <!-- 顶部工具栏（精简） -->
+                    <div class="top flex">
+                        <ul class="list1 flex">
+                            <!-- 可添加“个人中心”或“退出”等 -->
+                        </ul>
+                    </div>
+                    <!-- 主导航菜单 -->
+                    <nav id="nav" class="pc_nav">
+                        <ul class="flex">
+                            <!-- 我的作品（带下拉） -->
+                            <li class="{% if request.resolver_match.url_name == 'work_list' or request.resolver_match.url_name == 'work_detail' %}active{% endif %}">
+                                <a href="{% url 'work_list' %}">
+                                    <div class="h3">我的作品</div>
+                                </a>
+                                <div class="sub">
+                                    <div class="box">
+                                        {% if works %}
+                                            {% for work in works %}
+                                                <a href="{% url 'work_detail' work.id %}">{{ work.title }}</a>
+                                            {% endfor %}
+                                        {% else %}
+                                            <span class="empty-message">暂无作品，去创建</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </li>
+                            <!-- 回收站 -->
+                            <li class="{% if request.resolver_match.url_name == 'trash' %}active{% endif %}">
+                                <a href="{% url 'trash' %}">
+                                    <div class="h3">回收站</div>
+                                </a>
+                            </li>
+                            <!-- 关于我们 -->
+                            <li class="{% if request.resolver_match.url_name == 'about' %}active{% endif %}">
+                                <a href="{% url 'about' %}">
+                                    <div class="h3">关于我们</div>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页面主体 -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- 底部（可选） -->
+    <footer class="footer">
+        <p>&copy; 2026 作家工厂. 保留所有权利.</p>
+    </footer>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

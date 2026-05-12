@@ -1,0 +1,11 @@
+# requirements.txt
+# 用于第四题（pymysql 操作 MySQL）
+pymysql==1.1.0
+
+# 用于第五、六题（Flask Web 框架 + SQLAlchemy ORM）
+Flask==3.0.0
+Flask-SQLAlchemy==3.1.1
+PyMySQL==1.1.0   # 与上同，可只保留一个，但明确列出
+
+# 若使用 SQLAlchemy 单独操作（第四题未使用，但可备）
+# SQLAlchemy==2.0.23

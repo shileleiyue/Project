@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}教师招聘 - {{ block.super }}{% endblock %}
+{% block content %}
+<h2>教师招聘</h2>
+{% for job in jobs %}
+<div class="card mb-3">
+    <div class="card-body">
+        <h5 class="card-title">{{ job.title }}</h5>
+        <p>{{ job.description|linebreaksbr }}</p>
+        {% if job.requirements %}<h6>任职要求</h6><p>{{ job.requirements|linebreaksbr }}</p>{% endif %}
+        <small class="text-muted">发布于 {{ job.pub_date|date:"Y-m-d" }}</small>
+    </div>
+</div>
+{% empty %}
+<p>暂无招聘信息</p>
+{% endfor %}
+{% endblock %}

@@ -2,8 +2,8 @@
     "files.associations": {
         "max": "c"
     },
-    "python-envs.defaultEnvManager": "ms-python.python:system",
+    "python-envs.defaultEnvManager": "ms-python.python:conda",
     "C_Cpp.errorSquiggles": "disabled",
     "liveServer.settings.port": 5501,
-    "python-envs.defaultPackageManager": "ms-python.python:pip"
+    "python-envs.defaultPackageManager": "ms-python.python:conda"
 }

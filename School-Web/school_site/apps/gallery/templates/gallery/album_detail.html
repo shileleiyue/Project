@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}{{ album.name }} - 校园风光 - {{ block.super }}{% endblock %}
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'gallery:album_list' %}">全部相册</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ album.name }}</li>
+    </ol>
+</nav>
+<h2>{{ album.name }}</h2>
+<p class="text-muted">{{ album.description }}</p>
+<div class="row">
+    {% for image in images %}
+    <div class="col-md-3 col-sm-4 col-6 mb-3">
+        <a href="{{ image.image.url }}" target="_blank">
+            <img src="{{ image.image.url }}" class="img-fluid rounded" alt="{{ image.caption }}" loading="lazy">
+        </a>
+        {% if image.caption %}<p class="text-center small mt-1">{{ image.caption }}</p>{% endif %}
+    </div>
+    {% empty %}
+    <p>暂无图片</p>
+    {% endfor %}
+</div>
+{% endblock %}

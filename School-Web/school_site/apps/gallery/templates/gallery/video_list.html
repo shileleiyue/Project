@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}视频集锦 - {{ block.super }}{% endblock %}
+{% block content %}
+<h2>视频集锦</h2>
+<div class="row">
+    {% for video in videos %}
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            {% if video.thumbnail %}
+            <img src="{{ video.thumbnail.url }}" class="card-img-top" alt="{{ video.title }}" loading="lazy">
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ video.title }}</h5>
+                {% if video.video_file %}
+                <video controls class="w-100">
+                    <source src="{{ video.video_file.url }}" type="video/mp4">
+                    您的浏览器不支持视频播放。
+                </video>
+                {% elif video.video_url %}
+                <a href="{{ video.video_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">观看视频</a>
+                {% endif %}
+                <p class="card-text text-muted small mt-2">{{ video.created_at|date:"Y-m-d" }}</p>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12"><p>暂无视频</p></div>
+    {% endfor %}
+</div>
+{% endblock %}

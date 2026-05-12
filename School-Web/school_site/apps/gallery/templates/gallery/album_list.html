@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}校园风光 - {{ block.super }}{% endblock %}
+{% block content %}
+<h2>校园风光</h2>
+<div class="row">
+    {% for album in albums %}
+    <div class="col-md-4 mb-4" data-aos="fade-up">
+        <div class="card">
+            {% if album.cover_image %}
+            <img src="{{ album.cover_image.image.url }}" class="card-img-top" alt="{{ album.name }}">
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title"><a href="{% url 'gallery:album_detail' album.slug %}">{{ album.name }}</a></h5>
+                <p class="card-text text-muted small">{{ album.description|truncatechars:80 }}</p>
+                <span class="badge bg-info">{{ album.images.count }} 张</span>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p>暂无相册</p>
+    {% endfor %}
+</div>
+{% endblock %}

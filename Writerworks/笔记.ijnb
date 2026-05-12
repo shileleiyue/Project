@@ -9,23 +9,90 @@
   "cells": [
     {
       "id": "68b9f882-7bbc-421e-a560-8550a57f606e",
-      "cell_type": "code",
-      "source": "$ django-admin\r\n\r\nType 'django-admin help <subcommand>' for help on a specific subcommand.\r\n\r\nAvailable subcommands:\r\n\r\n[django]\r\n    check\r\n    compilemessages\r\n    createcachetable\r\n    dbshell\r\n    diffsettings\r\n    dumpdata\r\n    flush\r\n    inspectdb\r\n    loaddata\r\n    makemessages\r\n    makemigrations\r\n    migrate\r\n    runserver\r\n    sendtestemail\r\n    shell\r\n    showmigrations\r\n    sqlflush\r\n    sqlmigrate\r\n    sqlsequencereset\r\n    squashmigrations\r\n    startapp\r\n    startproject\r\n    test\r\n    testserver\r\n……省略部分……",
+      "cell_type": "markdown",
+      "source": "django-admin startproject <项目名称> [目标目录]\r\n\r\ncreatesuperuser\t创建管理员用户\tpython manage.py createsuperuser\r\nshell\t进入 Django Shell（带 ORM 支持）\tpython manage.py shell\r\ntest\t运行测试用例\tpython manage.py test blog\r\ncollectstatic\t收集静态文件（生产环境部署）\tpython manage.py collectstatic\r\n$ django-admin\r\nType 'django-admin help <subcommand>' for help on a specific subcommand.\r\nAvailable subcommands:\r\n[django]\r\n    check\r\n    compilemessages\r\n    createcachetable\r\n    dbshell\r\n    diffsettings\r\n    dumpdata\r\n    flush\r\n    inspectdb\r\n    loaddata\r\n    makemessages\r\n    makemigrations\r\n    migrate\r\n    runserver\r\n    sendtestemail\r\n    shell\r\n    showmigrations\r\n    sqlflush\r\n    sqlmigrate\r\n    sqlsequencereset\r\n    squashmigrations\r\n    startapp\r\n    startproject\r\n    test\r\n    testserver\r\n\r\nstartproject\t创建一个新 Django 项目\tdjango-admin startproject myproject\r\nstartapp\t创建一个新 Django 应用\tdjango-admin startapp myapp\r\nrunserver\t启动开发服务器\tpython manage.py runserver\r\nmakemigrations\t生成数据库迁移文件\tpython manage.py makemigrations\r\nmigrate\t执行数据库迁移\tpython manage.py migrate\r\ncreatesuperuser\t创建管理员账号\tpython manage.py createsuperuser\r\nshell\t启动 Django 交互式 Shell\tpython manage.py shell\r\ncollectstatic\t收集静态文件（用于生产环境）\tpython manage.py collectstatic\r\ntest\t运行单元测试\tpython manage.py test\r\n\r\ndjango-admin startapp <应用名称> [目标目录]\r\nmigrations/：数据库迁移文件目录\r\n__init__.py\r\nadmin.py：管理后台配置\r\napps.py：应用配置\r\nmodels.py：数据模型定义\r\ntests.py：测试代码\r\nviews.py：视图函数",
       "metadata": {
-        "language": "java"
-      },
-      "execution_count": null,
-      "outputs": []
+        "language": "java",
+        "id": "68b9f882-7bbc-421e-a560-8550a57f606e"
+      }
     },
     {
       "id": "8e9c6b4e-862d-40c0-80fa-396953ea9f7a",
       "cell_type": "code",
-      "source": "venv\\Scripts\\activate\r\npython manage.py runserver ",
+      "source": "D:\\IST\\Project\\Writerworks\\venv\\Scripts\\activate\r\npython manage.py runserver ",
       "metadata": {
-        "language": "java"
+        "language": "java",
+        "id": "8e9c6b4e-862d-40c0-80fa-396953ea9f7a",
+        "executionSummary": {
+          "executionOrder": 1,
+          "success": false
+        }
       },
-      "execution_count": null,
-      "outputs": []
+      "execution_count": 1,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": "非法字符: '\\'\nD:\\IST\\Project\\Writerworks\\venv\\Scripts\\activate\n  ^\n"
+          },
+          "metadata": {},
+          "execution_count": 1
+        }
+      ]
+    },
+    {
+      "id": "100ee5a5-9ac5-48aa-b0b2-e83e83ded5dc",
+      "cell_type": "markdown",
+      "source": "django-admin check\r\n模型定义是否正确\r\nURL 配置是否有效\r\n模板设置是否正确\r\n静态文件配置等",
+      "metadata": {
+        "language": "markdown",
+        "id": "100ee5a5-9ac5-48aa-b0b2-e83e83ded5dc"
+      }
+    },
+    {
+      "id": "4841b4b3-2201-41e2-95fe-f7a192d397da",
+      "cell_type": "markdown",
+      "source": "django-admin makemigrations  # 创建迁移文件\r\ndjango-admin migrate        # 应用迁移到数据库",
+      "metadata": {
+        "language": "markdown",
+        "id": "4841b4b3-2201-41e2-95fe-f7a192d397da"
+      }
+    },
+    {
+      "id": "5c4fa166-1041-4b90-a516-fd84c38a87a8",
+      "cell_type": "markdown",
+      "source": "HelloWorld/\r\n├── apps/               # 推荐：存放所有自定义应用\r\n│   └── blog/          # 示例应用\r\n├── static/             # 静态文件（CSS/JS/图片）\r\n├── media/              # 用户上传文件\r\n├── templates/          # 全局模板目录\r\n└── requirements.txt    # 项目依赖列表\r\n\r\n1.apps/ 目录（推荐结构）\r\n将应用集中管理，避免散落在项目根目录。\r\n\r\n需在 settings.py 中配置 Python 路径：\r\n\r\nimport sys\r\nsys.path.insert(0, os.path.join(BASE_DIR, 'apps'))\r\n\r\n2. 静态文件与媒体文件\r\nstatic/：存放 CSS、JavaScript、图片等，通过 STATIC_URL 访问。\r\n\r\nmedia/：用户上传的文件（如头像），通过 MEDIA_URL 访问。需配置服务器在开发时提供访问：\r\n\r\n# urls.py（仅开发环境）\r\nfrom django.conf import settings\r\nfrom django.conf.urls.static import static\r\n\r\nurlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)",
+      "metadata": {
+        "language": "markdown",
+        "id": "5c4fa166-1041-4b90-a516-fd84c38a87a8"
+      }
+    },
+    {
+      "id": "9f9c60d2-947a-4ff0-a10c-94b92fc5ff47",
+      "cell_type": "markdown",
+      "source": "models.py\r\n定义数据模型，与数据库表对应：\r\n\r\n实例\r\nfrom django.db import models\r\n\r\nclass Product(models.Model):\r\n    name = models.CharField(max_length=100)\r\n    price = models.DecimalField(max_digits=10, decimal_places=2)\r\n    description = models.TextField()\r\n   \r\n    def __str__(self):\r\n        return self.name\r\n\r\nviews.py\r\n处理业务逻辑，返回响应：\r\n实例\r\nfrom django.shortcuts import render\r\nfrom .models import Product\r\n\r\ndef product_list(request):\r\n    products = Product.objects.all()\r\n    return render(request, 'myapp/product_list.html', {'products': products})\r\n\r\nadmin.py\r\n配置 Django 管理后台：\r\n\r\n实例\r\nfrom django.contrib import admin\r\nfrom .models import Product\r\n\r\n@admin.register(Product)\r\nclass ProductAdmin(admin.ModelAdmin):\r\n    list_display = ('name', 'price')\r\n\r\n",
+      "metadata": {
+        "language": "markdown",
+        "id": "9f9c60d2-947a-4ff0-a10c-94b92fc5ff47"
+      }
+    },
+    {
+      "id": "2a861e2e-b6ea-4899-8699-d60a0cf153ec",
+      "cell_type": "markdown",
+      "source": "myproject/\r\n│\r\n├── manage.py\r\n├── requirements.txt\r\n├── static/\r\n│   ├── css/\r\n│   ├── js/\r\n│   └── images/\r\n├── media/\r\n├── templates/\r\n│   └── base.html\r\n└── myproject/\r\n    ├── __init__.py\r\n    ├── settings.py\r\n    ├── urls.py\r\n    ├── wsgi.py\r\n    └── asgi.py\r\n└── myapp1/\r\n    ├── migrations/\r\n    ├── templates/\r\n    │   └── myapp1/\r\n    ├── __init__.py\r\n    ├── admin.py\r\n    ├── apps.py\r\n    ├── models.py\r\n    ├── tests.py\r\n    ├── urls.py\r\n    └── views.py\r\n└── myapp2/\r\n    └── ... (类似结构)",
+      "metadata": {
+        "language": "markdown",
+        "id": "2a861e2e-b6ea-4899-8699-d60a0cf153ec"
+      }
+    },
+    {
+      "id": "f6e7b3c2-3fe1-43b5-84c9-c86992c6f261",
+      "cell_type": "markdown",
+      "source": "migrations 目录\r\n存储数据库迁移文件，Django 使用这些文件来跟踪模型变更并同步到数据库。\r\n\r\nstatic 目录\r\n存放静态文件（CSS, JavaScript, 图片等），在部署时会收集到指定位置。\r\n\r\ntemplates 目录\r\n存放 HTML 模板文件，Django 使用模板语言动态生成页面。\r\n\r\nmedia 目录\r\n存储用户上传的文件，需要在 settings.py 中配置：\r\n\r\n实例\r\nMEDIA_URL = '/media/'\r\nMEDIA_ROOT = os.path.join(BASE_DIR, 'media')",
+      "metadata": {
+        "language": "markdown",
+        "id": "f6e7b3c2-3fe1-43b5-84c9-c86992c6f261"
+      }
     }
   ]
 }

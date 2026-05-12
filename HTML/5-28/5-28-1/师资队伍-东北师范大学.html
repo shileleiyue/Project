@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>师资队伍模块演示</title>
+    <style>
+        /* 基础重置 + 字体 (模拟官网) */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Microsoft YaHei", "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background-color: #f5f5f5;
+}
+
+/* fl1 容器 */
+.fl1 {
+    width: 1200px;
+    margin: 0 auto;
+    padding: 40px 0;
+}
+
+/* 水平弹性布局 */
+.list42 {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    list-style: none;
+}
+
+.list42 > li {
+    width: 23.5%;  /* 4 列等宽，留出间距 */
+    margin-bottom: 20px;
+    list-style: none;
+}
+
+/* 整个卡片链接 */
+.list42 .a {
+    display: block;
+    text-decoration: none;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.list42 .a:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+}
+
+/* 图片背景区域 (固定高度, 背景覆盖) */
+.imgBox {
+    position: relative;
+    width: 100%;
+    height: 180px;
+    overflow: hidden;
+}
+
+.imgLi {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center center;
+    transition: transform 0.4s ease;
+}
+
+.list42 .a:hover .imgLi {
+    transform: scale(1.05);
+}
+
+/* 文字区域 + 图标圆环 */
+.txt {
+    text-align: center;
+    position: relative;
+}
+
+.ico {
+    position: relative;
+    width: 70px;
+    height: 70px;
+    margin: -45px auto 15px;
+    z-index: 2;
+}
+
+/* 两个旋转圆环背景 */
+.cir_b {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.cir {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 2px solid #004e9e;
+    opacity: 0;
+    transition: all 0.4s;
+}
+
+.cir1 {
+    border-color: #ff8c00;
+}
+.cir2 {
+    border-color: #004e9e;
+}
+
+.list42 .a:hover .cir1 {
+    opacity: 0.6;
+    transform: scale(1.2);
+}
+.list42 .a:hover .cir2 {
+    opacity: 0.8;
+    transform: scale(1.3);
+}
+
+/* 图标图片 */
+.ico img {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    display: block;
+    margin: 5px auto 0;
+    z-index: 3;
+    background: #fff;
+    border-radius: 50%;
+    padding: 8px;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+}
+
+/* 标题文字 */
+.h4s1 {
+    font-size: 18px;
+    font-weight: bold;
+    color: #1e2a3e;
+    margin-top: 10px;
+    letter-spacing: 1px;
+}
+
+.list42 .a:hover .h4s1 {
+    color: #004e9e;
+}
+
+/* 响应式适配 */
+@media (max-width: 1200px) {
+    .fl1 {
+        width: 96%;
+    }
+    .list42 > li {
+        width: 48%;
+    }
+}
+@media (max-width: 768px) {
+    .list42 > li {
+        width: 100%;
+    }
+    .imgBox {
+        height: 150px;
+    }
+}
+
+    </style>
+</head>
+<body>
+    <div class="fl1">
+    <ul class="list42 flex">
+        <li>
+            <a href="szdw/lsmr.htm" title="历史名人" class="a">
+                <div class="img imgBox">
+                    <div class="imgLi" style=" background: url(images/list42_i1.jpg);"></div>
+                </div>
+                <div class="txt">
+                    <div class="ico">
+                        <div class="cir_b">
+                            <div class="cir cir1"></div>
+                            <div class="cir cir2"></div>
+                        </div>
+                        <img src="images/list42_i1.png" alt="">
+                    </div>
+                    <h4 class="h4s1">历史名人</h4>
+                </div>
+            </a>
+        </li>
+        <li>
+            <a href="szdw/ys.htm" title="院士" class="a">
+                <div class="img imgBox">
+                    <div class="imgLi" style=" background: url(images/list42_i2.jpg);"></div>
+                </div>
+                <div class="txt">
+                    <div class="ico">
+                        <div class="cir_b">
+                            <div class="cir cir1"></div>
+                            <div class="cir cir2"></div>
+                        </div>
+                        <img src="images/list42_i2.png" alt="">
+                    </div>
+                    <h4 class="h4s1">院士</h4>
+                </div>
+            </a>
+        </li>
+        <li>
+            <a href="szdw/ryjs.htm" title="荣誉教授" class="a">
+                <div class="img imgBox">
+                    <div class="imgLi" style=" background: url(images/list42_i3.jpg);"></div>
+                </div>
+                <div class="txt">
+                    <div class="ico">
+                        <div class="cir_b">
+                            <div class="cir cir1"></div>
+                            <div class="cir cir2"></div>
+                        </div>
+                        <img src="images/list42_i3.png" alt="">
+                    </div>
+                    <h4 class="h4s1">荣誉教授</h4>
+                </div>
+            </a>
+        </li>
+        <li>
+            <a href="szdw/gwyxkpyzcy.htm" title="国务院学科评议组成员" class="a">
+                <div class="img imgBox">
+                    <div class="imgLi" style=" background: url(images/list42_i4.jpg);"></div>
+                </div>
+                <div class="txt">
+                    <div class="ico">
+                        <div class="cir_b">
+                            <div class="cir cir1"></div>
+                            <div class="cir cir2"></div>
+                        </div>
+                        <img src="images/list42_i4.png" alt="">
+                    </div>
+                    <h4 class="h4s1">国务院学科评议组成员</h4>
+                </div>
+            </a>
+        </li>
+    </ul>
+</div>
+</body>
+</html>

@@ -1,0 +1,13 @@
+# 1. 创建一个名为 backend_env 的 conda 环境，Python 版本 3.10
+conda create -n backend_env python=3.10 -y
+
+# 2. 激活该环境
+conda activate backend_env
+
+# 3. 在该环境中安装 pymysql 和 sqlalchemy
+conda install pymysql sqlalchemy -y
+# 或使用 pip 安装（conda 源可能没有最新版，推荐 pip）
+pip install pymysql sqlalchemy
+
+# 4. 导出当前环境到 environment.yaml 文件
+conda env export > environment.yaml

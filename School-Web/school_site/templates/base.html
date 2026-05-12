@@ -1,0 +1,147 @@
+{% load static %}
+{% load gallery_tags %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{% block meta_description %}{% if school_info %}{{ school_info.brief_intro }}{% else %}学校官方网站{% endif %}{% endblock %}">
+    <title>{% block title %}{% if school_info %}{{ school_info.name }}{% else %}学校官网{% endif %}{% endblock %}</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcdn.net/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'core:home' %}">
+                {% if school_info %}
+                    <img src="{% static_image school_info.logo_usage %}" alt="{{ school_info.short_name }}" height="40" class="me-2">
+                    {{ school_info.short_name }}
+                {% else %}
+                    学校Logo
+                {% endif %}
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav ms-auto">
+                    {% with request.resolver_match.app_name as app_name %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if app_name == 'core' %}active{% endif %}" href="{% url 'core:home' %}">首页</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle {% if app_name == 'organization' %}active{% endif %}" href="#" role="button" data-bs-toggle="dropdown">组织机构</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'organization:leaders' %}">领导介绍</a></li>
+                            <li><a class="dropdown-item" href="{% url 'organization:departments' %}">部门设置</a></li>
+                            <li><a class="dropdown-item" href="{% url 'organization:teachers' %}">师资队伍</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle {% if app_name == 'news' %}active{% endif %}" href="#" role="button" data-bs-toggle="dropdown">新闻动态</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'news:article_list' %}">全部</a></li>
+                            <li><a class="dropdown-item" href="{% url 'news:category_list' 'news' %}">新闻动态</a></li>
+                            <li><a class="dropdown-item" href="{% url 'news:category_list' 'notice' %}">通知公告</a></li>
+                            <li><a class="dropdown-item" href="{% url 'news:category_list' 'media' %}">媒体报道</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle {% if app_name == 'admissions' %}active{% endif %}" href="#" role="button" data-bs-toggle="dropdown">招生招聘</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'admissions:brochures' %}">招生简章</a></li>
+                            <li><a class="dropdown-item" href="{% url 'admissions:zhongkao_faq' %}">中考咨询</a></li>
+                            <li><a class="dropdown-item" href="{% url 'admissions:jobs' %}">教师招聘</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if app_name == 'graduates' %}active{% endif %}" href="{% url 'graduates:list' %}">优秀毕业生</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if app_name == 'gallery' %}active{% endif %}" href="{% url 'gallery:album_list' %}">校园风光</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle {% if app_name == 'contact' %}active{% endif %}" href="#" role="button" data-bs-toggle="dropdown">互动</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'contact:message_list' %}">留言板</a></li>
+                            <li><a class="dropdown-item" href="{% url 'contact:principal_mail' %}">校长信箱</a></li>
+                        </ul>
+                    </li>
+                    {% endwith %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container my-4 flex-grow-1">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="mt-auto py-3 border-top position-relative">
+        <div class="container text-center">
+            {% if school_info %}
+                <p class="mb-1">{{ school_info.name }} &copy; 2025</p>
+                <small>地址：{{ school_info.address }} | 电话：{{ school_info.phone }}</small>
+            {% else %}
+                <p class="mb-0">学校信息未配置</p>
+            {% endif %}
+        </div>
+        <button id="back-to-top" class="position-absolute top-0 end-0 mt-2 me-3" title="返回顶部">&#8679;</button>
+    </footer>
+
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 600,
+            easing: 'ease-out',
+            once: true,
+            disable: 'mobile'
+        });
+
+        // 返回顶部按钮
+        const btn = document.getElementById('back-to-top');
+        window.addEventListener('scroll', () => {
+            btn.classList.toggle('show', window.scrollY > 300);
+        });
+        btn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // 导航栏下拉悬浮
+        document.querySelectorAll('.navbar .dropdown').forEach(dropdown => {
+            dropdown.addEventListener('mouseenter', function() {
+                const toggle = this.querySelector('.dropdown-toggle');
+                const menu = this.querySelector('.dropdown-menu');
+                if (toggle && menu) {
+                    toggle.classList.add('show');
+                    menu.classList.add('show');
+                }
+            });
+            dropdown.addEventListener('mouseleave', function() {
+                const toggle = this.querySelector('.dropdown-toggle');
+                const menu = this.querySelector('.dropdown-menu');
+                if (toggle && menu) {
+                    toggle.classList.remove('show');
+                    menu.classList.remove('show');
+                }
+            });
+        });
+
+        // 导航栏滚动收缩
+        const navbar = document.querySelector('.navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('navbar-shrink');
+            } else {
+                navbar.classList.remove('navbar-shrink');
+            }
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

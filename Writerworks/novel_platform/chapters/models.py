@@ -137,3 +137,17 @@ class OutlineNode(models.Model):
         self.is_deleted = True
         self.save(update_fields= ['is_deleted'])# 大纲节点软删除
         self.children.all().update(is_deleted=True)  # 级联软删除子节点
+
+class DailyStats(models.Model):
+    """每日创作统计"""
+    date = models.DateField(unique=True, verbose_name='日期')
+    word_count = models.IntegerField(default=0, verbose_name='码字数')          # 当日新增字数
+    duration_seconds = models.IntegerField(default=0, verbose_name='创作时长(秒)')
+    last_update = models.DateTimeField(auto_now=True, verbose_name='最后更新')
+
+    class Meta:
+        verbose_name = '每日统计'
+        verbose_name_plural = '每日统计'
+
+    def __str__(self):
+        return f"{self.date} - {self.word_count}字 / {self.duration_seconds//60}分钟"

@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load gallery_tags %}
+
+{% block title %}{% if school_info %}{{ school_info.name }}{% else %}首页{% endif %}{% endblock %}
+
+{% block content %}
+<!-- Hero 区域 -->
+<section class="hero-section position-relative overflow-hidden mb-5">
+    <div class="container py-5">
+        <div class="row align-items-center min-vh-40">
+            <div class="col-lg-8 mx-auto text-center" data-aos="fade-up">
+                <h1 class="display-4 fw-bold text-white hero-title">
+                    {% if school_info %}{{ school_info.short_name|default:school_info.name }}{% else %}欢迎访问{% endif %}
+                </h1>
+                {% if school_info.brief_intro %}
+                <p class="lead text-white-50 mt-3">{{ school_info.brief_intro }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="hero-bg-shapes"></div>
+</section>
+
+<!-- 原有内容区域 -->
+<div class="row">
+    <div class="col-md-8" data-aos="fade-right">
+        <h3>最新动态</h3>
+        {% for article in latest_news %}
+        <div class="card mb-3" data-aos="fade-up">
+            <div class="row g-0">
+                {% if article.cover_image %}
+                <div class="col-md-4">
+                    <img src="{{ article.cover_image.image.url }}" class="img-fluid rounded-start" alt="{{ article.title }}">
+                </div>
+                {% endif %}
+                <div class="col">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            {% if article.is_pinned %}<span class="badge bg-danger">置顶</span>{% endif %}
+                            <a href="{% url 'news:article_detail' article.slug %}">{{ article.title }}</a>
+                        </h5>
+                        <p class="text-muted small">{{ article.pub_date|date:"Y-m-d" }}</p>
+                        <p class="card-text">{{ article.excerpt|truncatechars:100 }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>暂无新闻</p>
+        {% endfor %}
+    </div>
+
+    <div class="col-md-4" data-aos="fade-left">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">快速链接</h5>
+                <ul class="list-unstyled">
+                    <li><a href="{% url 'admissions:zhongkao_faq' %}">中考咨询</a></li>
+                    <li><a href="{% url 'graduates:list' %}">优秀毕业生</a></li>
+                    <li><a href="{% url 'admissions:jobs' %}">教师招聘</a></li>
+                    <li><a href="{% url 'news:category_list' 'notice' %}">通知公告</a></li>
+                    <li><a href="{% url 'contact:message_list' %}">留言板</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

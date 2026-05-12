@@ -1,4 +1,5 @@
-{% load static %}<!DOCTYPE html>
+{% load static %}
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -6,47 +7,57 @@
     <title>回收站</title>
     <link rel="stylesheet" href="{% static 'chapters/trash.css' %}">
 </head>
-</head>
 <body>
-    <a href="{% url 'work_list' %}">← 返回作品列表</a>
-    <h1>回收站</h1>
-    <h2>已删除的作品：</h2>
-    {% if works %}
-        {% for work in works %}
-            <div>
-                <h3>{{ work.title }}</h3>
-                <p>创建于：{{ work.created_at }}</p>
-                <form action="{% url 'work_restore' work.id %}" method="post" style="display: inline;">
-                    {% csrf_token %}
-                    <button type="submit">恢复</button>
-                </form>
-                <form action="{% url 'work_hard_delete' work.id %}" method="post" style="display: inline;">
-                    {% csrf_token %}
-                    <button type="submit" onclick="return confirm('永久删除后无法恢复，确定？');">永久删除</button>
-                </form>
+    <a href="{% url 'work_list' %}" class="back-link"> 返回作品列表</a>
+    <div class="trash-container">
+        <h1>回收站</h1>
+        <h2>已删除的作品：</h2>
+        {% if works %}
+            {% for work in works %}
+                <div class="trash-item">
+                    <div>
+                        <h3>{{ work.title }}</h3>
+                        <p>创建于：{{ work.created_at }}</p>
+                    </div>
+                    <div>
+                        <form action="{% url 'work_restore' work.id %}" method="post" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="restore-btn">恢复</button>
+                        </form>
+                        <form action="{% url 'work_hard_delete' work.id %}" method="post" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="hard-delete-btn" onclick="return confirm('永久删除后无法恢复，确定？');">永久删除</button>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="empty-text">回收站中没有已删除的作品。</p>
+        {% endif %}
+
+        <h2>已删除的章节：</h2>
+        {% if chapters %}
+            {% for chapter in chapters %}
+            <div class="trash-item">
+                <div>
+                    <h3>{{ chapter.title }} (属于《{{ chapter.work.title }}》)</h3>
+                    <p>创建于：{{ chapter.created_at }}</p>
+                </div>
+                <div>
+                    <form action="{% url 'chapter_restore' chapter.work.id chapter.id %}" method="post" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="restore-btn">恢复</button>
+                    </form>
+                    <form action="{% url 'chapter_hard_delete' chapter.work.id chapter.id %}" method="post" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="hard-delete-btn" onclick="return confirm('永久删除后无法恢复，确定？');">永久删除</button>
+                    </form>
+                </div>
             </div>
         {% endfor %}
-    {% else %}
-        <p>回收站中没有已删除的作品。</p>
-    {% endif %}
-    <h2>已删除的章节：</h2>
-    {% if chapters %}
-        {% for chapter in chapters %}
-        <div>
-            <h3>{{ chapter.title }} (属于《{{ chapter.work.title }}》)</h3>
-            <p>创建于：{{ chapter.created_at }}</p>
-            <form action="{% url 'chapter_restore' chapter.work.id chapter.id %}" method="post" style="display: inline;">
-                {% csrf_token %}
-                <button type="submit">恢复</button>
-            </form>
-            <form action="{% url 'chapter_hard_delete' chapter.work.id chapter.id %}" method="post" style="display: inline;">
-                {% csrf_token %}
-                <button type="submit" onclick="return confirm('永久删除后无法恢复，确定？');">永久删除</button>
-            </form>
-        </div>
-    {% endfor %}
-    {% else %}
-        <p>回收站中没有已删除的章节。</p>
-    {% endif %}
+        {% else %}
+            <p class="empty-text">回收站中没有已删除的章节。</p>
+        {% endif %}
+    </div>
 </body>
 </html>

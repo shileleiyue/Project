@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}优秀毕业生 - {{ block.super }}{% endblock %}
+{% block content %}
+<h2>优秀毕业生</h2>
+<div class="row">
+    {% for grad in graduates %}
+    <div class="col-md-4 mb-3 text-center">
+        {% if grad.photo %}<img src="{{ grad.photo.image.url }}" class="img-fluid rounded mb-2" alt="{{ grad.name }}">{% endif %}
+        <h5>{{ grad.name }}</h5>
+        <p class="text-muted">{{ grad.graduate_year }}届 · {{ grad.achievement }}</p>
+        {% if grad.story %}<p class="small">{{ grad.story|truncatechars:100 }}</p>{% endif %}
+    </div>
+    {% empty %}
+    <p>暂无毕业生信息</p>
+    {% endfor %}
+</div>
+{% endblock %}

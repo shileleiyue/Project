@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}师资队伍 - {{ block.super }}{% endblock %}
+{% block content %}
+<h2>师资队伍</h2>
+<div class="row">
+    {% for teacher in teachers %}
+    <div class="col-md-3 col-6 text-center mb-3" data-aos="fade-right">
+        {% if teacher.photo %}
+        <img src="{{ teacher.photo.image.url }}" class="rounded-circle" width="100" height="100" alt="{{ teacher.name }}">
+        {% else %}
+        <div class="rounded-circle bg-secondary d-inline-flex align-items-center justify-content-center" style="width:100px;height:100px;">
+            <span class="text-white">暂无</span>
+        </div>
+        {% endif %}
+        <p class="mt-2">{{ teacher.name }}<br><small>{{ teacher.title }}</small></p>
+        {% if teacher.department %}<p class="text-muted small">{{ teacher.department.name }}</p>{% endif %}
+    </div>
+    {% empty %}
+    <p>暂无教师信息</p>
+    {% endfor %}
+</div>
+{% endblock %}
