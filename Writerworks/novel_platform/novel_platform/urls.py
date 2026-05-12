@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
-from chapters.views import work_list,work_detail,chapter_read,chapter_save,work_delete,chapter_delete,trash_view,work_restore,chapter_restore,work_hard_delete,chapter_hard_delete,work_rename,chapter_rename,outline_view,work_create
+from chapters.views import work_list,work_detail,chapter_read,chapter_save,work_delete,chapter_delete,trash_view,work_restore,chapter_restore,work_hard_delete,chapter_hard_delete,work_rename,chapter_rename,work_create,outline_add_root,outline_add_child,outline_view
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', work_list, name='work_list'),
@@ -36,6 +36,8 @@ urlpatterns = [
     path('work/<int:work_id>/chapter/<int:chapter_id>/rename/', chapter_rename, name='chapter_rename'),
     path('work/<int:work_id>/outline/', outline_view, name='outline_view'),
     path('work/create/', work_create, name='work_create'),
+    path('work/<int:work_id>/outline/add_root/', outline_add_root, name='outline_add_root'),
+    path('work/<int:work_id>/outline/<int:node_id>/add_child/', outline_add_child, name='outline_add_child'),
 
 ]
 if settings.DEBUG:

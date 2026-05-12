@@ -1,8 +1,78 @@
-/* 大屏增大基准 */
-@media (min-width: 1920px) {
-  html { font-size: 18px; }
+/* ============================================
+   作家工厂 - 大纲页 (outline.css)
+   ============================================ */
+:root {
+    --color-primary: #5b7fff;
+    --color-primary-light: #8ba4ff;
+    --color-accent: #7c5cfc;
+    --bg-card: rgba(255,255,255,0.85);
+    --bg-glass: rgba(255,255,255,0.65);
+    --text-primary: #1e293b;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    --border-subtle: rgba(148,163,184,0.18);
+    --shadow-sm: 0 1px 3px rgba(30,41,59,0.06);
+    --radius-md: 14px;
+    --radius-lg: 20px;
+    --ease-out-expo: cubic-bezier(0.16,1,0.3,1);
+    --duration-fast: 180ms;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
 }
-/* 小屏缩小基准 */
-@media (max-width: 768px) {
-  html { font-size: 14px; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: var(--font-sans);
+    color: var(--text-primary);
+    background: linear-gradient(170deg, #f0f5fb, #eef2f9, #f3f0fa, #eef4f9) fixed;
+    min-height: 100vh;
+    padding: 20px 16px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.back-link {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 500;
+    margin-bottom: 16px;
+    padding: 8px 16px;
+    border-radius: 30px;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-subtle);
+    backdrop-filter: blur(6px);
+    transition: all var(--duration-fast);
+}
+.back-link:hover { background: rgba(91,127,255,0.1); }
+.outline-container { width: 100%; max-width: 800px; }
+h1 { font-size: 1.8rem; margin-bottom: 20px; }
+
+/* 大纲树 */
+.outline-tree {
+    list-style: none;
+    padding-left: 0;
+}
+.outline-node {
+    background: var(--bg-card);
+    border-radius: var(--radius-md);
+    padding: 12px 16px;
+    margin: 8px 0;
+    border: 1px solid var(--border-subtle);
+    backdrop-filter: blur(8px);
+    box-shadow: var(--shadow-sm);
+    transition: all var(--duration-fast);
+}
+.outline-node:hover { transform: translateX(4px); border-color: var(--color-primary-light); }
+.outline-node .node-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.outline-node strong {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+/* 嵌套子节点缩进 */
+.outline-node ul {
+    list-style: none;
+    padding-left: 24px;
+    margin-top: 8px;
 }

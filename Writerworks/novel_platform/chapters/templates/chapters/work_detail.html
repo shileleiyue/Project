@@ -8,32 +8,31 @@
     <link rel="stylesheet" href="{% static 'chapters/work_detail.css' %}">
 </head>
 <body>
-    <a href="{% url 'work_list' %}"> 返回作品列表 </a><hr>
-    <div class="header">
-        <div id="work-title-area">
-            <span id="work-title-text">{{ work.title }}</span>
-            <button id="edit-work-title-btn">编辑</button>
+    <a href="{% url 'work_list' %}" class="back-link"> 返回作品列表</a>
+    <div class="detail-container">
+        <div class="header">
+            <div id="work-title-area">
+                <span id="work-title-text">{{ work.title }}</span>
+                <button id="edit-work-title-btn">编辑</button>
+            </div>
+            <div id="work-title-edit" style="display: none;">
+                <input type="text" id="work-title-input" value="{{ work.title }}">
+                <button id="save-work-title-btn">确认</button>
+                <button id="cancel-work-title-btn">取消</button>
+            </div>
+            <div>
+                <a href="{% url 'outline_view' work.id %}">📋 查看大纲</a>
+            </div>
+            {% if work.cover_image %}
+                <img src="{{ work.cover_image }}" alt="封面" class="cover-image">
+            {% else %}
+                <p>[暂无封面]</p>
+            {% endif %}
+            <p>{{ work.description }}</p>
+            <p>创建于：{{ work.created_at }}</p>
         </div>
-        <div id="work-title-edit" style="display: none;">
-            <input type="text" id="work-title-input" value="{{ work.title }}">
-            <button id="save-work-title-btn">确认</button>
-            <button id="cancel-work-title-btn">取消</button>
-        </div>
-        <div>
-            <a href="{% url 'outline_view' work.id %}">📋 查看大纲</a>
-        </div>
-        {% if work.cover_image %}
-            <img src="{{ work.cover_image }}" alt="封面" style="max-width:200px;">
-        {% else %}
-            <p>[暂无封面]</p>
-        {% endif %}
-        <p>{{ work.description }}</p>
-        <p>创建于：{{ work.created_at }}</p>
-    </div>
-    <hr>
-    <div class="">
         <div class="dashboard">
-            <div class="content">
+            <main class="chapter-list">
                 <h2>章节列表</h2>
                 {% if chapters %}
                     {% for chapter in chapters %}
@@ -60,15 +59,15 @@
                 {% else %}
                     <p>暂无章节</p>
                 {% endif %}
-            </div>
-            <div class="sidebar">
+            </main>
+            <aside class="sidebar">
                 <h2>新建章节</h2>
                 <form method="post" action="">
                     {% csrf_token %}
                     <p>章节名称：<input type="text" name="title" placeholder="章节名称"></p>
                     <button type="submit">新建章节</button>
                 </form>
-            </div>
+            </aside>
         </div>
     </div>
     <hr>
@@ -144,16 +143,12 @@
             workTitleArea.style.display = 'block';
         });
         // ==================== 章节名称编辑（事件委托） ====================
-        
-
-        // 全局点击监听
         document.addEventListener('click', async (e) => {
             const btn = e.target;
             const item = btn.closest('.chapter-item');
             if (!item) return;
             const chapterId = item.dataset.chapterId;
 
-            // 打开编辑
             if (btn.classList.contains('edit-chapter-title-btn')) {
                 const area = item.querySelector('.chapter-title-area');
                 const edit = item.querySelector('.chapter-title-edit');
@@ -164,7 +159,6 @@
                 input.focus();
             }
 
-            // 取消编辑
             if (btn.classList.contains('cancel-chapter-title-btn')) {
                 const area = item.querySelector('.chapter-title-area');
                 const edit = item.querySelector('.chapter-title-edit');
@@ -172,7 +166,6 @@
                 area.style.display = 'block';
             }
 
-            // 保存编辑
             if (btn.classList.contains('save-chapter-title-btn')) {
                 const input = item.querySelector('.chapter-title-input');
                 const newTitle = input.value.trim();
@@ -180,7 +173,7 @@
                     alert('标题不能为空');
                     return;
                 }
-                const url = item.dataset.renameUrl;   // 直接使用预存的完整 URL
+                const url = item.dataset.renameUrl;
                 const formData = new URLSearchParams();
                 formData.append('title', newTitle);
                 try {
@@ -202,7 +195,6 @@
                 } catch (e) {
                     alert('修改失败');
                 }
-                // 切换回阅读视图
                 item.querySelector('.chapter-title-area').style.display = 'block';
                 item.querySelector('.chapter-title-edit').style.display = 'none';
             }

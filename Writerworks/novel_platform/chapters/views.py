@@ -126,11 +126,26 @@ def chapter_rename(request, work_id, chapter_id):
 
 def outline_view(request, work_id):
     work = get_object_or_404(Work, id=work_id)
-    chapters = work.chapters.filter(is_deleted=False).order_by('order', 'created_at')
+    # 只获取未删除的根节点
     root_nodes = work.outline_nodes.filter(parent__isnull=True).order_by('order')
-    context = {
-        'work': work,
-        'chapters': chapters,
-        'outline_nodes': root_nodes,
-    }
-    return render(request, 'chapters/outline.html', context)
+    return render(request, 'chapters/outline.html', {'work': work, 'root_nodes': root_nodes})
+
+@require_POST
+def outline_add_root(request, work_id):
+    work = get_object_or_404(Work, id=work_id)
+    title = request.POST.get('title', '').strip()
+    if title:
+        # 获取当前最大 order
+        last_order = work.outline_nodes.filter(parent__isnull=True).aggregate(max_order=Max('order'))['max_order'] or 0
+        OutlineNode.objects.create(work=work, title=title, parent=None, order=last_order + 1)
+    return redirect('outline', work_id=work.id)
+
+@require_POST
+def outline_add_child(request, work_id, node_id):
+    parent = get_object_or_404(OutlineNode, id=node_id, work_id=work_id)
+    title = request.POST.get('title', '').strip()
+    if title:
+        last_order = parent.children.aggregate(max_order=Max('order'))['max_order'] or 0
+        OutlineNode.objects.create(work=parent.work, title=title, parent=parent, order=last_order + 1)
+    return redirect('outline', work_id=work_id)
+

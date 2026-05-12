@@ -8,11 +8,17 @@
     <link rel="stylesheet" href="{% static 'chapters/outline.css' %}">
 </head>
 <body>
-    <a href="{% url 'work_detail' work.id %}">返回作品详情</a>
-    <h1>{{ work.title }} - 大纲</h1>
-
+    <a href="{% url 'work_detail' work.id %}" class="back-link"> 返回作品详情</a>
+    <!-- 新建根节点表单 -->
+    <form method="post" action="{% url 'outline_add_root' work.id %}" style="margin-bottom: 10px;">
+        {% csrf_token %}
+        <input type="text" name="title" placeholder="新建根节点标题" required>
+        <button type="submit">新建根节点</button>
+    </form>
+    <div class="outline-container">
+        <h1>{{ work.title }} - 大纲</h1>
         {% if root_nodes %}
-            <ul>
+            <ul class="outline-tree">
                 {% for node in root_nodes %}
                     {% include 'chapters/outline_node.html' with node=node %}
                 {% endfor %}
@@ -20,6 +26,19 @@
         {% else %}
             <p>暂无大纲，请新建。</p>
         {% endif %}
-
+    </div>
+    <script>
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('toggle-child-form')) {
+                const form = e.target.nextElementSibling;
+                if (form.style.display === 'none') {
+                    form.style.display = 'block';
+                    form.querySelector('input').focus();
+                } else {
+                    form.style.display = 'none';
+                }
+            }
+        });
+    </script>
 </body>
 </html>
