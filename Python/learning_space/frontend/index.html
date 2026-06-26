@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>登录 · 个性化网络学习空间</title>
+<link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css" />
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    min-height: 100vh;
+    font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .login-box {
+    width: 420px; max-width: 92vw;
+    background: rgba(255,255,255,.95);
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.2);
+    padding: 40px 36px 32px;
+    backdrop-filter: blur(12px);
+  }
+  .login-title { text-align: center; margin-bottom: 6px; font-size: 22px; color: #303133; font-weight: 600; }
+  .login-subtitle { text-align: center; margin-bottom: 32px; font-size: 13px; color: #909399; }
+  .role-switch { display: flex; margin-bottom: 24px; background: #f5f7fa; border-radius: 8px; padding: 4px; }
+  .role-switch button {
+    flex: 1; padding: 8px 0; border: none; background: transparent;
+    cursor: pointer; border-radius: 6px; color: #606266; font-size: 14px; font-weight: 500;
+    transition: all .2s;
+  }
+  .role-switch button.active { background: #409eff; color: #fff; box-shadow: 0 2px 6px rgba(64,158,255,.4); }
+  .tip { margin-top: 14px; font-size: 12px; color: #909399; text-align: center; }
+  .tip code { background: #f0f2f5; padding: 2px 6px; border-radius: 4px; color: #409eff; font-family: Consolas, monospace; }
+  .logo { width: 56px; height: 56px; margin: 0 auto 16px; border-radius: 14px;
+    background: linear-gradient(135deg, #409eff, #764ba2); display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 28px; font-weight: bold; }
+  .footer { margin-top: 20px; text-align: center; font-size: 12px; color: #c0c4cc; }
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="login-box">
+    <div class="logo">学</div>
+    <div class="login-title">个性化网络学习空间</div>
+    <div class="login-subtitle">Personalized E-Learning Platform</div>
+
+    <div class="role-switch">
+      <button :class="{active: role==='student'}" @click="role='student'">学生</button>
+      <button :class="{active: role==='teacher'}" @click="role='teacher'">教师</button>
+      <button :class="{active: role==='admin'}" @click="role='admin'">管理员</button>
+    </div>
+
+    <el-form :model="form" :rules="rules" ref="formRef" label-width="70px" size="large" @keyup.enter="doLogin">
+      <el-form-item label="用户名" prop="username">
+        <el-input v-model="form.username" placeholder="请输入用户名" :prefix-icon="UserIcon" />
+      </el-form-item>
+      <el-form-item label="密 码" prop="password">
+        <el-input v-model="form.password" type="password" show-password placeholder="请输入密码" :prefix-icon="LockIcon" />
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" style="width:100%" :loading="loading" @click="doLogin">登 录</el-button>
+      </el-form-item>
+    </el-form>
+
+    <div class="tip">
+      测试账号：
+      <template v-if="role==='student'"><code>student / student123</code></template>
+      <template v-else-if="role==='teacher'"><code>teacher / teacher123</code></template>
+      <template v-else><code>admin / admin123</code></template>
+    </div>
+  </div>
+  <div class="footer">© 2026 个性化网络学习空间 · Powered by Django + Vue</div>
+</div>
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+<script src="https://unpkg.com/element-plus"></script>
+<script src="https://unpkg.com/@element-plus/icons-vue"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+  const { createApp, ref, reactive } = Vue;
+
+  const API = axios.create({ baseURL: 'http://127.0.0.1:8000/api', timeout: 15000 });
+  API.interceptors.response.use(r => r, err => {
+    const msg = err.response?.data?.detail || err.message;
+    ElementPlus.ElMessage.error(msg);
+    return Promise.reject(err);
+  });
+
+  const app = createApp({
+    setup() {
+      const role = ref('student');
+      const formRef = ref(null);
+      const loading = ref(false);
+      const form = reactive({ username: '', password: '' });
+      const rules = {
+        username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
+        password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+      };
+      const doLogin = async () => {
+        await formRef.value.validate();
+        loading.value = true;
+        try {
+          const { data } = await API.post('/auth/login/', form);
+          const user = await API.get('/auth/me', { headers: { Authorization: 'Bearer ' + data.access }});
+          if (user.data.role !== role.value) {
+            ElementPlus.ElMessage.warning('该账号角色不匹配当前选择');
+            return;
+          }
+          localStorage.setItem('ls_access', data.access);
+          localStorage.setItem('ls_refresh', data.refresh);
+          localStorage.setItem('ls_user', JSON.stringify(user.data));
+          ElementPlus.ElMessage.success('登录成功');
+          setTimeout(() => location.href = 'app.html', 400);
+        } catch(e) {
+          /* interceptor already shows message */
+        } finally { loading.value = false; }
+      };
+      return { role, form, formRef, loading, rules, doLogin,
+               UserIcon: ElementPlusIconsVue.User, LockIcon: ElementPlusIconsVue.Lock };
+    }
+  });
+  app.use(ElementPlus);
+  for (const [k, v] of Object.entries(ElementPlusIconsVue)) app.component(k, v);
+  app.mount('#app');
+</script>
+</body>
+</html>

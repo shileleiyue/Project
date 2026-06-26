@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}绑定孩子 - {{ school_info.name }}{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/pages/inner.css' %}">{% endblock %}
+
+{% block content %}
+<div class="breadcrumb"><div class="container"><ol><li><a href="{% url 'core:home' %}">首页</a></li><li><a href="{% url 'accounts:profile' %}">个人中心</a></li><li>绑定孩子</li></ol></div></div>
+<section class="container auth-page" data-animate="fade-up">
+  <div class="auth-card card">
+    <div class="card-body">
+      <h1>绑定孩子</h1>
+      <form method="post">
+        {% csrf_token %}
+        <div class="form-group"><label class="form-label">学生学号/账号</label><input type="text" name="student_id" class="form-input" required></div>
+        <button type="submit" class="btn btn-primary btn-block">绑定</button>
+      </form>
+      {% if form.errors %}<div class="alert-error mt-1">绑定失败，请检查信息。</div>{% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

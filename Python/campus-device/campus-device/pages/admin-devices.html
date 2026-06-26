@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>设备管理 - 校园设备借用与维修管理系统</title>
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../index.html">校园设备管理</a>
+    </div>
+    <div class="navbar-menu" id="navbar-menu">
+      <a class="navbar-item" data-page="index" href="../index.html">设备大厅</a>
+      <a class="navbar-item active" data-page="admin-devices" href="admin-devices.html">设备管理</a>
+      <a class="navbar-item" data-page="admin-borrows" href="admin-borrows.html">借用审核</a>
+      <a class="navbar-item" data-page="admin-repairs" href="admin-repairs.html">报修管理</a>
+    </div>
+    <div class="navbar-user">
+      <span class="user-avatar" id="user-avatar"></span>
+      <span id="user-name"></span>
+      <button class="btn btn-outline" id="logout-btn" style="padding:4px 12px;font-size:12px;">退出</button>
+    </div>
+  </nav>
+
+  <div class="main-content full-width">
+    <div class="container">
+      <div class="page-header">
+        <h2>设备管理</h2>
+        <div class="actions">
+          <button class="btn btn-primary" onclick="AdminModule.openDeviceForm()">新增设备</button>
+        </div>
+      </div>
+
+      <div class="filter-bar">
+        <input type="text" id="admin-search-keyword" class="form-input" placeholder="搜索设备名称..." style="min-width:200px;">
+        <button class="btn btn-outline" id="admin-search-btn">搜索</button>
+      </div>
+
+      <div class="card">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>名称</th>
+                <th>类型</th>
+                <th>状态</th>
+                <th>位置</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="admin-device-tbody">
+              <tr><td colspan="5" style="text-align:center;padding:40px;">加载中...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="admin-device-paginator"></div>
+    </div>
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/toast.js"></script>
+  <script src="../js/modal.js"></script>
+  <script src="../js/paginator.js"></script>
+  <script src="../js/admin.js"></script>
+  <script>
+    // 路由守卫 - 要求 admin 角色
+    Auth.checkAuth('admin');
+
+    (function initNav() {
+      var user = Storage.getUser();
+      if (!user) return;
+      var avatar = document.getElementById('user-avatar');
+      var userName = document.getElementById('user-name');
+      if (avatar) avatar.textContent = (user.username || user.name || '?').charAt(0).toUpperCase();
+      if (userName) userName.textContent = user.username || user.name || '用户';
+    })();
+
+    document.getElementById('logout-btn').addEventListener('click', function() {
+      Auth.logout();
+    });
+
+    // 搜索
+    document.getElementById('admin-search-btn').addEventListener('click', function() {
+      var keyword = document.getElementById('admin-search-keyword').value.trim();
+      AdminModule.loadAdminDevices(1, keyword);
+    });
+
+    document.getElementById('admin-search-keyword').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        var keyword = e.target.value.trim();
+        AdminModule.loadAdminDevices(1, keyword);
+      }
+    });
+
+    // 初始加载
+    AdminModule.loadAdminDevices(1);
+  </script>
+</body>
+</html>

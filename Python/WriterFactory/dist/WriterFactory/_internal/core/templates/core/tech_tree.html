@@ -1,0 +1,21 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}{{ work.title }} - 科技树{% endblock %}
+
+{% block content %}
+<div style="max-width:1000px;margin:0 auto;padding:20px;">
+    <a href="{% url 'work_detail' work.id %}" class="back-link">← 返回作品详情</a>
+    <div class="page-header">
+        <h2>{{ work.title }} - 科技树</h2>
+        <a href="{% url 'tech_add' work.id %}" class="btn">+ 添加节点</a>
+    </div>
+    {% if tree %}
+        <ul style="padding-left:0;list-style:none;">
+            {% include 'core/tech_tree_node.html' with nodes=tree %}
+        </ul>
+    {% else %}
+        <div class="empty-state"><p>暂无科技树节点，点击上方"添加节点"开始创建。</p></div>
+    {% endif %}
+</div>
+{% endblock %}

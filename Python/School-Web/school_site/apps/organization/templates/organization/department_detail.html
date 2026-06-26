@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ department.name }} - {{ school_info.name }}{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/pages/inner.css' %}">{% endblock %}
+
+{% block content %}
+<div class="breadcrumb">
+  <div class="container"><ol><li><a href="{% url 'core:home' %}">首页</a></li><li><a href="{% url 'organization:departments' %}">组织机构</a></li><li>{{ department.name }}</li></ol></div>
+</div>
+<section class="container" data-animate="fade-up">
+  <h1>{{ department.name }}</h1>
+  {% if department.description %}<p class="lead">{{ department.description }}</p>{% endif %}
+  <h2>部门成员</h2>
+  <div class="card-grid">
+    {% for teacher in department.teachers.all %}
+    <div class="card">
+      <div class="card-body">
+        <h3>{{ teacher.name }}</h3>
+        <p>{{ teacher.title|default:"教师" }}</p>
+        {% if teacher.intro %}<p>{{ teacher.intro|truncatewords:20 }}</p>{% endif %}
+      </div>
+    </div>
+    {% empty %}<p>暂无成员信息。</p>{% endfor %}
+  </div>
+</section>
+{% endblock %}

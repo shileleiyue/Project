@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}概览{% endblock %}
+{% block page_title %}概览{% endblock %}
+{% block content %}
+<div class="grid-4">
+    <div class="stat-card">
+        <div class="number">{{ total_contacts }}</div>
+        <div class="label">联系人</div>
+    </div>
+    <div class="stat-card">
+        <div class="number">{{ total_messages }}</div>
+        <div class="label">消息总数</div>
+    </div>
+    <div class="stat-card">
+        <div class="number">{{ total_starred }}</div>
+        <div class="label">星标消息</div>
+    </div>
+    <div class="stat-card">
+        <div class="number">{{ total_schedules }}</div>
+        <div class="label">待办日程</div>
+    </div>
+</div>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px;">
+    <div class="card">
+        <h3 style="margin-bottom: 16px; font-size: 16px;">最近会话</h3>
+        {% if recent_conversations %}
+        <table class="table">
+            {% for conv in recent_conversations %}
+            <tr>
+                <td>{{ conv.contact.name }}</td>
+                <td style="color: #888; font-size: 12px;">{{ conv.updated_at|date:'m-d H:i' }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+        <div class="empty-state"><p>暂无会话数据</p></div>
+        {% endif %}
+    </div>
+    <div class="card">
+        <h3 style="margin-bottom: 16px; font-size: 16px;">即将到来的日程</h3>
+        {% if upcoming_schedules %}
+        <table class="table">
+            {% for s in upcoming_schedules %}
+            <tr>
+                <td>{{ s.title }}</td>
+                <td style="color: #888; font-size: 12px;">{{ s.start_time|date:'m-d H:i' }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+        <div class="empty-state"><p>暂无日程安排</p></div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}{{ work.title }} - {% if character %}编辑角色{% else %}添加角色{% endif %}{% endblock %}
+
+{% block content %}
+<div style="max-width:600px;margin:0 auto;padding:20px;">
+    <a href="{% url 'character_list' work.id %}" class="back-link">← 返回角色列表</a>
+    <div class="page-header">
+        <h2>{{ work.title }} - {% if character %}编辑角色{% else %}添加角色{% endif %}</h2>
+    </div>
+    <div class="glass-card">
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="name">姓名 *</label>
+                <input type="text" id="name" name="name" value="{{ character.name|default:'' }}" required class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="alias">别名</label>
+                <input type="text" id="alias" name="alias" value="{{ character.alias|default:'' }}" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="gender">性别</label>
+                <input type="text" id="gender" name="gender" value="{{ character.gender|default:'' }}" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="age">年龄</label>
+                <input type="number" id="age" name="age" value="{{ character.age|default:'' }}" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="description">描述</label>
+                <textarea id="description" name="description" class="form-control">{{ character.description|default:'' }}</textarea>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:20px;">
+                <button type="submit" class="btn">保存</button>
+                <a href="{% url 'character_list' work.id %}" class="btn btn-secondary">取消</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

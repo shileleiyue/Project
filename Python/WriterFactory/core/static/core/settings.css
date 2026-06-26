@@ -1,0 +1,183 @@
+/* ===== 应用设置页 ===== */
+.settings-container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 24px 20px 60px;
+}
+
+.settings-header {
+    margin-bottom: 26px;
+}
+.settings-header h1 {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 6px;
+}
+.settings-header p {
+    font-size: 14px;
+    color: var(--text-muted, #94a3b8);
+    margin: 0;
+}
+
+.settings-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 20px;
+    padding: 26px 28px;
+    margin-bottom: 22px;
+    box-shadow: 0 8px 30px rgba(60, 70, 120, 0.08);
+}
+.settings-card h2 {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.settings-card .card-desc {
+    font-size: 13px;
+    color: var(--text-muted, #94a3b8);
+    margin: 0 0 20px;
+}
+
+.settings-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+}
+.settings-row:last-child { margin-bottom: 0; }
+.settings-row .field-label {
+    flex: 0 0 150px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary, #475569);
+}
+.settings-row .field-control {
+    flex: 1;
+    min-width: 220px;
+}
+.settings-row .field-hint {
+    flex-basis: 100%;
+    font-size: 12px;
+    color: var(--text-muted, #94a3b8);
+    margin-top: -8px;
+    padding-left: 166px;
+}
+
+.settings-card input[type="text"],
+.settings-card input[type="password"],
+.settings-card input[type="number"],
+.settings-card select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 14px;
+    background: #fff;
+    transition: border-color .2s, box-shadow .2s;
+}
+.settings-card input:focus,
+.settings-card select:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(91, 127, 255, 0.15);
+}
+
+.color-field {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.color-field input[type="color"] {
+    width: 48px;
+    height: 40px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 3px;
+    background: #fff;
+    cursor: pointer;
+}
+.color-field input[type="text"] { flex: 1; }
+
+.storage-path {
+    width: 100%;
+    background: #f8fafc;
+    border: 1.5px dashed #cbd5e1;
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 13px;
+    color: var(--text-secondary, #475569);
+    word-break: break-all;
+    margin-bottom: 14px;
+}
+
+/* 开关 */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 48px;
+    height: 26px;
+}
+.switch input { opacity: 0; width: 0; height: 0; }
+.switch .slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background: #cbd5e1;
+    border-radius: 26px;
+    transition: .3s;
+}
+.switch .slider::before {
+    content: "";
+    position: absolute;
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    top: 3px;
+    background: #fff;
+    border-radius: 50%;
+    transition: .3s;
+    box-shadow: 0 2px 4px rgba(0,0,0,.2);
+}
+.switch input:checked + .slider {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+}
+.switch input:checked + .slider::before { transform: translateX(22px); }
+
+.settings-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px solid #eef2f7;
+}
+
+/* 消息提示 */
+.settings-messages { margin-bottom: 20px; }
+.settings-messages .msg {
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 13.5px;
+    margin-bottom: 10px;
+}
+.settings-messages .msg.success { background: rgba(39,174,96,.12); color: #219a52; }
+.settings-messages .msg.error { background: rgba(231,76,60,.12); color: #c0392b; }
+
+.range-field { display: flex; align-items: center; gap: 14px; }
+.range-field input[type="range"] { flex: 1; accent-color: var(--color-primary); }
+.range-field .range-val {
+    min-width: 56px; text-align: center; font-weight: 600;
+    color: var(--color-primary); font-size: 14px;
+}
+
+@media (max-width: 640px) {
+    .settings-row .field-label { flex-basis: 100%; }
+    .settings-row .field-hint { padding-left: 0; }
+}

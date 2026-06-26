@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}视频集锦 - {{ school_info.name }}{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/pages/inner.css' %}">{% endblock %}
+
+{% block content %}
+<div class="breadcrumb"><div class="container"><ol><li><a href="{% url 'core:home' %}">首页</a></li><li>视频集锦</li></ol></div></div>
+<section class="container" data-animate="fade-up">
+  <h1>视频集锦</h1>
+  <div class="card-grid">
+    {% for video in videos %}
+    <div class="card">
+      {% if video.thumbnail %}<img src="{{ video.thumbnail.url }}" alt="{{ video.title }}">{% endif %}
+      <div class="card-body">
+        <h3>{{ video.title }}</h3>
+        <a href="{{ video.video_url }}" class="btn btn-sm btn-primary" target="_blank">观看视频</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

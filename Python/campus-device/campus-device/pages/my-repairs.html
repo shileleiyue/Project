@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我的报修 - 校园设备借用与维修管理系统</title>
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/layout.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../index.html">校园设备管理</a>
+    </div>
+    <div class="navbar-menu" id="navbar-menu">
+      <a class="navbar-item" data-page="index" href="../index.html">设备大厅</a>
+      <a class="navbar-item" data-page="my-borrows" href="my-borrows.html">我的借用</a>
+      <a class="navbar-item active" data-page="my-repairs" href="my-repairs.html">我的报修</a>
+    </div>
+    <div class="navbar-user">
+      <span class="user-avatar" id="user-avatar"></span>
+      <span id="user-name"></span>
+      <button class="btn btn-outline" id="logout-btn" style="padding:4px 12px;font-size:12px;">退出</button>
+    </div>
+  </nav>
+
+  <div class="main-content full-width">
+    <div class="container">
+      <div class="page-header">
+        <h2>我的报修记录</h2>
+      </div>
+
+      <div class="card">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>设备名称</th>
+                <th>故障描述</th>
+                <th>工单状态</th>
+                <th>创建时间</th>
+                <th>维修人员</th>
+              </tr>
+            </thead>
+            <tbody id="repair-tbody">
+              <tr><td colspan="5" style="text-align:center;padding:40px;">加载中...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="repair-paginator"></div>
+    </div>
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/toast.js"></script>
+  <script src="../js/modal.js"></script>
+  <script src="../js/paginator.js"></script>
+  <script>
+    // 路由守卫 - 要求 student 角色
+    Auth.checkAuth('student');
+
+    (function initNav() {
+      var user = Storage.getUser();
+      if (!user) return;
+      var avatar = document.getElementById('user-avatar');
+      var userName = document.getElementById('user-name');
+      if (avatar) avatar.textContent = (user.username || user.name || '?').charAt(0).toUpperCase();
+      if (userName) userName.textContent = user.username || user.name || '用户';
+    })();
+
+    document.getElementById('logout-btn').addEventListener('click', function() {
+      Auth.logout();
+    });
+
+    var STATUS_MAP = {
+      'pending': { label: '待处理', cls: 'status-repair_pending' },
+      'assigned': { label: '已分配', cls: 'status-repair_pending' },
+      'repairing': { label: '维修中', cls: 'status-repairing' },
+      'repaired': { label: '已修复', cls: 'status-repaired' },
+      'unfixable': { label: '无法修复', cls: 'status-damaged' },
+      'completed': { label: '已完成', cls: 'status-available' }
+    };
+
+    async function loadMyRepairs(page) {
+      page = page || 1;
+      var tbody = document.getElementById('repair-tbody');
+      if (tbody) tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:40px;">加载中...</td></tr>';
+
+      try {
+        var result = await API.get('/repairs/my?page=' + page + '&page_size=' + AppConfig.PAGE_SIZE);
+        var repairs = result.data?.list || result.data?.items || result.items || [];
+        var total = result.data?.total || result.total || 0;
+        var totalPages = Paginator.calcTotalPages(total);
+
+        if (!repairs || repairs.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:60px;color:#999;">暂无报修记录</td></tr>';
+        } else {
+          var html = '';
+          repairs.forEach(function(item) {
+            var statusInfo = STATUS_MAP[item.status] || { label: item.status || '未知', cls: 'status-offline' };
+            var deviceName = (item.device && item.device.name) ? item.device.name : (item.device_name || '未知设备');
+            var repairerName = (item.assigned_user && item.assigned_user.username) ? item.assigned_user.username : (item.assigned_to_name || '-');
+
+            html += '<tr>';
+            html += '<td>' + Utils.escapeHtml(deviceName) + '</td>';
+            html += '<td>' + Utils.escapeHtml(item.description || item.fault_description || '-') + '</td>';
+            html += '<td><span class="status-tag ' + statusInfo.cls + '">' + statusInfo.label + '</span></td>';
+            html += '<td>' + Utils.formatDate(item.created_at) + '</td>';
+            html += '<td>' + Utils.escapeHtml(repairerName) + '</td>';
+            html += '</tr>';
+          });
+          tbody.innerHTML = html;
+        }
+
+        Paginator.render('#repair-paginator', page, totalPages, function(newPage) {
+          loadMyRepairs(newPage);
+        });
+      } catch (error) {
+        if (tbody) tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:40px;color:#dc2626;">加载失败：' + Utils.escapeHtml(error.message) + '</td></tr>';
+        Toast.show(error.message || '加载报修记录失败', 'error');
+      }
+    }
+
+    loadMyRepairs(1);
+  </script>
+</body>
+</html>

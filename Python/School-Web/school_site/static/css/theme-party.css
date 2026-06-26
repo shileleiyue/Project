@@ -1,0 +1,10 @@
+/* ===================================
+   theme-party.css – 党政红色主题
+   使用方法: <body class="party-theme">
+   =================================== */
+body.party-theme {
+  --color-primary: var(--color-party-primary);
+  --color-primary-light: var(--color-party-light);
+  --color-primary-dark: var(--color-party-dark);
+  --color-accent: #f1c40f; /* 金色点缀 */
+}

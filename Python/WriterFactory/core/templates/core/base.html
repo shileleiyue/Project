@@ -1,0 +1,134 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}作家工厂{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'core/nav.css' %}?v=20260910b">
+    {% if app_config %}
+    <style>
+        :root {
+            --color-primary: {{ app_config.theme_primary|default:'#5b7fff' }};
+            --color-accent: {{ app_config.theme_accent|default:'#7c5cfc' }};
+        }
+        html { font-size: calc(16px * {{ app_config.font_scale|default:1 }}); }
+    </style>
+    {% endif %}
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- 占位 -->
+    <div class="nav-placeholder"></div>
+
+    <!-- 固定导航栏 -->
+    <div class="pc_hb">
+        <div class="pc_h">
+            <div class="wp flex">
+                <!-- Logo -->
+                <div class="logo">
+                    <a href="{% url 'work_list' %}">
+                        <span class="logo-text">📚 作家工厂</span>
+                    </a>
+                </div>
+                <!-- 搜索框 -->
+                <form class="search-form" method="get" action="{% url 'search' %}">
+                    <input type="text" name="q" placeholder="搜索作品、章节、角色..." value="{{ request.GET.q }}">
+                    <button type="submit">搜索</button>
+                </form>
+                <!-- 右侧区域 -->
+                <div class="right">
+                    <!-- 顶部工具栏（精简） -->
+                    <div class="top flex">
+                        <ul class="list1 flex">
+                            <!-- 可添加"个人中心"或"退出"等 -->
+                        </ul>
+                        <div class="nav-user">
+                            {% if user.is_authenticated %}
+                                <span class="nav-username">{% if app_config.display_name %}{{ app_config.display_name }}{% else %}{{ user.username }}{% endif %}</span>
+                                <a href="{% url 'app_settings' %}" class="nav-settings-btn" title="设置">⚙️ 设置</a>
+                                <a href="{% url 'logout' %}" class="nav-logout">登出</a>
+                            {% else %}
+                                <a href="{% url 'login' %}" class="nav-login-btn">登录</a>
+                                <a href="{% url 'register' %}" class="nav-register-btn">注册</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <!-- 主导航菜单 -->
+                    <nav id="nav" class="pc_nav">
+                        <ul class="flex">
+                            <!-- 我的作品（带下拉） -->
+                            <li class="{% if request.resolver_match.url_name == 'work_list' or request.resolver_match.url_name == 'work_detail' %}active{% endif %}">
+                                <a href="{% url 'work_list' %}">
+                                    <div class="h3">我的作品</div>
+                                </a>
+                                {% if works %}
+                                <div class="sub">
+                                    <div class="box">
+                                        {% for work in works %}
+                                            <a href="{% url 'work_detail' work.id %}">{{ work.title }}</a>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </li>
+                            <!-- 世界管理（带下拉，仅在作品详情页显示） -->
+                            {% if request.resolver_match.kwargs.work_id %}
+                                <li class="{% if 'character' in request.resolver_match.url_name or 'relationship' in request.resolver_match.url_name or 'timeline' in request.resolver_match.url_name or 'tech' in request.resolver_match.url_name %}active{% endif %}">
+                                    <a href="javascript:void(0);">
+                                        <div class="h3">世界管理</div>
+                                    </a>
+                                    <div class="sub">
+                                        <div class="box">
+                                            <a href="{% url 'character_list' request.resolver_match.kwargs.work_id %}">📝 角色管理</a>
+                                            <a href="{% url 'relationship_list' request.resolver_match.kwargs.work_id %}">🔗 关系管理</a>
+                                            <a href="{% url 'timeline_list' request.resolver_match.kwargs.work_id %}">📅 时间线</a>
+                                            <a href="{% url 'tech_tree' request.resolver_match.kwargs.work_id %}">🌳 科技树</a>
+                                        </div>
+                                    </div>
+                                </li>
+                            {% endif %}
+                            <!-- 回收站 -->
+                            <li class="{% if request.resolver_match.url_name == 'trash' %}active{% endif %}">
+                                <a href="{% url 'trash' %}">
+                                    <div class="h3">回收站</div>
+                                </a>
+                            </li>
+                            <!-- 统计 -->
+                            <li class="{% if request.resolver_match.url_name == 'stats' %}active{% endif %}">
+                                <a href="{% url 'stats' %}">
+                                    <div class="h3">统计</div>
+                                </a>
+                            </li>
+                            <!-- 关于我们 -->
+                            <li class="{% if request.resolver_match.url_name == 'about' %}active{% endif %}">
+                                <a href="{% url 'about' %}">
+                                    <div class="h3">关于我们</div>
+                                </a>
+                            </li>
+                            <!-- 设置 -->
+                            <li class="{% if request.resolver_match.url_name == 'app_settings' %}active{% endif %}">
+                                <a href="{% url 'app_settings' %}">
+                                    <div class="h3">设置</div>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页面主体 -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- 底部（可选） -->
+    <footer class="footer">
+        <p>&copy; 2026 作家工厂. 保留所有权利.</p>
+    </footer>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

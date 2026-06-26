@@ -1,0 +1,21 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 5,
+  "metadata": {
+    "language_info": {
+      "name": "java"
+    }
+  },
+  "cells": [
+    {
+      "id": "af0b011e-b0ba-4350-9722-55f76764fe46",
+      "cell_type": "code",
+      "source": "$env:DB_PASSWORD = \"hanlei.20060412\"\r\n$env:DJANGO_DEBUG = \"True\"\r\npython manage.py runserver",
+      "metadata": {
+        "language": "java"
+      },
+      "execution_count": null,
+      "outputs": []
+    }
+  ]
+}

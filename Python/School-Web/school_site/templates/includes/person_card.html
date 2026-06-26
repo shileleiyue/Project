@@ -1,0 +1,14 @@
+{% load static %}
+<div class="col-md-3 col-6 text-center mb-4">
+    {% if person.photo %}
+    <img src="{{ person.photo.image.url }}" class="avatar-circle mb-2" alt="{{ person.name }}" loading="lazy">
+    {% else %}
+    <div class="avatar-circle bg-secondary d-inline-flex align-items-center justify-content-center mb-2">
+        <span class="text-white">暂无</span>
+    </div>
+    {% endif %}
+    <h6 class="mb-1">{{ person.name }}</h6>
+    {% if person.position %}<p class="text-muted small">{{ person.position }}</p>{% endif %}
+    {% if person.title %}<p class="text-muted small">{{ person.title }}</p>{% endif %}
+    {% if person.achievement %}<p class="small text-success">{{ person.achievement }}</p>{% endif %}
+</div>

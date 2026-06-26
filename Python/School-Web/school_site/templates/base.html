@@ -1,0 +1,124 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{{ school_info.name|default:"化隆一中" }}{% endblock %}</title>
+  <meta name="description" content="{{ school_info.description|default:'' }}">
+  <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  <link rel="stylesheet" href="{% static 'css/layout.css' %}">
+  <link rel="stylesheet" href="{% static 'css/components.css' %}">
+  {% block extra_css %}{% endblock %}
+  {% if body_class %}
+  <link rel="stylesheet" href="{% static 'css/theme-party.css' %}">
+  {% endif %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="{% url 'core:home' %}" class="logo">
+        <img src="{% static 'images/ui/logo.png' %}" alt="{{ school_info.name }}" onerror="this.style.display='none'">
+        <span>{{ school_info.short_name|default:"化隆一中" }}</span>
+      </a>
+      <nav class="main-nav">
+        <ul>
+          {% for item in nav_items %}
+            {% if item.children %}
+              <li class="dropdown">
+                <a href="{{ item.url }}">{{ item.name }}</a>
+                <ul class="dropdown-menu">
+                  {% for child in item.children %}
+                    <li><a href="{% url child.url %}">{{ child.name }}</a></li>
+                  {% endfor %}
+                </ul>
+              </li>
+            {% else %}
+              <li><a href="{% if item.url|slice:':1' == '/' %}{{ item.url }}{% else %}{% url item.url %}{% endif %}">{{ item.name }}</a></li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      </nav>
+      <div class="header-tools">
+        <form method="get" action="{% url 'core:search' %}" class="search-form" style="display: inline-flex; align-items: center;">
+          <input type="text" name="q" placeholder="搜索..." aria-label="搜索"
+                 style="width: 140px; padding: 0.3rem 0.5rem; border: 1px solid #ccc; border-radius: 4px; font-size: 0.875rem;">
+          <button type="submit" class="btn-icon" aria-label="搜索" style="background: none; border: none; cursor: pointer; font-size: 1rem;">🔍</button>
+        </form>
+        {% if user.is_authenticated %}
+          <a href="{% url 'accounts:profile' %}" class="btn-login">个人中心</a>
+          <a href="{% url 'accounts:logout' %}" class="btn-login" style="background:#7f8c8d;">退出</a>
+        {% else %}
+          <a href="{% url 'accounts:login' %}" class="btn-login">登录</a>
+        {% endif %}
+      </div>
+      <button class="hamburger" aria-label="菜单">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- 移动端导航 -->
+  <div class="mobile-nav">
+    <button class="close-btn">&times;</button>
+    <ul>
+      {% for item in nav_items %}
+        {% if item.children %}
+          <li class="dropdown">
+            <a href="{{ item.url }}">{{ item.name }}</a>
+            <ul class="dropdown-menu">
+              {% for child in item.children %}
+                <li><a href="{% url child.url %}">{{ child.name }}</a></li>
+              {% endfor %}
+            </ul>
+          </li>
+        {% else %}
+          <li><a href="{% if item.url|slice:':1' == '/' %}{{ item.url }}{% else %}{% url item.url %}{% endif %}">{{ item.name }}</a></li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+  </div>
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h4>{{ school_info.name|default:"化隆县第一中学" }}</h4>
+        <p>地址：{{ school_info.address|default:"青海省海东市化隆县" }}</p>
+        <p>电话：{{ school_info.phone|default:"0972-xxxxxxx" }}</p>
+        <p>邮箱：{{ school_info.email|default:"info@hualong1z.edu.cn" }}</p>
+      </div>
+      <div class="footer-col">
+        <h4>快速链接</h4>
+        <a href="{% url 'core:sitemap' %}">站点地图</a>
+        <a href="{% url 'admissions:brochures' %}">招生简章</a>
+        <a href="{% url 'organization:teachers' %}">师资队伍</a>
+        <a href="{% url 'gallery:album_list' %}">校园风光</a>
+        <a href="{% url 'contact:principal_mail' %}">校长信箱</a>
+      </div>
+      <div class="footer-col">
+        <h4>友情链接</h4>
+        {% for link in friend_links %}
+          <a href="{{ link.url }}" target="_blank" rel="noopener noreferrer">{{ link.name }}</a>
+        {% empty %}
+          <p>暂无友情链接</p>
+        {% endfor %}
+      </div>
+      <div class="footer-col">
+        <h4>关注我们</h4>
+        <p>微信公众号：化隆一中</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; {{ school_info.established_year|default:"1958" }}-2026 {{ school_info.name|default:"化隆一中" }} 版权所有
+    </div>
+  </footer>
+
+  <script src="{% static 'js/animations.js' %}"></script>
+  <script src="{% static 'js/main.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

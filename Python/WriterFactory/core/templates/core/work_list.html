@@ -1,0 +1,108 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}作家工厂 - 我的作品{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'core/work_list.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="bodier">
+        <div class="dashboard">
+            <aside class="sidebar_left">
+                <div class="stats-dashboard">
+                    <h3>📊 工作概览</h3>
+                    <div class="stat-item">
+                        <span class="stat-label">今日码字</span>
+                        <span class="stat-value">{{ today_stats.words }}</span>
+                        <span class="stat-unit">字</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">今日时长</span>
+                        <span class="stat-value">{{ today_stats.minutes }}</span>
+                        <span class="stat-unit">分钟</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">工作强度</span>
+                        <span class="stat-value intensity-{{ today_stats.intensity_class }}">{{ today_stats.intensity }}</span>
+                    </div>
+                    {% if today_stats.rest_tip %}
+                        <div class="rest-tip">{{ today_stats.rest_tip }}</div>
+                    {% endif %}
+
+                    <h4>📅 近7日码字</h4>
+                    <div class="calendar-grid">
+                        {% for day in calendar_data %}
+                            <div class="day-cell" title="{{ day.date }}: {{ day.words }}字">
+                                <span class="day-label">{{ day.date }}</span>
+                                <span class="day-bar" style="height: {{ day.words|default:0|floatformat:0 }}%;">
+                                    {{ day.words|default:0 }}
+                                </span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </aside>
+
+            <main class="content">
+                <div class="filter-bar">
+                    <form method="get" action="{% url 'work_list' %}" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap; margin-bottom: 20px;">
+                        <select name="category" onchange="this.form.submit()">
+                            <option value="">全部分类</option>
+                            {% for cat in categories %}
+                                <option value="{{ cat.id }}" {% if selected_category == cat.id|stringformat:"s" %}selected{% endif %}>{{ cat.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <select name="tag" onchange="this.form.submit()">
+                            <option value="">全部标签</option>
+                            {% for tag in tags %}
+                                <option value="{{ tag.id }}" {% if selected_tag == tag.id|stringformat:"s" %}selected{% endif %}>{{ tag.name }}</option>
+                            {% endfor %}
+                        </select>
+                        {% if selected_category or selected_tag %}
+                            <a href="{% url 'work_list' %}" style="text-decoration: none; color: #666;">清除筛选</a>
+                        {% endif %}
+                    </form>
+                </div>
+                {% if works %}
+                    {% for work in works %}
+                        <article class="bookshelf">
+                            <a href="{% url 'work_detail' work.id %}" class="card-link" aria-label="查看《{{ work.title }}》详情"></a>
+                            <div class="book-cover">
+                                {% if work.cover_image %}
+                                    <img src="{{ work.cover_image.url }}" alt="{{ work.title }} 封面">
+                                {% else %}
+                                    <p>[暂无封面]</p>
+                                {% endif %}
+                            </div>
+                            <div class="book-info">
+                                <div class="work-meta">
+                                    <h3 class="work-title">
+                                        <span class="title-text">{{ work.title }}</span>
+                                    </h3>
+                                    <p class="work-date">创建于：{{ work.created_at }}</p>
+                                    <p class="work-date">最后修改：{{ work.updated_at }}</p>
+                                </div>
+                                <div class="work-actions">
+                                    <form method="post" action="{% url 'work_delete' work.id %}" class="delete-form">
+                                        {% csrf_token %}
+                                        <button type="submit" onclick="return confirm('确定要删除这个作品吗？')">删除</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </article>
+                    {% endfor %}
+                {% else %}
+                    <p class="empty-state">暂无作品，请新建。</p>
+                {% endif %}
+
+                {% include 'core/_pagination.html' with page_obj=works %}
+            </main>
+
+            <aside class="sidebar_right">
+                <a href="{% url 'work_create' %}" class="create-button">+ 新建作品</a>
+            </aside>
+        </div>
+    </div>
+{% endblock %}

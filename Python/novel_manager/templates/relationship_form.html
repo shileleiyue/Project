@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>{{ '编辑关系' if relationship else '添加关系' }}</h2>
+<form method="post">
+    <div class="mb-3">
+        <label>角色1*</label>
+        <select name="character1_id" class="form-select" required>
+            {% for c in characters %}
+            <option value="{{ c.id }}" {% if relationship and (relationship.character1_id==c.id or relationship.character2_id==c.id) and loop.index==1 %}{% set ns=namespace(selected=c.id) %}{% endif %}
+                    {% if (relationship and relationship.character1_id==c.id) %}selected{% endif %}>
+                {{ c.name }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="mb-3">
+        <label>角色2*</label>
+        <select name="character2_id" class="form-select" required>
+            {% for c in characters %}
+            <option value="{{ c.id }}" {% if relationship and relationship.character2_id==c.id %}selected{% endif %}>
+                {{ c.name }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="mb-3">
+        <label>关系类型*</label>
+        <input type="text" name="relation_type" class="form-control" value="{{ relationship.relation_type if relationship else '' }}" required>
+    </div>
+    <div class="mb-3">
+        <label>描述</label>
+        <textarea name="description" rows="2" class="form-control">{{ relationship.description if relationship else '' }}</textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">保存</button>
+    <a href="{{ url_for('relationships') }}" class="btn btn-secondary">取消</a>
+</form>
+{% endblock %}

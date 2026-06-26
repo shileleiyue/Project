@@ -1,0 +1,299 @@
+/* ============================================
+   化隆一中官网 - 高级科技风 (动态流动版)
+   包含：流动导航、原地动画、Hero 数据卡、红色党政主题
+   ============================================ */
+
+:root {
+  --primary-blue: #4361ee;
+  --primary-purple: #7209b7;
+  --accent-cyan: #4cc9f0;
+  --gradient-primary: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+  --bg-light: #f5f7ff;
+  --text-dark: #1a2035;
+  --text-gray: #5a6074;
+  --card-bg: rgba(255,255,255,0.7);
+  --card-border: rgba(67,97,238,0.15);
+  --shadow-card: 0 8px 30px rgba(67,97,238,0.1);
+  --shadow-glow: 0 0 20px rgba(67,97,238,0.3);
+}
+
+/* 全局背景 */
+body {
+  background: linear-gradient(165deg, #eef2ff 0%, #f8faff 50%, #f3f0ff 100%);
+  background-attachment: fixed;
+  color: var(--text-dark);
+  font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  overflow-x: hidden;
+  transition: background 0.5s, color 0.5s;
+}
+/* 科技网格 */
+body::after {
+  content: '';
+  position: fixed;
+  top:0; left:0; width:100%; height:100%;
+  background-image:
+    linear-gradient(rgba(67,97,238,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(67,97,238,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ========== 导航栏（流动光感） ========== */
+.navbar {
+  background: linear-gradient(90deg, 
+    var(--primary-blue) 0%, 
+    var(--primary-purple) 50%, 
+    var(--primary-blue) 100%);
+  background-size: 200% 100%;
+  animation: navbarFlow 6s ease-in-out infinite;
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+  box-shadow: 0 4px 25px rgba(67,97,238,0.3);
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+  transition: all 0.3s ease;
+}
+@keyframes navbarFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.navbar .navbar-brand,
+.navbar .nav-link {
+  color: #fff !important;
+  font-weight: 500;
+}
+.nav-link:hover {
+  text-shadow: 0 0 15px rgba(255,255,255,0.8);
+}
+.nav-link::after {
+  content: '';
+  position: absolute; bottom: -2px; left: 50%; transform: translateX(-50%);
+  width: 0; height: 2px;
+  background: var(--accent-cyan);
+  box-shadow: 0 0 10px var(--accent-cyan);
+  transition: width 0.3s;
+}
+.nav-link:hover::after, .nav-link.active::after { width: 80%; }
+
+.navbar-shrink {
+  padding-top: 0.2rem !important;
+  padding-bottom: 0.2rem !important;
+  background-size: 200% 100% !important;
+  background-color: rgba(26,26,62,0.9) !important;
+}
+
+.dropdown-menu {
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(12px);
+  border-radius: 14px;
+  box-shadow: var(--shadow-card);
+  z-index: 1031 !important;
+}
+.dropdown-item:hover {
+  background: rgba(67,97,238,0.1);
+  color: var(--primary-blue);
+}
+
+/* ========== 动画统一：原地淡入上浮 ========== */
+[data-aos] {
+  transition-property: opacity, transform !important;
+}
+[data-aos="fade-up"] {
+  transform: translateY(30px);
+}
+[data-aos].aos-animate {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+/* 移动端关闭动画 */
+@media (max-width: 768px) {
+  [data-aos] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+/* ========== Hero 区域（数据卡 + 动态背景） ========== */
+.hero-section {
+  background: linear-gradient(135deg, #1a1a3e 0%, #2d2b55 50%, #1a1a3e 100%);
+  position: relative;
+  overflow: hidden;
+  padding: 4rem 0;
+}
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(circle at 30% 40%, rgba(67,97,238,0.4) 0%, transparent 50%),
+              radial-gradient(circle at 70% 60%, rgba(114,9,183,0.3) 0%, transparent 50%);
+  animation: heroGlow 6s infinite alternate;
+}
+@keyframes heroGlow {
+  0% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+.hero-bg-shapes {
+  position: absolute;
+  top:0; left:0; width:100%; height:100%;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  animation: shapesFloat 20s linear infinite;
+}
+@keyframes shapesFloat {
+  0% { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(-20px) rotate(1deg); }
+}
+.hero-title {
+  font-size: 2.8rem;
+  font-weight: 800;
+  text-shadow: 0 0 30px rgba(76,201,240,0.7);
+  letter-spacing: 2px;
+}
+.hero-subtitle {
+  color: rgba(255,255,255,0.75);
+  font-size: 1.2rem;
+}
+/* 数据卡片 */
+.stat-card {
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 16px;
+  padding: 1.5rem;
+  text-align: center;
+  color: #fff;
+  transition: transform 0.3s;
+}
+.stat-card:hover {
+  transform: translateY(-5px);
+  background: rgba(255,255,255,0.15);
+}
+.stat-number {
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: linear-gradient(to right, var(--accent-cyan), #fff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.stat-label {
+  font-size: 0.9rem;
+  opacity: 0.8;
+  margin-top: 0.5rem;
+}
+
+/* ========== 卡片与内容 ========== */
+.card {
+  background: var(--card-bg);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  box-shadow: var(--shadow-card);
+  transition: transform 0.25s, box-shadow 0.25s;
+  margin-bottom: 1.8rem;
+  position: relative;
+  overflow: hidden;
+}
+.card::before {
+  content: '';
+  position: absolute;
+  top:0; left:-75%;
+  width:50%; height:100%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.25), transparent);
+  transform: skewX(-25deg);
+  transition: left 0.6s;
+  z-index: 1;
+  pointer-events: none;
+}
+.card:hover::before { left: 125%; }
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-card), var(--shadow-glow);
+}
+.card-body, .card-img-top { position: relative; z-index: 2; }
+.card-header {
+  background: rgba(67,97,238,0.06);
+  border-bottom: 1px solid var(--card-border);
+  color: var(--primary-blue);
+  font-weight: 600;
+}
+h2 {
+  border-left: 4px solid var(--primary-blue);
+  padding-left: 18px;
+  font-weight: 700;
+  background: linear-gradient(to right, rgba(67,97,238,0.1), transparent);
+  border-radius: 0 8px 8px 0;
+}
+
+/* 按钮 */
+.btn-primary {
+  background: var(--gradient-primary);
+  border: none;
+  box-shadow: 0 6px 20px rgba(67,97,238,0.4);
+}
+.btn-primary:hover {
+  box-shadow: 0 8px 25px rgba(67,97,238,0.6);
+  transform: translateY(-2px);
+}
+
+/* 页脚 */
+footer {
+  background: rgba(255,255,255,0.8);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(67,97,238,0.15);
+  position: relative;
+}
+#back-to-top {
+  position: absolute;
+  top: -20px; right: 20px;
+  background: var(--gradient-primary);
+  border-radius: 50%;
+  color: #fff;
+  width: 42px; height: 42px;
+  opacity: 0; visibility: hidden;
+  transition: 0.3s;
+  box-shadow: 0 4px 15px rgba(67,97,238,0.4);
+}
+#back-to-top.show { opacity: 1; visibility: visible; }
+
+/* ========== 党政红色主题 ========== */
+body.party-theme {
+  --primary-blue: #e63946;
+  --primary-purple: #c1121f;
+  --accent-cyan: #ffb3b3;
+  --gradient-primary: linear-gradient(135deg, #e63946, #c1121f);
+  --card-border: rgba(230,57,70,0.25);
+  --shadow-glow: 0 0 20px rgba(230,57,70,0.3);
+  background: linear-gradient(165deg, #fff5f5 0%, #fffafa 50%, #ffe8e8 100%);
+  background-attachment: fixed;
+}
+body.party-theme .navbar {
+  background: linear-gradient(90deg, #c1121f 0%, #e63946 50%, #c1121f 100%);
+  background-size: 200% 100%;
+}
+body.party-theme .nav-link::after {
+  background: #ffb3b3;
+  box-shadow: 0 0 10px #ffb3b3;
+}
+body.party-theme .card-header { color: var(--primary-blue); }
+body.party-theme h2 { border-left-color: var(--primary-blue); }
+body.party-theme .btn-primary { background: var(--gradient-primary); }
+body.party-theme .hero-section {
+  background: linear-gradient(135deg, #3d0000 0%, #5a0000 100%);
+}
+body.party-theme .stat-number {
+  background: linear-gradient(to right, #ffb3b3, #fff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .hero-title { font-size: 2rem; }
+  .stat-card { margin-bottom: 1rem; }
+}

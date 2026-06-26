@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}招生简章 - {{ school_info.name }}{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/pages/inner.css' %}">{% endblock %}
+
+{% block content %}
+<div class="breadcrumb"><div class="container"><ol><li><a href="{% url 'core:home' %}">首页</a></li><li>招生简章</li></ol></div></div>
+<section class="container" data-animate="fade-up">
+  <h1>招生简章</h1>
+  <div class="card-grid">
+    {% for brochure in brochures %}
+    <div class="card">
+      <div class="card-body">
+        <h3>{{ brochure.title }}</h3>
+        <p class="text-muted">发布：{{ brochure.pub_date|date:"Y-m-d" }}</p>
+        {% if brochure.pdf_file %}<a href="{{ brochure.pdf_file.url }}" class="btn btn-sm btn-primary">下载PDF</a>{% endif %}
+      </div>
+    </div>
+    {% empty %}<p>暂无招生简章。</p>{% endfor %}
+  </div>
+</section>
+{% endblock %}

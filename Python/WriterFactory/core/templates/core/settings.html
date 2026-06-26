@@ -1,0 +1,187 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}设置 · 作家工厂{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'core/settings.css' %}?v=20260910b">
+{% endblock %}
+
+{% block content %}
+<div class="settings-container">
+    <header class="settings-header">
+        <h1>⚙️ 应用设置</h1>
+        <p>管理存储位置、个性化外观与写作偏好</p>
+    </header>
+
+    {% if messages %}
+    <div class="settings-messages">
+        {% for message in messages %}
+            <div class="msg {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- 存储位置 -->
+    <div class="settings-card">
+        <h2>📁 作品存储位置</h2>
+        <p class="card-desc">数据库与封面等数据的保存目录。更改后将自动迁移数据，需重启应用生效。</p>
+        <div class="storage-path" title="{{ data_dir }}">当前位置：{{ data_dir }}</div>
+        <form method="post" action="{% url 'app_settings_storage' %}"
+              onsubmit="return confirm('确认更改存储位置？数据将复制到新目录，完成后请重启应用。');">
+            {% csrf_token %}
+            <div class="settings-row">
+                <div class="field-control">
+                    <input type="text" name="data_dir" placeholder="输入新目录，例如 D:\我的小说\作家工厂数据" required>
+                </div>
+            </div>
+            <div class="settings-actions">
+                <button type="submit" class="btn btn-primary">更改并迁移数据</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- 个性化外观 -->
+    <div class="settings-card">
+        <h2>🎨 个性化外观</h2>
+        <p class="card-desc">自定义主题色与界面字号，设置保存后刷新页面即可看到效果。</p>
+        <form method="post" action="{% url 'app_settings' %}">
+            {% csrf_token %}
+            <input type="hidden" name="section" value="personalization">
+            <div class="settings-row">
+                <div class="field-label">主题主色</div>
+                <div class="field-control">
+                    <div class="color-field">
+                        <input type="color" id="primary_picker" value="{{ cfg.theme_primary }}"
+                               onchange="document.getElementById('primary_text').value=this.value">
+                        <input type="text" id="primary_text" name="theme_primary" value="{{ cfg.theme_primary }}">
+                    </div>
+                </div>
+            </div>
+            <div class="settings-row">
+                <div class="field-label">主题强调色</div>
+                <div class="field-control">
+                    <div class="color-field">
+                        <input type="color" id="accent_picker" value="{{ cfg.theme_accent }}"
+                               onchange="document.getElementById('accent_text').value=this.value">
+                        <input type="text" id="accent_text" name="theme_accent" value="{{ cfg.theme_accent }}">
+                    </div>
+                </div>
+            </div>
+            <div class="settings-row">
+                <div class="field-label">界面字号</div>
+                <div class="field-control">
+                    <div class="range-field">
+                        <input type="range" name="font_scale" min="0.9" max="1.2" step="0.05"
+                               value="{{ cfg.font_scale }}"
+                               oninput="document.getElementById('font_val').textContent=this.value+'x'">
+                        <span class="range-val" id="font_val">{{ cfg.font_scale }}x</span>
+                    </div>
+                </div>
+            </div>
+            <div class="settings-row">
+                <div class="field-label">显示昵称</div>
+                <div class="field-control">
+                    <input type="text" name="display_name" value="{{ cfg.display_name }}"
+                           placeholder="留空则显示用户名">
+                </div>
+            </div>
+            <div class="settings-actions">
+                <button type="submit" class="btn btn-primary">保存外观设置</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- 写作偏好 -->
+    <div class="settings-card">
+        <h2>✍️ 写作偏好</h2>
+        <p class="card-desc">列表显示与编辑器相关的偏好。</p>
+        <form method="post" action="{% url 'app_settings' %}">
+            {% csrf_token %}
+            <input type="hidden" name="section" value="preferences">
+            <div class="settings-row">
+                <div class="field-label">每页作品数</div>
+                <div class="field-control">
+                    <select name="page_size">
+                        <option value="5"  {% if cfg.page_size == 5  %}selected{% endif %}>5 条/页</option>
+                        <option value="8"  {% if cfg.page_size == 8  %}selected{% endif %}>8 条/页</option>
+                        <option value="10" {% if cfg.page_size == 10 %}selected{% endif %}>10 条/页</option>
+                        <option value="15" {% if cfg.page_size == 15 %}selected{% endif %}>15 条/页</option>
+                        <option value="20" {% if cfg.page_size == 20 %}selected{% endif %}>20 条/页</option>
+                        <option value="30" {% if cfg.page_size == 30 %}selected{% endif %}>30 条/页</option>
+                        <option value="50" {% if cfg.page_size == 50 %}selected{% endif %}>50 条/页</option>
+                    </select>
+                </div>
+            </div>
+            <div class="settings-row">
+                <div class="field-label">章节自动保存</div>
+                <div class="field-control">
+                    <label class="switch">
+                        <input type="checkbox" name="autosave" {% if cfg.autosave %}checked{% endif %}>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="field-hint">开启后编辑器将定时自动保存内容（需编辑器支持）。</div>
+            </div>
+            <div class="settings-actions">
+                <button type="submit" class="btn btn-primary">保存偏好</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- 写作目标 -->
+    <div class="settings-card">
+        <h2>🎯 写作目标</h2>
+        <p class="card-desc">设置每日与每周的字数目标，用于统计页进度展示。</p>
+        <form method="post" action="{% url 'app_settings' %}">
+            {% csrf_token %}
+            <input type="hidden" name="section" value="goal">
+            <div class="settings-row">
+                <div class="field-label">每日目标（字）</div>
+                <div class="field-control">
+                    <input type="number" name="daily_goal" value="{{ goal.daily_goal }}" min="100" step="100">
+                </div>
+            </div>
+            <div class="settings-row">
+                <div class="field-label">每周目标（字）</div>
+                <div class="field-control">
+                    <input type="number" name="weekly_goal" value="{{ goal.weekly_goal }}" min="500" step="500">
+                </div>
+            </div>
+            <div class="settings-actions">
+                <button type="submit" class="btn btn-primary">保存目标</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- 修改密码 -->
+    <div class="settings-card">
+        <h2>🔒 修改密码</h2>
+        <p class="card-desc">更新当前账号（{{ request.user.username }}）的登录密码，修改后需重新登录。</p>
+        <form method="post" action="{% url 'app_settings_password' %}">
+            {% csrf_token %}
+            <div class="settings-row">
+                <div class="field-label">原密码</div>
+                <div class="field-control">
+                    <input type="password" name="old_password" required>
+                </div>
+            </div>
+            <div class="settings-row">
+                <div class="field-label">新密码</div>
+                <div class="field-control">
+                    <input type="password" name="new_password" required minlength="6">
+                </div>
+            </div>
+            <div class="settings-row">
+                <div class="field-label">确认新密码</div>
+                <div class="field-control">
+                    <input type="password" name="confirm_password" required minlength="6">
+                </div>
+            </div>
+            <div class="settings-actions">
+                <button type="submit" class="btn btn-primary">修改密码</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

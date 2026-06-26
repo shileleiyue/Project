@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}登录 - {{ school_info.name }}{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/pages/inner.css' %}">{% endblock %}
+
+{% block content %}
+<div class="breadcrumb"><div class="container"><ol><li><a href="{% url 'core:home' %}">首页</a></li><li>登录</li></ol></div></div>
+<section class="container auth-page" data-animate="fade-up">
+  <div class="auth-card card">
+    <div class="card-body">
+      <h1 class="text-center">登录</h1>
+      <form method="post">
+        {% csrf_token %}
+        {% if form.errors %}<div class="alert-error">用户名或密码错误，请重试。</div>{% endif %}
+        <div class="form-group"><label class="form-label">用户名</label><input type="text" name="username" class="form-input" required></div>
+        <div class="form-group"><label class="form-label">密码</label><input type="password" name="password" class="form-input" required></div>
+        <button type="submit" class="btn btn-primary btn-block">登录</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

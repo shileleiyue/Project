@@ -1,0 +1,44 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}{{ work.title }} - {% if event %}编辑事件{% else %}添加事件{% endif %}{% endblock %}
+
+{% block content %}
+<div style="max-width:600px;margin:0 auto;padding:20px;">
+    <a href="{% url 'timeline_list' work.id %}" class="back-link">← 返回时间线</a>
+    <div class="page-header">
+        <h2>{{ work.title }} - {% if event %}编辑事件{% else %}添加事件{% endif %}</h2>
+    </div>
+    <div class="glass-card">
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="title">事件标题 *</label>
+                <input type="text" id="title" name="title" value="{{ event.title|default:'' }}" required class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="date">日期</label>
+                <input type="text" id="date" name="date" value="{{ event.date|default:'' }}" placeholder="如：2024年春季 / 纪元123年" class="form-control">
+                <div style="font-size:12px;color:var(--text-secondary);margin-top:2px;">支持任意格式，建议使用 YYYY-MM-DD</div>
+            </div>
+            <div class="form-group">
+                <label for="description">描述</label>
+                <textarea id="description" name="description" class="form-control">{{ event.description|default:'' }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="characters">关联角色（可多选）</label>
+                <select id="characters" name="characters" multiple class="form-control" style="min-height:150px;">
+                    {% for char in characters %}
+                        <option value="{{ char.id }}" {% if char.id in selected %}selected{% endif %}>{{ char.name }}</option>
+                    {% endfor %}
+                </select>
+                <div style="font-size:12px;color:var(--text-secondary);margin-top:2px;">按住 Ctrl 键可多选</div>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:20px;">
+                <button type="submit" class="btn">保存</button>
+                <a href="{% url 'timeline_list' work.id %}" class="btn btn-secondary">取消</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>注册 - 校园设备借用与维修管理系统</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/common.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/login.css">
+</head>
+<body class="login-page">
+  <div class="login-card">
+    <h1 class="login-title">校园设备借用与维修管理系统</h1>
+    <p class="login-subtitle">创建新账号</p>
+    <form id="register-form">
+      <div class="form-group">
+        <label for="username">用户名</label>
+        <input type="text" id="username" class="form-input" placeholder="请输入用户名" autocomplete="username" maxlength="20">
+        <span class="form-error" id="username-error"></span>
+      </div>
+      <div class="form-group">
+        <label for="phone">手机号</label>
+        <input type="text" id="phone" class="form-input" placeholder="请输入手机号" autocomplete="tel" maxlength="11">
+        <span class="form-error" id="phone-error"></span>
+      </div>
+      <div class="form-group">
+        <label for="password">密码</label>
+        <input type="password" id="password" class="form-input" placeholder="请输入密码（至少6位）" autocomplete="new-password">
+        <span class="form-error" id="password-error"></span>
+      </div>
+      <div class="form-group">
+        <label for="role">角色</label>
+        <select id="role" class="form-select">
+          <option value="">请选择角色</option>
+          <option value="student">学生</option>
+          <option value="admin">管理员</option>
+          <option value="repairer">维修人员</option>
+        </select>
+        <span class="form-error" id="role-error"></span>
+      </div>
+      <div class="login-error" id="register-error"></div>
+      <button type="submit" class="btn btn-primary" id="register-btn">注 册</button>
+    </form>
+    <p class="login-link">已有账号？<a href="login.html">立即登录</a></p>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/toast.js"></script>
+  <script>
+    document.getElementById('register-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const username = document.getElementById('username').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const role = document.getElementById('role').value;
+      const registerBtn = document.getElementById('register-btn');
+      const registerError = document.getElementById('register-error');
+
+      // 清除之前的错误
+      document.querySelectorAll('.form-error').forEach(function(el) { el.textContent = ''; });
+      registerError.textContent = '';
+
+      // 校验
+      let valid = true;
+      if (!username) {
+        document.getElementById('username-error').textContent = '请输入用户名';
+        valid = false;
+      }
+      if (!phone) {
+        document.getElementById('phone-error').textContent = '请输入手机号';
+        valid = false;
+      } else if (!/^1\d{10}$/.test(phone)) {
+        document.getElementById('phone-error').textContent = '请输入正确的手机号';
+        valid = false;
+      }
+      if (!password) {
+        document.getElementById('password-error').textContent = '请输入密码';
+        valid = false;
+      } else if (password.length < 6) {
+        document.getElementById('password-error').textContent = '密码长度至少6位';
+        valid = false;
+      }
+      if (!role) {
+        document.getElementById('role-error').textContent = '请选择角色';
+        valid = false;
+      }
+      if (!valid) return;
+
+      registerBtn.disabled = true;
+      registerBtn.textContent = '注册中...';
+
+      try {
+        await Auth.register(username, phone, password, role);
+        Toast.show('注册成功，请登录', 'success');
+        setTimeout(function() {
+          window.location.href = 'login.html';
+        }, 800);
+      } catch (error) {
+        registerError.textContent = error.message || '注册失败，请重试';
+        Toast.show(error.message || '注册失败', 'error');
+      } finally {
+        registerBtn.disabled = false;
+        registerBtn.textContent = '注 册';
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>个性化网络学习空间</title>
+<link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css" />
+<link rel="stylesheet" href="css/app.css" />
+</head>
+<body>
+<div id="app">
+  <div style="display:flex">
+    <!-- ===== 侧边栏 ===== -->
+    <aside class="sidebar">
+      <div class="logo"><div class="icon">学</div>学习空间</div>
+      <div class="user-info">
+        <div class="avatar">{{ (profile.first_name || profile.username || '?')[0].toUpperCase() }}</div>
+        <div>
+          <div class="name">{{ profile.first_name || profile.username }}</div>
+          <div class="role-tag" :class="'role-' + profile.role">{{ roleLabel(profile.role) }}</div>
+        </div>
+      </div>
+      <el-menu :default-active="page" @select="(p)=>page=p" background-color="transparent" text-color="#d1d5db" active-text-color="#fff">
+        <!-- 学生菜单 -->
+        <template v-if="profile.role==='student'">
+          <el-menu-item index="student_dashboard"><el-icon><Odometer /></el-icon><span>学习总览</span></el-menu-item>
+          <el-menu-item index="student_courses"><el-icon><Reading /></el-icon><span>课程学习</span></el-menu-item>
+          <el-menu-item index="student_exams"><el-icon><DocumentChecked /></el-icon><span>考试中心</span></el-menu-item>
+          <el-menu-item index="student_wrong"><el-icon><Warning /></el-icon><span>错题本</span></el-menu-item>
+          <el-menu-item index="student_preference"><el-icon><DataAnalysis /></el-icon><span>学习分析</span></el-menu-item>
+          <el-menu-item index="profile_student"><el-icon><User /></el-icon><span>个人资料</span></el-menu-item>
+        </template>
+        <!-- 教师菜单 -->
+        <template v-else-if="profile.role==='teacher'">
+          <el-menu-item index="teacher_dashboard"><el-icon><Odometer /></el-icon><span>工作台</span></el-menu-item>
+          <el-menu-item index="teacher_courses"><el-icon><Reading /></el-icon><span>课程管理</span></el-menu-item>
+          <el-menu-item index="teacher_materials"><el-icon><Files /></el-icon><span>资料上传</span></el-menu-item>
+          <el-menu-item index="teacher_questions"><el-icon><Collection /></el-icon><span>题库管理</span></el-menu-item>
+          <el-menu-item index="teacher_exams"><el-icon><Document /></el-icon><span>试卷管理</span></el-menu-item>
+        </template>
+        <!-- 管理员菜单 -->
+        <template v-else>
+          <el-menu-item index="admin_dashboard"><el-icon><Odometer /></el-icon><span>工作台</span></el-menu-item>
+          <el-menu-item index="admin_students"><el-icon><User /></el-icon><span>学生管理</span></el-menu-item>
+          <el-menu-item index="teacher_courses"><el-icon><Reading /></el-icon><span>课程列表</span></el-menu-item>
+        </template>
+      </el-menu>
+    </aside>
+
+    <!-- ===== 主内容 ===== -->
+    <div class="main">
+      <div class="topbar">
+        <div class="page-title">{{ pageTitle }}</div>
+        <div class="actions">
+          <el-button type="danger" link @click="logout">退出登录</el-button>
+        </div>
+      </div>
+      <div class="content">
+        <component :is="currentComp" @go="(p,extra)=>{ page=p; pageExtra=extra; }" :course="pageExtra" />
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+<script src="https://unpkg.com/element-plus"></script>
+<script src="https://unpkg.com/@element-plus/icons-vue"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="js/api.js"></script>
+<script src="js/pages.js"></script>
+<script>
+const { createApp, ref, computed, onMounted, watch } = Vue;
+
+const app = createApp({
+  setup() {
+    const profile = ref(JSON.parse(localStorage.getItem('ls_user') || 'null'));
+    const page = ref(window.location.hash.replace('#/', '') ||
+      (profile.value?.role === 'student' ? 'student_dashboard' :
+       profile.value?.role === 'teacher' ? 'teacher_dashboard' : 'admin_dashboard'));
+    const pageExtra = ref(null);
+
+    if (!profile.value) location.href = 'index.html';
+
+    const currentComp = computed(() => {
+      const name = page.value === 'do_exam' ? 'do_exam' : page.value;
+      return APP_PAGES[name] || APP_PAGES[profile.value.role + '_dashboard'];
+    });
+
+    const pageTitle = computed(() => {
+      const map = {
+        student_dashboard: '学习总览', student_courses: '课程学习', course_detail: '课程详情',
+        student_exams: '考试中心', do_exam: '正在答题', student_wrong: '错题本',
+        student_preference: '学习喜好分析', profile_student: '个人资料',
+        teacher_dashboard: '教师工作台', teacher_courses: '课程管理', teacher_kp: '知识点管理',
+        teacher_materials: '学习资料', teacher_questions: '题库管理', teacher_exams: '试卷管理',
+        admin_dashboard: '管理员工作台', admin_students: '学生管理',
+      };
+      return map[page.value] || page.value;
+    });
+
+    const logout = () => {
+      localStorage.clear(); location.href = 'index.html';
+    };
+
+    // 监听 pages.js 中的导航事件
+    window.addEventListener('nav', (e) => {
+      page.value = e.detail.page;
+      if (e.detail.course) pageExtra.value = e.detail.course;
+    });
+
+    return { profile, page, pageExtra, currentComp, pageTitle, logout, roleLabel };
+  }
+});
+
+app.use(ElementPlus);
+for (const [k, v] of Object.entries(ElementPlusIconsVue)) app.component(k, v);
+// 注册所有页面组件
+for (const [k, v] of Object.entries(APP_PAGES)) app.component(k, v);
+app.mount('#app');
+</script>
+</body>
+</html>

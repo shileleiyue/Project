@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}搜索：{{ query }} - {{ school_info.name|default:"化隆一中" }}{% endblock %}
+
+{% block content %}
+<div class="breadcrumb"><div class="container"><ol><li><a href="{% url 'core:home' %}">首页</a></li><li>搜索{% if query %}：{{ query }}{% endif %}</li></ol></div></div>
+<section class="search-page container" style="padding: 2rem 0;">
+  <div class="search-header" style="margin-bottom: 2rem;">
+    <form method="get" action="{% url 'core:search' %}" class="search-form" style="display: flex; gap: 0.5rem; max-width: 600px; margin: 0 auto;">
+      <input type="text" name="q" value="{{ query }}" placeholder="输入关键词搜索..." required
+             style="flex: 1; padding: 0.75rem 1rem; border: 2px solid #ddd; border-radius: 4px; font-size: 1rem;">
+      <button type="submit" style="padding: 0.75rem 1.5rem; background: #1a73e8; color: #fff; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer;">搜索</button>
+    </form>
+    {% if query %}
+      <p style="text-align: center; margin-top: 1rem; color: #666;">
+        搜索 "{{ query }}" 共找到 {{ total_results }} 条结果
+      </p>
+    {% endif %}
+  </div>
+
+  {% if query %}
+    {% if total_results == 0 %}
+      <div style="text-align: center; padding: 3rem 0; color: #999;">
+        <p style="font-size: 1.2rem;">未找到与 "{{ query }}" 相关的内容</p>
+        <p>建议尝试其他关键词</p>
+      </div>
+    {% else %}
+      {% if articles %}
+        <div class="search-section" style="margin-bottom: 2rem;">
+          <h2 style="font-size: 1.25rem; border-bottom: 2px solid #1a73e8; padding-bottom: 0.5rem; margin-bottom: 1rem;">
+            新闻动态（{{ articles|length }}）
+          </h2>
+          <div class="result-list">
+            {% for article in articles %}
+              <div class="result-item" style="padding: 1rem; border-bottom: 1px solid #eee;">
+                <h3><a href="{% url 'news:article_detail' slug=article.slug %}" style="color: #1a73e8; text-decoration: none;">{{ article.title }}</a></h3>
+                <p style="color: #666; margin: 0.25rem 0;">
+                  <span class="badge">{{ article.category.name }}</span>
+                  <span style="margin-left: 0.5rem;">{{ article.pub_date|date:"Y-m-d" }}</span>
+                </p>
+                <p style="color: #444;">{{ article.excerpt|default:article.content|truncatechars:150 }}</p>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+
+      {% if flatpages %}
+        <div class="search-section" style="margin-bottom: 2rem;">
+          <h2 style="font-size: 1.25rem; border-bottom: 2px solid #1a73e8; padding-bottom: 0.5rem; margin-bottom: 1rem;">
+            页面（{{ flatpages|length }}）
+          </h2>
+          <div class="result-list">
+            {% for page in flatpages %}
+              <div class="result-item" style="padding: 1rem; border-bottom: 1px solid #eee;">
+                <h3><a href="{% url 'pages:page_detail' slug=page.slug %}" style="color: #1a73e8; text-decoration: none;">{{ page.title }}</a></h3>
+                <p style="color: #666; margin: 0.25rem 0;">
+                  <span class="badge">{{ page.get_page_type_display }}</span>
+                </p>
+                <p style="color: #444;">{{ page.content|striptags|truncatechars:200 }}</p>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+
+      {% if teachers %}
+        <div class="search-section" style="margin-bottom: 2rem;">
+          <h2 style="font-size: 1.25rem; border-bottom: 2px solid #1a73e8; padding-bottom: 0.5rem; margin-bottom: 1rem;">
+            教师（{{ teachers|length }}）
+          </h2>
+          <div class="result-list">
+            {% for teacher in teachers %}
+              <div class="result-item" style="padding: 1rem; border-bottom: 1px solid #eee;">
+                <h3><a href="{% url 'organization:teachers' %}" style="color: #1a73e8; text-decoration: none;">{{ teacher.name }}</a></h3>
+                <p style="color: #666; margin: 0.25rem 0;">
+                  <span class="badge">{{ teacher.title|default:"教师" }}</span>
+                  {% if teacher.department %}
+                    <span style="margin-left: 0.5rem;">{{ teacher.department.name }}</span>
+                  {% endif %}
+                </p>
+                <p style="color: #444;">{{ teacher.intro|truncatechars:200 }}</p>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+    {% endif %}
+  {% else %}
+    <div style="text-align: center; padding: 3rem 0; color: #999;">
+      <p style="font-size: 1.2rem;">请输入关键词进行搜索</p>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

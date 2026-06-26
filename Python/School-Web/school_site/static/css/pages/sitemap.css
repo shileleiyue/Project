@@ -1,0 +1,92 @@
+/* ===================================
+   sitemap.css – 站点地图页面样式
+   =================================== */
+
+.sitemap-section {
+  padding: var(--spacing-lg) 0;
+}
+
+.sitemap-tree {
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.sitemap-root {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sitemap-category {
+  margin-bottom: var(--spacing-lg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.sitemap-root-link {
+  display: block;
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-primary, #1a5276);
+  border-bottom: 2px solid var(--color-primary, #1a5276);
+  text-decoration: none;
+}
+
+a.sitemap-root-link:hover {
+  color: var(--color-primary-dark, #0d3b5c);
+  background: rgba(26, 82, 118, 0.05);
+}
+
+.sitemap-children {
+  list-style: none;
+  padding: var(--spacing-sm) var(--spacing-md);
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--spacing-xs);
+}
+
+.sitemap-item {
+  padding: 0.25rem 0;
+}
+
+.sitemap-link {
+  color: var(--color-text, #333);
+  text-decoration: none;
+  font-size: 0.95rem;
+  display: inline-block;
+  padding: 0.3rem 0.5rem;
+  border-radius: var(--radius-sm, 4px);
+  transition: background var(--transition-fast, 0.2s);
+}
+
+.sitemap-link:hover {
+  background: rgba(26, 82, 118, 0.08);
+  color: var(--color-primary, #1a5276);
+}
+
+.sitemap-label {
+  color: var(--color-text-light, #666);
+  font-size: 0.95rem;
+  padding: 0.3rem 0.5rem;
+  display: inline-block;
+}
+
+.sitemap-grandchildren {
+  list-style: none;
+  padding-left: 1.2rem;
+  margin: 0.25rem 0 0;
+  border-left: 2px solid var(--color-border, #eee);
+}
+
+.sitemap-grandchildren .sitemap-link {
+  font-size: 0.88rem;
+}
+
+@media (max-width: 600px) {
+  .sitemap-children {
+    grid-template-columns: 1fr;
+  }
+}

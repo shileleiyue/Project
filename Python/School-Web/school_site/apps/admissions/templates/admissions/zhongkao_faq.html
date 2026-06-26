@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}中考咨询 - {{ school_info.name }}{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/pages/inner.css' %}">{% endblock %}
+
+{% block content %}
+<div class="breadcrumb"><div class="container"><ol><li><a href="{% url 'core:home' %}">首页</a></li><li>中考咨询</li></ol></div></div>
+<section class="container" data-animate="fade-up">
+  <h1>中考常见问题</h1>
+  <div class="faq-list">
+    {% for faq in faqs %}
+    <details class="faq-item">
+      <summary>{{ faq.question }}</summary>
+      <div class="faq-answer">{{ faq.answer|linebreaks }}</div>
+    </details>
+    {% empty %}<p>暂无问题。</p>{% endfor %}
+  </div>
+</section>
+{% endblock %}

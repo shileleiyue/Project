@@ -1,0 +1,264 @@
+/* ============================================
+   作家工厂 - 写作统计页
+   约定：仅作用于 .stats-container，全部使用 px；
+   主题色引用 nav.css 的 CSS 变量，不重复声明 :root。
+   ============================================ */
+.stats-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 8px 20px 60px;
+}
+
+.stats-header {
+    text-align: center;
+    padding: 24px 24px 20px;
+}
+.stats-header h1 {
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0 0 8px;
+}
+.stats-header-desc {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+/* ---- 统计卡片网格 ---- */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-bottom: 22px;
+}
+
+.stat-card,
+.progress-card,
+.chart-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border-subtle, rgba(148, 163, 184, 0.18));
+    border-radius: 20px;
+    box-shadow: 0 1px 3px rgba(30, 41, 59, 0.06);
+    padding: 22px;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 22px rgba(30, 41, 59, 0.09);
+}
+
+.stat-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+.stat-card-icon { font-size: 22px; }
+.stat-card-header h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.stat-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+}
+.stat-row:last-child { border-bottom: none; }
+.stat-row-label {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+.stat-row-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--color-primary);
+}
+.stat-row-value small {
+    font-size: 12px;
+    font-weight: 400;
+    color: #94a3b8;
+}
+
+/* ---- 目标表单 ---- */
+.goal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.goal-field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.goal-field label {
+    font-size: 13px;
+    color: var(--text-secondary);
+    min-width: 64px;
+}
+.goal-field input {
+    flex: 1;
+    min-width: 0;
+    padding: 8px 12px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 14px;
+    background: rgba(255, 255, 255, 0.9);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.goal-field input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(91, 127, 255, 0.15);
+}
+.goal-field span {
+    font-size: 13px;
+    color: #94a3b8;
+    white-space: nowrap;
+}
+.goal-save-btn {
+    align-self: flex-start;
+    padding: 9px 20px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-top: 4px;
+}
+.goal-save-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(91, 127, 255, 0.3);
+}
+
+/* ---- 进度条 ---- */
+.progress-section {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+    margin-bottom: 22px;
+}
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+.progress-header h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+.progress-percent {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--color-primary);
+}
+.progress-bar-container {
+    width: 100%;
+    height: 14px;
+    background: rgba(148, 163, 184, 0.15);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+    border-radius: 10px;
+    transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    min-width: 0;
+}
+.progress-bar.weekly-bar {
+    background: linear-gradient(90deg, #22c55e, #16a34a);
+}
+.progress-desc {
+    font-size: 13px;
+    color: #94a3b8;
+    text-align: right;
+    margin: 0;
+}
+
+/* ---- 柱状图 ---- */
+.chart-section { margin-bottom: 22px; }
+.chart-header { margin-bottom: 18px; }
+.chart-header h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+.chart-body {
+    overflow-x: auto;
+    padding: 8px 0;
+}
+.bar-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    min-height: 200px;
+    padding: 0 4px;
+}
+.bar-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    min-width: 0;
+}
+.bar-wrapper {
+    width: 100%;
+    height: 160px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+.bar {
+    width: 70%;
+    max-width: 28px;
+    background: linear-gradient(180deg, var(--color-primary), var(--color-accent));
+    border-radius: 4px 4px 0 0;
+    transition: height 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    min-height: 2px;
+}
+.bar-label {
+    font-size: 10px;
+    color: #94a3b8;
+    text-align: center;
+    white-space: nowrap;
+    transform: rotate(-45deg);
+    transform-origin: left top;
+    margin-top: 6px;
+}
+
+@media (max-width: 768px) {
+    .stats-grid { grid-template-columns: 1fr; }
+    .progress-section { grid-template-columns: 1fr; }
+    .stats-header h1 { font-size: 24px; }
+}
+@media (max-width: 480px) {
+    .stats-container { padding: 8px 14px 40px; }
+    .bar { max-width: 18px; }
+    .bar-label { font-size: 9px; }
+}

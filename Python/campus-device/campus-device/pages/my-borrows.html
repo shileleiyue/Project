@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我的借用 - 校园设备借用与维修管理系统</title>
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/borrow.css">
+</head>
+<body>
+  <!-- 导航栏 -->
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../index.html">校园设备管理</a>
+    </div>
+    <div class="navbar-menu" id="navbar-menu">
+      <a class="navbar-item" data-page="index" href="../index.html">设备大厅</a>
+      <a class="navbar-item active" data-page="my-borrows" href="my-borrows.html">我的借用</a>
+      <a class="navbar-item" data-page="my-repairs" href="my-repairs.html">我的报修</a>
+    </div>
+    <div class="navbar-user">
+      <span class="user-avatar" id="user-avatar"></span>
+      <span id="user-name"></span>
+      <button class="btn btn-outline" id="logout-btn" style="padding:4px 12px;font-size:12px;">退出</button>
+    </div>
+  </nav>
+
+  <div class="main-content full-width">
+    <div class="container">
+      <div class="page-header">
+        <h2>我的借用记录</h2>
+      </div>
+
+      <div class="card">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>设备名称</th>
+                <th>借用时间</th>
+                <th>预计归还时间</th>
+                <th>状态</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="borrow-tbody">
+              <tr><td colspan="5" style="text-align:center;padding:40px;">加载中...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="borrow-paginator"></div>
+    </div>
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/toast.js"></script>
+  <script src="../js/modal.js"></script>
+  <script src="../js/paginator.js"></script>
+  <script src="../js/upload.js"></script>
+  <script src="../js/borrow.js"></script>
+  <script>
+    // 路由守卫 - 要求 student 角色
+    Auth.checkAuth('student');
+
+    // 初始化导航
+    (function initNav() {
+      var user = Storage.getUser();
+      if (!user) return;
+      var avatar = document.getElementById('user-avatar');
+      var userName = document.getElementById('user-name');
+      if (avatar) avatar.textContent = (user.username || user.name || '?').charAt(0).toUpperCase();
+      if (userName) userName.textContent = user.username || user.name || '用户';
+    })();
+
+    document.getElementById('logout-btn').addEventListener('click', function() {
+      Auth.logout();
+    });
+
+    // 加载借用记录
+    BorrowModule.loadMyBorrows(1);
+  </script>
+</body>
+</html>

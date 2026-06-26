@@ -1,0 +1,82 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}搜索 - 作家工厂{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'core/search.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="search-container">
+        <h1>搜索结果</h1>
+
+        {% if query %}
+            <p class="search-query-info">搜索词：<strong>"{{ query }}"</strong></p>
+            {% with total=search_works|length|add:chapters|length|add:characters|length %}
+                <p class="search-result-count">共找到 {{ total }} 个结果</p>
+            {% endwith %}
+
+            <div class="search-section">
+                <h2>📚 作品（{{ search_works|length }}）</h2>
+                {% if search_works %}
+                    <ul class="search-results-list">
+                        {% for work in search_works %}
+                            <li class="search-result-item">
+                                <a href="{% url 'work_detail' work.id %}">
+                                    <h3>{{ work.title }}</h3>
+                                    <p>{{ work.description|truncatewords:30 }}</p>
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="empty-text">未找到匹配的作品。</p>
+                {% endif %}
+            </div>
+
+            <div class="search-section">
+                <h2>📄 章节（{{ chapters|length }}）</h2>
+                {% if chapters %}
+                    <ul class="search-results-list">
+                        {% for chapter in chapters %}
+                            <li class="search-result-item">
+                                <a href="{% url 'chapter_read' chapter.work.id chapter.id %}">
+                                    <h3>{{ chapter.title }}</h3>
+                                    <p class="chapter-meta">所属作品：《{{ chapter.work.title }}》</p>
+                                    <p>{{ chapter.content|truncatewords:50 }}</p>
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="empty-text">未找到匹配的章节。</p>
+                {% endif %}
+            </div>
+
+            <div class="search-section">
+                <h2>👤 角色（{{ characters|length }}）</h2>
+                {% if characters %}
+                    <ul class="search-results-list">
+                        {% for character in characters %}
+                            <li class="search-result-item">
+                                <a href="{% url 'character_list' character.work.id %}">
+                                    <h3>{{ character.name }}</h3>
+                                    {% if character.alias %}
+                                        <p class="character-alias">别名：{{ character.alias }}</p>
+                                    {% endif %}
+                                    <p>{{ character.description|truncatewords:30 }}</p>
+                                    <p class="chapter-meta">所属作品：《{{ character.work.title }}》</p>
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="empty-text">未找到匹配的角色。</p>
+                {% endif %}
+            </div>
+        {% else %}
+            <p class="empty-text">请输入搜索关键词。</p>
+        {% endif %}
+    </div>
+{% endblock %}

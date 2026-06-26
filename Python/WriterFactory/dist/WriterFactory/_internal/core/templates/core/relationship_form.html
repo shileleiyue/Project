@@ -1,0 +1,48 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}{{ work.title }} - {% if relationship %}编辑关系{% else %}添加关系{% endif %}{% endblock %}
+
+{% block content %}
+<div style="max-width:600px;margin:0 auto;padding:20px;">
+    <a href="{% url 'relationship_list' work.id %}" class="back-link">← 返回关系列表</a>
+    <div class="page-header">
+        <h2>{{ work.title }} - {% if relationship %}编辑关系{% else %}添加关系{% endif %}</h2>
+    </div>
+    <div class="glass-card">
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="character1">角色A *</label>
+                <select id="character1" name="character1" required class="form-control">
+                    <option value="">请选择角色A</option>
+                    {% for char in characters %}
+                        <option value="{{ char.id }}" {% if relationship and relationship.character1.id == char.id %}selected{% endif %}>{{ char.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="character2">角色B *</label>
+                <select id="character2" name="character2" required class="form-control">
+                    <option value="">请选择角色B</option>
+                    {% for char in characters %}
+                        <option value="{{ char.id }}" {% if relationship and relationship.character2.id == char.id %}selected{% endif %}>{{ char.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="relation_type">关系类型 *</label>
+                <input type="text" id="relation_type" name="relation_type" value="{{ relationship.relation_type|default:'' }}" required placeholder="如：好友、敌人、恋人" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="description">描述</label>
+                <textarea id="description" name="description" class="form-control">{{ relationship.description|default:'' }}</textarea>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:20px;">
+                <button type="submit" class="btn">保存</button>
+                <a href="{% url 'relationship_list' work.id %}" class="btn btn-secondary">取消</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

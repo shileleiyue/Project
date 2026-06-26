@@ -1,0 +1,112 @@
+/* ===== 全局样式 ===== */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body, #app { height: 100%; }
+body { font-family: "PingFang SC", "Microsoft YaHei", sans-serif; background: #f0f2f5; }
+
+/* 侧边栏 */
+.sidebar {
+  width: 220px; min-height: 100vh; background: #1f2937;
+  display: flex; flex-direction: column; flex-shrink: 0;
+}
+.sidebar .logo {
+  height: 64px; display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 18px; font-weight: 600;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  gap: 10px;
+}
+.sidebar .logo .icon {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: linear-gradient(135deg, #409eff, #764ba2);
+  display: flex; align-items: center; justify-content: center; font-size: 16px;
+}
+.sidebar .user-info {
+  padding: 20px 20px 16px; display: flex; align-items: center; gap: 12px;
+  color: #e5e7eb; border-bottom: 1px solid rgba(255,255,255,.08);
+}
+.sidebar .user-info .avatar {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: linear-gradient(135deg, #409eff, #764ba2);
+  display: flex; align-items: center; justify-content: center; font-weight: 600;
+}
+.sidebar .user-info .name { font-size: 14px; font-weight: 500; }
+.sidebar .user-info .role-tag { margin-top: 2px; font-size: 11px; color: #9ca3af; }
+.sidebar .el-menu { flex: 1; border-right: none; background: transparent !important; }
+.sidebar .el-menu-item { color: #d1d5db !important; }
+.sidebar .el-menu-item.is-active { background: #409eff !important; color: #fff !important; }
+.sidebar .el-menu-item:hover:not(.is-active) { background: rgba(255,255,255,.06) !important; }
+
+/* 主内容区 */
+.main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.topbar {
+  height: 56px; background: #fff; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; border-bottom: 1px solid #e5e7eb; box-shadow: 0 1px 2px rgba(0,0,0,.03);
+}
+.topbar .page-title { font-size: 16px; font-weight: 600; color: #1f2937; }
+.topbar .actions { display: flex; gap: 12px; align-items: center; }
+.content { flex: 1; padding: 24px; overflow-y: auto; }
+
+/* 统计卡片 */
+.stat-card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
+.stat-card .label { font-size: 13px; color: #6b7280; margin-bottom: 8px; }
+.stat-card .value { font-size: 28px; font-weight: 700; color: #1f2937; }
+.stat-card .value .unit { font-size: 14px; color: #6b7280; font-weight: 400; margin-left: 4px; }
+.stat-card .trend { font-size: 12px; color: #10b981; margin-top: 6px; }
+
+/* 仪表盘卡片行 */
+.dash-row { display: grid; gap: 16px; margin-bottom: 24px; }
+.dash-row.c4 { grid-template-columns: repeat(4, 1fr); }
+.dash-row.c3 { grid-template-columns: repeat(3, 1fr); }
+.dash-row.c2 { grid-template-columns: repeat(2, 1fr); }
+
+/* 图表容器 */
+.chart-box {
+  background: #fff; border-radius: 12px; padding: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05); margin-bottom: 16px;
+}
+.chart-box h3 { font-size: 15px; color: #1f2937; margin-bottom: 16px; }
+
+/* 页面头部 */
+.page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.page-header h2 { font-size: 18px; color: #1f2937; }
+
+/* 角色色彩 */
+.role-student { color: #409eff; }
+.role-teacher { color: #e6a23c; }
+.role-admin { color: #f56c6c; }
+
+/* 空状态 */
+.empty-state { text-align: center; padding: 60px 20px; color: #9ca3af; }
+.empty-state .icon { font-size: 56px; margin-bottom: 12px; }
+
+/* 课程卡片 */
+.course-card {
+  background: #fff; border-radius: 12px; overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06); cursor: pointer;
+  transition: transform .2s, box-shadow .2s;
+}
+.course-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,.12); }
+.course-card .cover { height: 120px; display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; font-size: 32px; }
+.course-card .body { padding: 16px; }
+.course-card .body .name { font-size: 15px; font-weight: 600; color: #1f2937; margin-bottom: 6px; }
+.course-card .body .desc { font-size: 12px; color: #6b7280; line-height: 1.5; height: 36px; overflow: hidden; }
+
+/* 答题区域 */
+.quiz-card {
+  background: #fff; border-radius: 12px; padding: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06); margin-bottom: 16px;
+}
+.quiz-card .q-title { font-size: 15px; color: #1f2937; margin-bottom: 16px; font-weight: 500; }
+.quiz-card .q-meta { font-size: 12px; color: #9ca3af; margin-bottom: 8px; }
+.quiz-card .options label { display: block; padding: 12px 16px; border: 1px solid #e5e7eb;
+  border-radius: 8px; margin-bottom: 8px; cursor: pointer; transition: all .2s; }
+.quiz-card .options label:hover { border-color: #409eff; background: #f0f7ff; }
+
+/* 错题样式 */
+.wrong-item { border-left: 3px solid #f56c6c; padding: 12px 16px; background: #fef2f2; border-radius: 8px; margin-bottom: 12px; }
+.wrong-item.correct { border-left-color: #10b981; background: #f0fdf4; }
+.wrong-item .title { font-weight: 500; margin-bottom: 8px; }
+.wrong-item .meta { font-size: 12px; color: #6b7280; }
+
+/* 进度条 */
+.progress-tag { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; }

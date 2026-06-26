@@ -1,0 +1,73 @@
+/* ========================================
+   Login CSS - 登录/注册页面样式
+   ======================================== */
+
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+}
+
+.login-card {
+  background-color: var(--color-card);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  padding: 40px;
+  width: 100%;
+  max-width: 420px;
+  animation: slideUp 0.4s ease;
+}
+
+.login-card .login-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--color-text);
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.login-card .login-subtitle {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.login-card .form-group {
+  margin-bottom: 20px;
+}
+
+.login-card .btn {
+  width: 100%;
+  padding: 12px;
+  font-size: var(--font-size-lg);
+  margin-top: 8px;
+}
+
+.login-card .login-link {
+  text-align: center;
+  margin-top: 20px;
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+}
+
+.login-card .login-link a {
+  color: var(--color-primary);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.login-card .login-link a:hover {
+  text-decoration: underline;
+}
+
+.login-card .login-error {
+  text-align: center;
+  color: var(--color-danger);
+  font-size: var(--font-size-sm);
+  min-height: 20px;
+  margin-top: 8px;
+}

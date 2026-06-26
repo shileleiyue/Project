@@ -1,0 +1,139 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}作家工厂 - 写作统计{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'core/stats.css' %}?v=20260910b">
+{% endblock %}
+
+{% block content %}
+    <div class="stats-container">
+        <header class="stats-header">
+            <h1>📊 写作统计</h1>
+            <p class="stats-header-desc">追踪你的创作进度，达成每日写作目标</p>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-card today-card">
+                <div class="stat-card-header">
+                    <span class="stat-card-icon">📝</span>
+                    <h3>今日数据</h3>
+                </div>
+                <div class="stat-card-body">
+                    <div class="stat-row">
+                        <span class="stat-row-label">今日码字</span>
+                        <span class="stat-row-value">{{ today_words }} <small>字</small></span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-row-label">今日时长</span>
+                        <span class="stat-row-value">{{ today_minutes }} <small>分钟</small></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card total-card">
+                <div class="stat-card-header">
+                    <span class="stat-card-icon">📚</span>
+                    <h3>累计数据</h3>
+                </div>
+                <div class="stat-card-body">
+                    <div class="stat-row">
+                        <span class="stat-row-label">总码字数</span>
+                        <span class="stat-row-value">{{ total_words }} <small>字</small></span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-row-label">总创作时长</span>
+                        <span class="stat-row-value">{{ total_hours }} <small>小时</small></span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-row-label">日均码字</span>
+                        <span class="stat-row-value">{{ month_avg_words }} <small>字</small></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card goal-card">
+                <div class="stat-card-header">
+                    <span class="stat-card-icon">🎯</span>
+                    <h3>写作目标</h3>
+                </div>
+                <div class="stat-card-body">
+                    <form method="post" action="{% url 'stats_update_goal' %}" class="goal-form">
+                        {% csrf_token %}
+                        <div class="goal-field">
+                            <label for="daily_goal">每日目标</label>
+                            <input type="number" id="daily_goal" name="daily_goal" value="{{ daily_goal }}" min="100" step="100">
+                            <span>字</span>
+                        </div>
+                        <div class="goal-field">
+                            <label for="weekly_goal">每周目标</label>
+                            <input type="number" id="weekly_goal" name="weekly_goal" value="{{ weekly_goal }}" min="500" step="500">
+                            <span>字</span>
+                        </div>
+                        <button type="submit" class="goal-save-btn">保存目标</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="progress-section">
+            <div class="progress-card">
+                <div class="progress-header">
+                    <h3>📅 今日进度</h3>
+                    <span class="progress-percent">{{ daily_progress }}%</span>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" style="width: {{ daily_progress }}%;"></div>
+                </div>
+                <p class="progress-desc">{{ today_words }} / {{ daily_goal }} 字</p>
+            </div>
+
+            <div class="progress-card">
+                <div class="progress-header">
+                    <h3>📅 本周进度</h3>
+                    <span class="progress-percent">{{ weekly_progress }}%</span>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar weekly-bar" style="width: {{ weekly_progress }}%;"></div>
+                </div>
+                <p class="progress-desc">{{ weekly_words }} / {{ weekly_goal }} 字</p>
+            </div>
+        </div>
+
+        <div class="chart-section">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3>📈 近30日码字趋势</h3>
+                </div>
+                <div class="chart-body">
+                    <div class="bar-chart" id="monthChart">
+                        {% for item in chart_items %}
+                            <div class="bar-item" title="{{ item.label }}: {{ item.value }}字">
+                                <div class="bar-wrapper">
+                                    <div class="bar" style="height: 0%;"></div>
+                                </div>
+                                <span class="bar-label">{{ item.label }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    var chartData = {{ chart_data_json|safe }};
+
+    var maxVal = Math.max.apply(null, chartData);
+    if (maxVal === 0) maxVal = 1;
+
+    var bars = document.querySelectorAll('#monthChart .bar');
+    bars.forEach(function(bar, index) {
+        var height = (chartData[index] / maxVal) * 100;
+        bar.style.height = height + '%';
+    });
+</script>
+{% endblock %}

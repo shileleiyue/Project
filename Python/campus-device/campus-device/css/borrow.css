@@ -1,0 +1,15 @@
+/* ========================================
+   Borrow CSS - 借用记录页面样式
+   ======================================== */
+
+/* 操作按钮组 */
+.action-btns {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.action-btns .btn {
+  padding: 4px 12px;
+  font-size: var(--font-size-sm);
+}

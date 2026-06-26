@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}领导介绍 - {{ school_info.name }}{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/pages/inner.css' %}">{% endblock %}
+
+{% block content %}
+<div class="breadcrumb">
+  <div class="container"><ol><li><a href="{% url 'core:home' %}">首页</a></li><li>领导介绍</li></ol></div>
+</div>
+<section class="container" data-animate="fade-up">
+  <h1 class="page-title">领导介绍</h1>
+  <div class="card-grid">
+    {% for leader in leaders %}
+    <div class="card">
+      {% if leader.photo %}<img src="{{ leader.photo.url }}" alt="{{ leader.name }}">{% endif %}
+      <div class="card-body">
+        <h3>{{ leader.name }}</h3>
+        <p class="badge">{{ leader.position }}</p>
+        <p>{{ leader.intro|truncatewords:30 }}</p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

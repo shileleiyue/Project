@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ page.title }} - {{ school_info.name }}{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/pages/inner.css' %}">{% endblock %}
+
+{% block content %}
+<div class="breadcrumb">
+  <div class="container">
+    <ol>
+      <li><a href="{% url 'core:home' %}">首页</a></li>
+      <li>{{ page.title }}</li>
+    </ol>
+  </div>
+</div>
+<article class="page-content container" data-animate="fade-up">
+  <h1>{{ page.title }}</h1>
+  <div class="content-body">
+    {{ page.content|safe }}
+  </div>
+</article>
+{% endblock %}

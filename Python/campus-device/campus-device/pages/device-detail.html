@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>设备详情 - 校园设备借用与维修管理系统</title>
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/layout.css">
+</head>
+<body>
+  <!-- 导航栏 -->
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../index.html">校园设备管理</a>
+    </div>
+    <div class="navbar-menu" id="navbar-menu">
+      <a class="navbar-item" data-page="index" href="../index.html">设备大厅</a>
+      <a class="navbar-item" data-page="my-borrows" href="my-borrows.html" id="nav-my-borrows" style="display:none;">我的借用</a>
+      <a class="navbar-item" data-page="my-repairs" href="my-repairs.html" id="nav-my-repairs" style="display:none;">我的报修</a>
+      <a class="navbar-item" data-page="admin-devices" href="admin-devices.html" id="nav-admin-devices" style="display:none;">设备管理</a>
+      <a class="navbar-item" data-page="admin-borrows" href="admin-borrows.html" id="nav-admin-borrows" style="display:none;">借用审核</a>
+      <a class="navbar-item" data-page="admin-repairs" href="admin-repairs.html" id="nav-admin-repairs" style="display:none;">报修管理</a>
+      <a class="navbar-item" data-page="repair-tasks" href="repair-tasks.html" id="nav-repair-tasks" style="display:none;">维修工单</a>
+    </div>
+    <div class="navbar-user">
+      <span class="user-avatar" id="user-avatar"></span>
+      <span id="user-name"></span>
+      <button class="btn btn-outline" id="logout-btn" style="padding:4px 12px;font-size:12px;">退出</button>
+    </div>
+  </nav>
+
+  <div class="main-content full-width">
+    <div class="container">
+      <div class="page-header">
+        <h2 id="detail-title">设备详情</h2>
+        <button class="btn btn-outline" onclick="window.history.back()">返回</button>
+      </div>
+
+      <div id="detail-content">
+        <div class="loading-spinner">加载中...</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/toast.js"></script>
+  <script src="../js/modal.js"></script>
+  <script>
+    // 路由守卫
+    Auth.checkAuth();
+
+    // 根据角色显示导航菜单
+    (function initNav() {
+      var user = Storage.getUser();
+      if (!user) return;
+
+      var avatar = document.getElementById('user-avatar');
+      var userName = document.getElementById('user-name');
+      if (avatar) avatar.textContent = (user.username || user.name || '?').charAt(0).toUpperCase();
+      if (userName) userName.textContent = user.username || user.name || '用户';
+
+      var role = user.role;
+      var roleMap = {
+        'student': ['nav-my-borrows', 'nav-my-repairs'],
+        'admin': ['nav-admin-devices', 'nav-admin-borrows', 'nav-admin-repairs'],
+        'repairer': ['nav-repair-tasks']
+      };
+
+      var ids = roleMap[role] || [];
+      ids.forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) el.style.display = '';
+      });
+    })();
+
+    document.getElementById('logout-btn').addEventListener('click', function() {
+      Auth.logout();
+    });
+
+    // 加载设备详情
+    var deviceId = Utils.getQueryParam('id');
+    if (!deviceId) {
+      document.getElementById('detail-content').innerHTML = '<div class="empty-state"><p>设备ID不存在</p></div>';
+    } else {
+      loadDeviceDetail(deviceId);
+    }
+
+    var DEVICE_TYPES = {
+      'laptop': '笔记本电脑', 'phone': '手机', 'tablet': '平板电脑',
+      'camera': '相机', 'projector': '投影仪', 'other': '其他'
+    };
+
+    var STATUS_MAP = {
+      'available': { label: '可借用', cls: 'status-available' },
+      'pending_borrow': { label: '待审核', cls: 'status-pending_borrow' },
+      'borrowed': { label: '已借出', cls: 'status-borrowed' },
+      'pending_return': { label: '待归还', cls: 'status-pending_return' },
+      'damaged': { label: '已损坏', cls: 'status-damaged' },
+      'offline': { label: '已下架', cls: 'status-offline' },
+      'scrapped': { label: '已报废', cls: 'status-scrapped' }
+    };
+
+    async function loadDeviceDetail(id) {
+      var container = document.getElementById('detail-content');
+      try {
+        var result = await API.get('/devices/' + id);
+        var device = result.data || result;
+        var statusInfo = STATUS_MAP[device.status] || { label: device.status || '未知', cls: 'status-offline' };
+        var typeName = DEVICE_TYPES[device.type] || device.type || '未知';
+
+        var html = '<div class="card" style="display:flex;gap:24px;flex-wrap:wrap;">';
+        html += '<div style="flex:0 0 400px;max-width:100%;">';
+        html += '<img src="' + Utils.escapeHtml(device.image || '') + '" alt="' + Utils.escapeHtml(device.name) + '" style="width:100%;border-radius:8px;background-color:#f0f0f0;" onerror="this.src=\'../assets/placeholder.png\'">';
+        html += '</div>';
+        html += '<div style="flex:1;min-width:280px;">';
+        html += '<h3 style="font-size:24px;font-weight:600;margin-bottom:12px;">' + Utils.escapeHtml(device.name) + '</h3>';
+        html += '<p style="margin-bottom:8px;"><strong>类型：</strong>' + Utils.escapeHtml(typeName) + '</p>';
+        html += '<p style="margin-bottom:8px;"><strong>状态：</strong><span class="status-tag ' + statusInfo.cls + '">' + statusInfo.label + '</span></p>';
+        html += '<p style="margin-bottom:8px;"><strong>位置：</strong>' + Utils.escapeHtml(device.location || '未指定') + '</p>';
+        html += '<p style="margin-bottom:16px;"><strong>描述：</strong>' + Utils.escapeHtml(device.description || '暂无描述') + '</p>';
+
+        // 学生角色且设备可借用时显示申请按钮
+        var user = Storage.getUser();
+        if (user && user.role === 'student' && device.status === 'available') {
+          html += '<button class="btn btn-primary" id="apply-borrow-btn">申请借用</button>';
+        }
+
+        html += '</div></div>';
+        container.innerHTML = html;
+
+        // 绑定申请借用按钮
+        var applyBtn = document.getElementById('apply-borrow-btn');
+        if (applyBtn) {
+          applyBtn.addEventListener('click', function() {
+            openBorrowForm(device);
+          });
+        }
+      } catch (error) {
+        container.innerHTML = '<div class="empty-state"><p>加载失败：' + Utils.escapeHtml(error.message) + '</p></div>';
+        Toast.show(error.message || '加载设备详情失败', 'error');
+      }
+    }
+
+    function openBorrowForm(device) {
+      var contentHTML = '<div class="form-group">' +
+        '<label>设备名称</label>' +
+        '<p style="padding:10px 0;font-weight:500;">' + Utils.escapeHtml(device.name) + '</p>' +
+        '</div>' +
+        '<div class="form-group">' +
+        '<label for="borrow-reason">借用原因 <span style="color:#dc2626;">*</span></label>' +
+        '<textarea id="borrow-reason" class="form-textarea" placeholder="请输入借用原因" rows="3"></textarea>' +
+        '<span class="form-error" id="borrow-reason-error"></span>' +
+        '</div>' +
+        '<div class="form-group">' +
+        '<label for="borrow-return-time">预计归还时间 <span style="color:#dc2626;">*</span></label>' +
+        '<input type="datetime-local" id="borrow-return-time" class="form-input">' +
+        '<span class="form-error" id="borrow-return-time-error"></span>' +
+        '</div>' +
+        '<div class="modal-footer" style="margin-top:16px;">' +
+        '<button class="btn btn-outline" id="borrow-cancel-btn">取消</button>' +
+        '<button class="btn btn-primary" id="borrow-submit-btn">提交申请</button>' +
+        '</div>';
+
+      var overlay = Modal.custom('申请借用 - ' + Utils.escapeHtml(device.name), contentHTML);
+
+      overlay.querySelector('#borrow-cancel-btn').addEventListener('click', function() {
+        Modal.close(overlay);
+      });
+
+      overlay.querySelector('#borrow-submit-btn').addEventListener('click', async function() {
+        var reason = overlay.querySelector('#borrow-reason').value.trim();
+        var returnTime = overlay.querySelector('#borrow-return-time').value;
+        var reasonError = overlay.querySelector('#borrow-reason-error');
+        var timeError = overlay.querySelector('#borrow-return-time-error');
+        var submitBtn = overlay.querySelector('#borrow-submit-btn');
+
+        reasonError.textContent = '';
+        timeError.textContent = '';
+
+        var valid = true;
+        if (!reason) {
+          reasonError.textContent = '请输入借用原因';
+          valid = false;
+        }
+        if (!returnTime) {
+          timeError.textContent = '请选择预计归还时间';
+          valid = false;
+        }
+        if (!valid) return;
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = '提交中...';
+
+        try {
+          await API.post('/borrows', {
+            device_id: device.id,
+            borrow_reason: reason,
+            expected_return_time: returnTime
+          });
+          Toast.show('借用申请已提交', 'success');
+          Modal.close(overlay);
+        } catch (error) {
+          Toast.show(error.message || '提交失败', 'error');
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = '提交申请';
+        }
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>借用审核 - 校园设备借用与维修管理系统</title>
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/layout.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../index.html">校园设备管理</a>
+    </div>
+    <div class="navbar-menu" id="navbar-menu">
+      <a class="navbar-item" data-page="index" href="../index.html">设备大厅</a>
+      <a class="navbar-item" data-page="admin-devices" href="admin-devices.html">设备管理</a>
+      <a class="navbar-item active" data-page="admin-borrows" href="admin-borrows.html">借用审核</a>
+      <a class="navbar-item" data-page="admin-repairs" href="admin-repairs.html">报修管理</a>
+    </div>
+    <div class="navbar-user">
+      <span class="user-avatar" id="user-avatar"></span>
+      <span id="user-name"></span>
+      <button class="btn btn-outline" id="logout-btn" style="padding:4px 12px;font-size:12px;">退出</button>
+    </div>
+  </nav>
+
+  <div class="main-content full-width">
+    <div class="container">
+      <div class="page-header">
+        <h2>借用审核</h2>
+      </div>
+
+      <div class="card">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>申请人</th>
+                <th>设备名称</th>
+                <th>借用原因</th>
+                <th>申请时间</th>
+                <th>状态</th>
+                <th>操作</th>
+                <th>审核记录</th>
+              </tr>
+            </thead>
+            <tbody id="admin-borrow-tbody">
+              <tr><td colspan="7" style="text-align:center;padding:40px;">加载中...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="admin-borrow-paginator"></div>
+    </div>
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/toast.js"></script>
+  <script src="../js/modal.js"></script>
+  <script src="../js/paginator.js"></script>
+  <script src="../js/audit.js"></script>
+  <script>
+    // 路由守卫 - 要求 admin 角色
+    Auth.checkAuth('admin');
+
+    (function initNav() {
+      var user = Storage.getUser();
+      if (!user) return;
+      var avatar = document.getElementById('user-avatar');
+      var userName = document.getElementById('user-name');
+      if (avatar) avatar.textContent = (user.username || user.name || '?').charAt(0).toUpperCase();
+      if (userName) userName.textContent = user.username || user.name || '用户';
+    })();
+
+    document.getElementById('logout-btn').addEventListener('click', function() {
+      Auth.logout();
+    });
+
+    var STATUS_MAP = {
+      'pending': { label: '待审核', cls: 'status-pending_borrow' },
+      'approved': { label: '已通过', cls: 'status-available' },
+      'rejected': { label: '已驳回', cls: 'status-damaged' },
+      'borrowing': { label: '借用中', cls: 'status-borrowed' },
+      'pending_return': { label: '待归还确认', cls: 'status-pending_return' },
+      'returned': { label: '已归还', cls: 'status-available' },
+      'damaged_returned': { label: '已损坏', cls: 'status-damaged' }
+    };
+
+    var currentPage = 1;
+
+    async function loadAdminBorrows(page) {
+      page = page || 1;
+      currentPage = page;
+
+      var tbody = document.getElementById('admin-borrow-tbody');
+      if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;">加载中...</td></tr>';
+
+      try {
+        var result = await API.get('/borrows?page=' + page + '&page_size=' + AppConfig.PAGE_SIZE);
+        var borrows = result.data?.list || result.data?.items || result.items || [];
+        var total = result.data?.total || result.total || 0;
+        var totalPages = Paginator.calcTotalPages(total);
+
+        if (!borrows || borrows.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:60px;color:#999;">暂无借用申请</td></tr>';
+        } else {
+          var html = '';
+          borrows.forEach(function(item) {
+            var statusInfo = STATUS_MAP[item.status] || { label: item.status || '未知', cls: 'status-offline' };
+            var applicantName = (item.user && item.user.username) ? item.user.username : (item.username || '未知');
+            var deviceName = (item.device && item.device.name) ? item.device.name : (item.device_name || '未知设备');
+
+            html += '<tr>';
+            html += '<td>' + Utils.escapeHtml(applicantName) + '</td>';
+            html += '<td>' + Utils.escapeHtml(deviceName) + '</td>';
+            html += '<td>' + Utils.escapeHtml(item.borrow_reason || '-') + '</td>';
+            html += '<td>' + Utils.formatDate(item.created_at) + '</td>';
+            html += '<td><span class="status-tag ' + statusInfo.cls + '">' + statusInfo.label + '</span></td>';
+            html += '<td><div class="admin-actions" style="display:flex;gap:6px;flex-wrap:wrap;">';
+
+            if (item.status === 'pending') {
+              html += '<button class="btn btn-success" style="padding:4px 12px;font-size:12px;" onclick="handleApprove(' + item.id + ')">通过</button>';
+              html += '<button class="btn btn-danger" style="padding:4px 12px;font-size:12px;" onclick="handleReject(' + item.id + ')">驳回</button>';
+            }
+
+            if (item.status === 'pending_return') {
+              html += '<button class="btn btn-primary" style="padding:4px 12px;font-size:12px;" onclick="handleConfirmReturn(' + item.id + ')">确认归还</button>';
+            }
+
+            html += '</div></td>';
+            html += '<td><button class="btn btn-outline" style="padding:4px 12px;font-size:12px;" onclick="AuditViewer.show(\'borrow\',' + item.id + ',\'借用审核记录\')">审核记录</button></td>';
+            html += '</tr>';
+          });
+          tbody.innerHTML = html;
+        }
+
+        Paginator.render('#admin-borrow-paginator', page, totalPages, function(newPage) {
+          loadAdminBorrows(newPage);
+        });
+      } catch (error) {
+        if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:#dc2626;">加载失败：' + Utils.escapeHtml(error.message) + '</td></tr>';
+        Toast.show(error.message || '加载借用申请失败', 'error');
+      }
+    }
+
+    async function handleApprove(borrowId) {
+      var confirmed = await Modal.confirm('通过申请', '确定要批准该借用申请吗？');
+      if (!confirmed) return;
+      try {
+        await API.put('/borrows/' + borrowId + '/audit', { action: 'approve' });
+        Toast.show('申请已通过', 'success');
+        loadAdminBorrows(currentPage);
+      } catch (error) {
+        Toast.show(error.message || '操作失败', 'error');
+      }
+    }
+
+    async function handleReject(borrowId) {
+      var contentHTML = '<div class="form-group">' +
+        '<label for="reject-remark">驳回原因 <span style="color:#dc2626;">*</span></label>' +
+        '<textarea id="reject-remark" class="form-textarea" placeholder="请输入驳回原因" rows="3"></textarea>' +
+        '<span class="form-error" id="reject-remark-error"></span>' +
+        '</div>' +
+        '<div class="modal-footer">' +
+        '<button class="btn btn-outline" id="reject-cancel-btn">取消</button>' +
+        '<button class="btn btn-danger" id="reject-submit-btn">确认驳回</button>' +
+        '</div>';
+
+      var overlay = Modal.custom('驳回借用申请', contentHTML);
+
+      overlay.querySelector('#reject-cancel-btn').addEventListener('click', function() {
+        Modal.close(overlay);
+      });
+
+      overlay.querySelector('#reject-submit-btn').addEventListener('click', async function() {
+        var remark = overlay.querySelector('#reject-remark').value.trim();
+        var remarkError = overlay.querySelector('#reject-remark-error');
+        remarkError.textContent = '';
+
+        if (!remark) {
+          remarkError.textContent = '请输入驳回原因';
+          return;
+        }
+
+        var submitBtn = overlay.querySelector('#reject-submit-btn');
+        submitBtn.disabled = true;
+        submitBtn.textContent = '提交中...';
+
+        try {
+          await API.put('/borrows/' + borrowId + '/audit', { action: 'reject', remark: remark });
+          Toast.show('申请已驳回', 'success');
+          Modal.close(overlay);
+          loadAdminBorrows(currentPage);
+        } catch (error) {
+          Toast.show(error.message || '操作失败', 'error');
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = '确认驳回';
+        }
+      });
+    }
+
+    async function handleConfirmReturn(borrowId) {
+      var confirmed = await Modal.confirm('确认归还', '确定要确认该设备已归还吗？');
+      if (!confirmed) return;
+      try {
+        await API.put('/borrows/' + borrowId + '/confirm-return');
+        Toast.show('归还已确认', 'success');
+        loadAdminBorrows(currentPage);
+      } catch (error) {
+        Toast.show(error.message || '操作失败', 'error');
+      }
+    }
+
+    loadAdminBorrows(1);
+  </script>
+</body>
+</html>

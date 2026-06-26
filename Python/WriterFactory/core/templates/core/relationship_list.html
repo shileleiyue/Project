@@ -1,0 +1,50 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}{{ work.title }} - 关系管理{% endblock %}
+
+{% block content %}
+<div style="max-width:1000px;margin:0 auto;padding:20px;">
+    <a href="{% url 'work_detail' work.id %}" class="back-link">← 返回作品详情</a>
+    <div class="page-header">
+        <h2>{{ work.title }} - 关系管理</h2>
+        <a href="{% url 'relationship_add' work.id %}" class="btn">+ 添加关系</a>
+    </div>
+    {% if relationships %}
+        <div class="glass-card">
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>角色A</th>
+                            <th>角色B</th>
+                            <th>关系类型</th>
+                            <th>描述</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for rel in relationships %}
+                            <tr>
+                                <td>{{ rel.character1.name }}</td>
+                                <td>{{ rel.character2.name }}</td>
+                                <td>{{ rel.relation_type }}</td>
+                                <td>{{ rel.description|default:'-' }}</td>
+                                <td>
+                                    <a href="{% url 'relationship_edit' work.id rel.id %}" class="btn btn-sm">编辑</a>
+                                    <form method="post" action="{% url 'relationship_delete' work.id rel.id %}" style="display:inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('确定删除该关系？')">删除</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% else %}
+        <div class="empty-state"><p>暂无关系，点击上方"添加关系"开始创建。</p></div>
+    {% endif %}
+</div>
+{% endblock %}

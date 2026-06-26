@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block title %}消息{% endblock %}
+{% block page_title %}消息管理{% endblock %}
+{% block content %}
+<div class="card">
+    <div class="search-bar">
+        <form method="get" style="display:flex;flex:1;gap:8px;flex-wrap:wrap;">
+            <input type="text" name="q" placeholder="搜索消息内容..." value="{{ query }}" style="flex:1;">
+            <select name="type">
+                <option value="">全部类型</option>
+                <option value="text" {% if msg_type == 'text' %}selected{% endif %}>文本</option>
+                <option value="image" {% if msg_type == 'image' %}selected{% endif %}>图片</option>
+                <option value="file" {% if msg_type == 'file' %}selected{% endif %}>文件</option>
+                <option value="link" {% if msg_type == 'link' %}selected{% endif %}>链接</option>
+            </select>
+            <select name="tag">
+                <option value="">全部标签</option>
+                {% for tag in tags %}
+                <option value="{{ tag.id }}" {% if tag_id == tag.id|stringformat:'s' %}selected{% endif %}>{{ tag.name }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn btn-primary">搜索</button>
+            <a href="?starred=1" class="btn {% if starred %}btn-primary{% else %}btn-outline{% endif %}">星标</a>
+        </form>
+    </div>
+    <div style="margin-bottom:16px;">
+        <form method="post" action="{% url 'core:tag_create' %}" style="display:flex;gap:8px;align-items:center;">
+            {% csrf_token %}
+            <input type="text" name="name" placeholder="新标签名称" style="padding:6px 10px;border:1px solid #d9d9d9;border-radius:4px;font-size:13px;">
+            <input type="color" name="color" value="#1890ff" style="width:36px;height:32px;border:1px solid #d9d9d9;border-radius:4px;">
+            <button type="submit" class="btn btn-sm btn-primary">创建标签</button>
+        </form>
+    </div>
+    {% if messages %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>联系人</th>
+                <th>时间</th>
+                <th>类型</th>
+                <th>内容</th>
+                <th>标签</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for msg in messages %}
+            <tr>
+                <td>{{ msg.contact.name }}</td>
+                <td style="font-size:12px;color:#888;white-space:nowrap;">{{ msg.timestamp|date:'m-d H:i' }}</td>
+                <td><span class="msg-type-badge">{{ msg.get_msg_type_display }}</span></td>
+                <td style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ msg.content|truncatechars:50 }}</td>
+                <td>
+                    {% for tag in msg.tags.all %}
+                    <span class="tag" style="background:{{ tag.color }};">{{ tag.name }}</span>
+                    {% endfor %}
+                </td>
+                <td style="white-space:nowrap;">
+                    <a href="{% url 'core:toggle_star' msg.id %}" class="btn btn-sm {% if msg.is_starred %}starred{% endif %}">
+                        {% if msg.is_starred %}★{% else %}☆{% endif %}
+                    </a>
+                    <a href="{% url 'scheduler:extract_schedule' msg.id %}" class="btn btn-sm btn-primary">日程</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state"><p>暂无消息数据</p></div>
+    {% endif %}
+</div>
+{% endblock %}

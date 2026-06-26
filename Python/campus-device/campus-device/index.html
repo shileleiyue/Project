@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>设备大厅 - 校园设备借用与维修管理系统</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/common.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/device.css">
+</head>
+<body>
+  <!-- 导航栏 -->
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="index.html">校园设备管理</a>
+    </div>
+    <div class="navbar-menu" id="navbar-menu">
+      <a class="navbar-item active" data-page="index" href="index.html">设备大厅</a>
+      <a class="navbar-item" data-page="my-borrows" href="pages/my-borrows.html" id="nav-my-borrows" style="display:none;">我的借用</a>
+      <a class="navbar-item" data-page="my-repairs" href="pages/my-repairs.html" id="nav-my-repairs" style="display:none;">我的报修</a>
+      <a class="navbar-item" data-page="admin-devices" href="pages/admin-devices.html" id="nav-admin-devices" style="display:none;">设备管理</a>
+      <a class="navbar-item" data-page="admin-borrows" href="pages/admin-borrows.html" id="nav-admin-borrows" style="display:none;">借用审核</a>
+      <a class="navbar-item" data-page="admin-repairs" href="pages/admin-repairs.html" id="nav-admin-repairs" style="display:none;">报修管理</a>
+      <a class="navbar-item" data-page="repair-tasks" href="pages/repair-tasks.html" id="nav-repair-tasks" style="display:none;">维修工单</a>
+    </div>
+    <div class="navbar-user">
+      <span class="user-avatar" id="user-avatar"></span>
+      <span id="user-name"></span>
+      <button class="btn btn-outline" id="logout-btn" style="padding:4px 12px;font-size:12px;">退出</button>
+    </div>
+  </nav>
+
+  <!-- 主内容区（无侧边栏，全宽） -->
+  <div class="main-content full-width">
+    <div class="container">
+      <div class="page-header">
+        <h2>设备大厅</h2>
+        <span id="device-count" style="font-size:14px;color:var(--color-text-secondary);"></span>
+      </div>
+
+      <!-- 搜索栏 -->
+      <div class="search-bar">
+        <input type="text" id="search-keyword" class="search-input" placeholder="搜索设备名称...">
+        <select id="search-type" class="form-select">
+          <option value="">全部类型</option>
+          <option value="laptop">笔记本电脑</option>
+          <option value="phone">手机</option>
+          <option value="tablet">平板电脑</option>
+          <option value="camera">相机</option>
+          <option value="projector">投影仪</option>
+          <option value="other">其他</option>
+        </select>
+        <select id="search-status" class="form-select">
+          <option value="">全部状态</option>
+          <option value="available">可借用</option>
+          <option value="borrowed">已借出</option>
+          <option value="damaged">已损坏</option>
+          <option value="offline">已下架</option>
+        </select>
+      </div>
+
+      <!-- 设备卡片网格 -->
+      <div class="device-grid" id="device-grid">
+        <div class="loading-spinner">加载中...</div>
+      </div>
+
+      <!-- 分页器 -->
+      <div id="device-paginator"></div>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/toast.js"></script>
+  <script src="js/modal.js"></script>
+  <script src="js/paginator.js"></script>
+  <script src="js/device.js"></script>
+  <script>
+    // 路由守卫
+    Auth.checkAuth();
+
+    // 根据角色显示导航菜单
+    (function initNav() {
+      var user = Storage.getUser();
+      if (!user) return;
+
+      var avatar = document.getElementById('user-avatar');
+      var userName = document.getElementById('user-name');
+      if (avatar) avatar.textContent = (user.username || user.name || '?').charAt(0).toUpperCase();
+      if (userName) userName.textContent = user.username || user.name || '用户';
+
+      var role = user.role;
+      var roleMap = {
+        'student': ['nav-my-borrows', 'nav-my-repairs'],
+        'admin': ['nav-admin-devices', 'nav-admin-borrows', 'nav-admin-repairs'],
+        'repairer': ['nav-repair-tasks']
+      };
+
+      var ids = roleMap[role] || [];
+      ids.forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) el.style.display = '';
+      });
+    })();
+
+    // 退出登录
+    document.getElementById('logout-btn').addEventListener('click', function() {
+      Auth.logout();
+    });
+
+    // 初始化
+    DeviceModule.initSearchListeners();
+    DeviceModule.loadDevices(1);
+  </script>
+</body>
+</html>

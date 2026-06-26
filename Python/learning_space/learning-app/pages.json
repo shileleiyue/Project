@@ -1,0 +1,28 @@
+{
+  "pages": [
+    { "path": "pages/login/login", "style": { "navigationBarTitleText": "登录", "navigationStyle": "custom" } },
+    { "path": "pages/home/home", "style": { "navigationBarTitleText": "首页" } },
+    { "path": "pages_student/dashboard/dashboard", "style": { "navigationBarTitleText": "学习总览" } },
+    { "path": "pages_student/courses/courses", "style": { "navigationBarTitleText": "我的课程" } },
+    { "path": "pages_student/exam/exam", "style": { "navigationBarTitleText": "考试中心" } },
+    { "path": "pages_teacher/dashboard/dashboard", "style": { "navigationBarTitleText": "教师工作台" } },
+    { "path": "pages_teacher/questions/questions", "style": { "navigationBarTitleText": "题库管理" } },
+    { "path": "pages_admin/students/students", "style": { "navigationBarTitleText": "学生信息管理" } }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "个性化网络学习空间",
+    "navigationBarBackgroundColor": "#ffffff",
+    "backgroundColor": "#f5f6fa"
+  },
+  "tabBar": {
+    "color": "#999",
+    "selectedColor": "#409eff",
+    "borderStyle": "black",
+    "backgroundColor": "#ffffff",
+    "list": [
+      { "pagePath": "pages/home/home", "text": "首页", "iconPath": "static/home.png", "selectedIconPath": "static/home-active.png" },
+      { "pagePath": "pages/login/login", "text": "我的", "iconPath": "static/user.png", "selectedIconPath": "static/user-active.png" }
+    ]
+  }
+}

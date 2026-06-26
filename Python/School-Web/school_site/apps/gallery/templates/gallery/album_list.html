@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}校园风光 - {{ school_info.name }}{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/pages/inner.css' %}">{% endblock %}
+
+{% block content %}
+<div class="breadcrumb"><div class="container"><ol><li><a href="{% url 'core:home' %}">首页</a></li><li>校园风光</li></ol></div></div>
+<section class="container" data-animate="fade-up">
+  <h1>相册列表</h1>
+  <div class="card-grid">
+    {% for album in albums %}
+    <a href="{% url 'gallery:album_detail' slug=album.slug %}" class="card">
+      {% with album.images.first as cover %}
+      {% if cover %}<img src="{{ cover.image.url }}" alt="{{ album.title }}">{% endif %}
+      {% endwith %}
+      <div class="card-body">
+        <h3>{{ album.title }}</h3>
+        <p>{{ album.images.count }} 张照片</p>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

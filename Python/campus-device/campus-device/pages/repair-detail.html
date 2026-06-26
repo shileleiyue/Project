@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>维修详情 - 校园设备借用与维修管理系统</title>
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/repair.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../index.html">校园设备管理</a>
+    </div>
+    <div class="navbar-menu" id="navbar-menu">
+      <a class="navbar-item" data-page="index" href="../index.html">设备大厅</a>
+      <a class="navbar-item" data-page="repair-tasks" href="repair-tasks.html">维修工单</a>
+    </div>
+    <div class="navbar-user">
+      <span class="user-avatar" id="user-avatar"></span>
+      <span id="user-name"></span>
+      <button class="btn btn-outline" id="logout-btn" style="padding:4px 12px;font-size:12px;">退出</button>
+    </div>
+  </nav>
+
+  <div class="main-content full-width">
+    <div class="container">
+      <div class="page-header">
+        <h2>维修详情</h2>
+        <button class="btn btn-outline" onclick="window.history.back()">返回</button>
+      </div>
+
+      <div id="repair-detail-content">
+        <div class="loading-spinner">加载中...</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/toast.js"></script>
+  <script src="../js/modal.js"></script>
+  <script src="../js/upload.js"></script>
+  <script>
+    // 路由守卫 - 要求 repairer 角色
+    Auth.checkAuth('repairer');
+
+    (function initNav() {
+      var user = Storage.getUser();
+      if (!user) return;
+      var avatar = document.getElementById('user-avatar');
+      var userName = document.getElementById('user-name');
+      if (avatar) avatar.textContent = (user.username || user.name || '?').charAt(0).toUpperCase();
+      if (userName) userName.textContent = user.username || user.name || '用户';
+    })();
+
+    document.getElementById('logout-btn').addEventListener('click', function() {
+      Auth.logout();
+    });
+
+    var STATUS_MAP = {
+      'pending': { label: '待处理', cls: 'status-repair_pending' },
+      'assigned': { label: '已分配', cls: 'status-repair_pending' },
+      'repairing': { label: '维修中', cls: 'status-repairing' },
+      'repaired': { label: '已修复', cls: 'status-repaired' },
+      'unfixable': { label: '无法修复', cls: 'status-damaged' },
+      'completed': { label: '已完成', cls: 'status-available' }
+    };
+
+    var repairId = Utils.getQueryParam('id');
+    var currentRepair = null;
+
+    if (!repairId) {
+      document.getElementById('repair-detail-content').innerHTML = '<div class="empty-state"><p>工单ID不存在</p></div>';
+    } else {
+      loadRepairDetail(repairId);
+    }
+
+    async function loadRepairDetail(id) {
+      var container = document.getElementById('repair-detail-content');
+      try {
+        var result = await API.get('/repairs/' + id);
+        currentRepair = result.data || result;
+        renderRepairDetail(currentRepair);
+      } catch (error) {
+        container.innerHTML = '<div class="empty-state"><p>加载失败：' + Utils.escapeHtml(error.message) + '</p></div>';
+        Toast.show(error.message || '加载维修详情失败', 'error');
+      }
+    }
+
+    function renderRepairDetail(repair) {
+      var container = document.getElementById('repair-detail-content');
+      var statusInfo = STATUS_MAP[repair.status] || { label: repair.status || '未知', cls: 'status-offline' };
+      var deviceName = (repair.device && repair.device.name) ? repair.device.name : (repair.device_name || '未知设备');
+
+      var html = '<div class="card">';
+      html += '<h3 style="font-size:20px;font-weight:600;margin-bottom:16px;">' + Utils.escapeHtml(deviceName) + '</h3>';
+      html += '<p style="margin-bottom:8px;"><strong>故障描述：</strong>' + Utils.escapeHtml(repair.description || repair.fault_description || '-') + '</p>';
+      html += '<p style="margin-bottom:8px;"><strong>当前状态：</strong><span class="status-tag ' + statusInfo.cls + '">' + statusInfo.label + '</span></p>';
+      html += '<p style="margin-bottom:8px;"><strong>创建时间：</strong>' + Utils.formatDate(repair.created_at) + '</p>';
+
+      if (repair.repair_process) {
+        html += '<p style="margin-bottom:8px;"><strong>维修过程：</strong>' + Utils.escapeHtml(repair.repair_process) + '</p>';
+      }
+
+      // 维修图片展示
+      if (repair.images && repair.images.length > 0) {
+        html += '<p style="margin-bottom:8px;"><strong>维修图片：</strong></p>';
+        html += '<div class="repair-images">';
+        repair.images.forEach(function(img) {
+          var imgUrl = typeof img === 'string' ? img : (img.image_path || '');
+          html += '<img src="' + Utils.escapeHtml(imgUrl) + '" alt="维修图片" onerror="this.style.display=\'none\'">';
+        });
+        html += '</div>';
+      }
+
+      // 操作按钮区域
+      html += '<div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap;" id="repair-actions">';
+
+      if (repair.status === 'assigned') {
+        html += '<button class="btn btn-primary" id="accept-task-btn">接收任务</button>';
+      }
+
+      if (repair.status === 'repairing') {
+        html += '<button class="btn btn-primary" id="complete-repair-btn">维修完成</button>';
+      }
+
+      html += '</div>';
+      html += '</div>';
+
+      container.innerHTML = html;
+
+      // 绑定接收任务按钮
+      var acceptBtn = document.getElementById('accept-task-btn');
+      if (acceptBtn) {
+        acceptBtn.addEventListener('click', async function() {
+          var confirmed = await Modal.confirm('接收任务', '确定要接收该维修任务吗？');
+          if (!confirmed) return;
+          try {
+            await API.put('/repairs/' + repair.id + '/status', { status: 'repairing' });
+            Toast.show('任务已接收', 'success');
+            loadRepairDetail(repair.id);
+          } catch (error) {
+            Toast.show(error.message || '操作失败', 'error');
+          }
+        });
+      }
+
+      // 绑定维修完成按钮
+      var completeBtn = document.getElementById('complete-repair-btn');
+      if (completeBtn) {
+        completeBtn.addEventListener('click', function() {
+          openCompleteRepairForm(repair);
+        });
+      }
+    }
+
+    function openCompleteRepairForm(repair) {
+      var contentHTML = '<div class="form-group">' +
+        '<label for="repair-process">维修过程 <span style="color:#dc2626;">*</span></label>' +
+        '<textarea id="repair-process" class="form-textarea" placeholder="请描述维修过程" rows="4"></textarea>' +
+        '<span class="form-error" id="repair-process-error"></span>' +
+        '</div>' +
+        '<div class="form-group">' +
+        '<label>维修图片（选填）</label>' +
+        '<div id="repair-upload-area"></div>' +
+        '</div>' +
+        '<div class="modal-footer">' +
+        '<button class="btn btn-outline" id="repair-complete-cancel">取消</button>' +
+        '<button class="btn btn-primary" id="repair-complete-submit">提交完成</button>' +
+        '</div>';
+
+      var overlay = Modal.custom('维修完成', contentHTML);
+      var imageFiles = [];
+
+      Upload.createUploadArea('#repair-upload-area', {
+        onChange: function(files) {
+          imageFiles = files;
+        },
+        onError: function(msg) {
+          Toast.show(msg, 'error');
+        }
+      });
+
+      overlay.querySelector('#repair-complete-cancel').addEventListener('click', function() {
+        Modal.close(overlay);
+      });
+
+      overlay.querySelector('#repair-complete-submit').addEventListener('click', async function() {
+        var process = overlay.querySelector('#repair-process').value.trim();
+        var processError = overlay.querySelector('#repair-process-error');
+        processError.textContent = '';
+
+        if (!process) {
+          processError.textContent = '请输入维修过程';
+          return;
+        }
+
+        var submitBtn = overlay.querySelector('#repair-complete-submit');
+        submitBtn.disabled = true;
+        submitBtn.textContent = '提交中...';
+
+        try {
+          // 更新维修状态
+          await API.put('/repairs/' + repair.id + '/status', {
+            status: 'repaired',
+            repair_process: process
+          });
+
+          // 如果有图片，上传图片
+          if (imageFiles.length > 0) {
+            var formData = new FormData();
+            formData.append('image_type', 'after_repair');
+            imageFiles.forEach(function(file) {
+              formData.append('files', file);
+            });
+            await API.post('/repairs/' + repair.id + '/images', formData, true);
+          }
+
+          Toast.show('维修完成，已提交', 'success');
+          Modal.close(overlay);
+          loadRepairDetail(repair.id);
+        } catch (error) {
+          Toast.show(error.message || '提交失败', 'error');
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = '提交完成';
+        }
+      });
+    }
+  </script>
+</body>
+</html>

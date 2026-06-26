@@ -1,0 +1,23 @@
+{% for node in nodes %}
+    <li class="tech-node" style="margin:8px 0;">
+        <div class="glass-card" style="display:flex;align-items:center;gap:8px;padding:10px 16px;">
+            <span style="font-weight:600;font-size:15px;">{{ node.name }}</span>
+            {% if node.description %}
+                <span style="font-size:13px;color:var(--text-secondary);margin-left:8px;">- {{ node.description|truncatechars:50 }}</span>
+            {% endif %}
+            <div style="margin-left:auto;display:flex;gap:4px;">
+                <a href="{% url 'tech_add' work.id %}?parent_id={{ node.id }}" class="btn btn-success btn-sm">+子</a>
+                <a href="{% url 'tech_edit' work.id node.id %}" class="btn btn-sm">编辑</a>
+                <form method="post" action="{% url 'tech_delete' work.id node.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('确定删除节点「{{ node.name }}」？子节点将提升为根节点。')">删除</button>
+                </form>
+            </div>
+        </div>
+        {% if node.children_list %}
+            <ul style="padding-left:30px;list-style:none;">
+                {% include 'core/tech_tree_node.html' with nodes=node.children_list %}
+            </ul>
+        {% endif %}
+    </li>
+{% endfor %}

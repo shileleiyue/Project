@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>报修管理 - 校园设备借用与维修管理系统</title>
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/layout.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a href="../index.html">校园设备管理</a>
+    </div>
+    <div class="navbar-menu" id="navbar-menu">
+      <a class="navbar-item" data-page="index" href="../index.html">设备大厅</a>
+      <a class="navbar-item" data-page="admin-devices" href="admin-devices.html">设备管理</a>
+      <a class="navbar-item" data-page="admin-borrows" href="admin-borrows.html">借用审核</a>
+      <a class="navbar-item active" data-page="admin-repairs" href="admin-repairs.html">报修管理</a>
+    </div>
+    <div class="navbar-user">
+      <span class="user-avatar" id="user-avatar"></span>
+      <span id="user-name"></span>
+      <button class="btn btn-outline" id="logout-btn" style="padding:4px 12px;font-size:12px;">退出</button>
+    </div>
+  </nav>
+
+  <div class="main-content full-width">
+    <div class="container">
+      <div class="page-header">
+        <h2>报修管理</h2>
+        <div class="actions">
+          <button class="btn btn-primary" id="create-repair-btn">创建工单</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>设备名称</th>
+                <th>报修人</th>
+                <th>故障描述</th>
+                <th>状态</th>
+                <th>维修人员</th>
+                <th>操作</th>
+                <th>审核记录</th>
+              </tr>
+            </thead>
+            <tbody id="admin-repair-tbody">
+              <tr><td colspan="7" style="text-align:center;padding:40px;">加载中...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="admin-repair-paginator"></div>
+    </div>
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/toast.js"></script>
+  <script src="../js/modal.js"></script>
+  <script src="../js/paginator.js"></script>
+  <script src="../js/audit.js"></script>
+  <script>
+    // 路由守卫 - 要求 admin 角色
+    Auth.checkAuth('admin');
+
+    (function initNav() {
+      var user = Storage.getUser();
+      if (!user) return;
+      var avatar = document.getElementById('user-avatar');
+      var userName = document.getElementById('user-name');
+      if (avatar) avatar.textContent = (user.username || user.name || '?').charAt(0).toUpperCase();
+      if (userName) userName.textContent = user.username || user.name || '用户';
+    })();
+
+    document.getElementById('logout-btn').addEventListener('click', function() {
+      Auth.logout();
+    });
+
+    var STATUS_MAP = {
+      'pending': { label: '待处理', cls: 'status-repair_pending' },
+      'assigned': { label: '已分配', cls: 'status-repair_pending' },
+      'repairing': { label: '维修中', cls: 'status-repairing' },
+      'repaired': { label: '已修复', cls: 'status-repaired' },
+      'unfixable': { label: '无法修复', cls: 'status-damaged' },
+      'completed': { label: '已完成', cls: 'status-available' }
+    };
+
+    var currentPage = 1;
+
+    async function loadAdminRepairs(page) {
+      page = page || 1;
+      currentPage = page;
+
+      var tbody = document.getElementById('admin-repair-tbody');
+      if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;">加载中...</td></tr>';
+
+      try {
+        var result = await API.get('/repairs?page=' + page + '&page_size=' + AppConfig.PAGE_SIZE);
+        var repairs = result.data?.list || result.data?.items || result.items || [];
+        var total = result.data?.total || result.total || 0;
+        var totalPages = Paginator.calcTotalPages(total);
+
+        if (!repairs || repairs.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:60px;color:#999;">暂无报修工单</td></tr>';
+        } else {
+          var html = '';
+          repairs.forEach(function(item) {
+            var statusInfo = STATUS_MAP[item.status] || { label: item.status || '未知', cls: 'status-offline' };
+            var deviceName = (item.device && item.device.name) ? item.device.name : (item.device_name || '未知设备');
+            var reporterName = (item.user && item.user.username) ? item.user.username : (item.reporter_name || '未知');
+            var repairerName = (item.assigned_user && item.assigned_user.username) ? item.assigned_user.username : (item.assigned_to_name || '-');
+
+            html += '<tr>';
+            html += '<td>' + Utils.escapeHtml(deviceName) + '</td>';
+            html += '<td>' + Utils.escapeHtml(reporterName) + '</td>';
+            html += '<td>' + Utils.escapeHtml(item.description || item.fault_description || '-') + '</td>';
+            html += '<td><span class="status-tag ' + statusInfo.cls + '">' + statusInfo.label + '</span></td>';
+            html += '<td>' + Utils.escapeHtml(repairerName) + '</td>';
+            html += '<td><div class="admin-actions" style="display:flex;gap:6px;flex-wrap:wrap;">';
+
+            if (item.status === 'pending') {
+              html += '<button class="btn btn-primary" style="padding:4px 12px;font-size:12px;" onclick="handleAssign(' + item.id + ')">分配维修人员</button>';
+            }
+
+            if (item.status === 'repaired') {
+              html += '<button class="btn btn-success" style="padding:4px 12px;font-size:12px;" onclick="handleConfirmComplete(' + item.id + ')">确认完成</button>';
+            }
+
+            html += '</div></td>';
+            html += '<td><button class="btn btn-outline" style="padding:4px 12px;font-size:12px;" onclick="AuditViewer.show(\'repair\',' + item.id + ',\'维修审核记录\')">审核记录</button></td>';
+            html += '</tr>';
+          });
+          tbody.innerHTML = html;
+        }
+
+        Paginator.render('#admin-repair-paginator', page, totalPages, function(newPage) {
+          loadAdminRepairs(newPage);
+        });
+      } catch (error) {
+        if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:#dc2626;">加载失败：' + Utils.escapeHtml(error.message) + '</td></tr>';
+        Toast.show(error.message || '加载报修工单失败', 'error');
+      }
+    }
+
+    // 创建工单
+    document.getElementById('create-repair-btn').addEventListener('click', function() {
+      openCreateRepairForm();
+    });
+
+    async function openCreateRepairForm() {
+      // 加载设备列表供选择
+      var deviceOptions = '<option value="">请选择设备</option>';
+      try {
+        var devicesResult = await API.get('/devices?page_size=100');
+        var devices = devicesResult.data?.list || devicesResult.data?.items || devicesResult.items || [];
+        devices.forEach(function(d) {
+          deviceOptions += '<option value="' + d.id + '">' + Utils.escapeHtml(d.name) + '</option>';
+        });
+      } catch (e) {
+        // 加载设备列表失败，仍然允许手动输入
+      }
+
+      var contentHTML = '<div class="form-group">' +
+        '<label for="repair-device-select">设备 <span style="color:#dc2626;">*</span></label>' +
+        '<select id="repair-device-select" class="form-select">' + deviceOptions + '</select>' +
+        '<span class="form-error" id="repair-device-error"></span>' +
+        '</div>' +
+        '<div class="form-group">' +
+        '<label for="repair-desc">故障描述 <span style="color:#dc2626;">*</span></label>' +
+        '<textarea id="repair-desc" class="form-textarea" placeholder="请描述设备故障情况" rows="4"></textarea>' +
+        '<span class="form-error" id="repair-desc-error"></span>' +
+        '</div>' +
+        '<div class="modal-footer">' +
+        '<button class="btn btn-outline" id="repair-form-cancel">取消</button>' +
+        '<button class="btn btn-primary" id="repair-form-submit">创建工单</button>' +
+        '</div>';
+
+      var overlay = Modal.custom('创建报修工单', contentHTML);
+
+      overlay.querySelector('#repair-form-cancel').addEventListener('click', function() {
+        Modal.close(overlay);
+      });
+
+      overlay.querySelector('#repair-form-submit').addEventListener('click', async function() {
+        var deviceId = overlay.querySelector('#repair-device-select').value;
+        var desc = overlay.querySelector('#repair-desc').value.trim();
+        var deviceError = overlay.querySelector('#repair-device-error');
+        var descError = overlay.querySelector('#repair-desc-error');
+        deviceError.textContent = '';
+        descError.textContent = '';
+
+        var valid = true;
+        if (!deviceId) { deviceError.textContent = '请选择设备'; valid = false; }
+        if (!desc) { descError.textContent = '请输入故障描述'; valid = false; }
+        if (!valid) return;
+
+        var submitBtn = overlay.querySelector('#repair-form-submit');
+        submitBtn.disabled = true;
+        submitBtn.textContent = '创建中...';
+
+        try {
+          await API.post('/repairs', { device_id: parseInt(deviceId), fault_description: desc });
+          Toast.show('工单创建成功', 'success');
+          Modal.close(overlay);
+          loadAdminRepairs(1);
+        } catch (error) {
+          Toast.show(error.message || '创建失败', 'error');
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = '创建工单';
+        }
+      });
+    }
+
+    // 分配维修人员
+    async function handleAssign(repairId) {
+      // 加载维修人员列表
+      var repairerOptions = '<option value="">请选择维修人员</option>';
+      try {
+        var usersResult = await API.get('/users?role=repairer');
+        var users = usersResult.data?.list || usersResult.data?.items || usersResult.items || [];
+        users.forEach(function(u) {
+          repairerOptions += '<option value="' + u.id + '">' + Utils.escapeHtml(u.username || u.name) + '</option>';
+        });
+      } catch (e) {
+        Toast.show('加载维修人员列表失败', 'error');
+        return;
+      }
+
+      var contentHTML = '<div class="form-group">' +
+        '<label for="assign-repairer-select">维修人员 <span style="color:#dc2626;">*</span></label>' +
+        '<select id="assign-repairer-select" class="form-select">' + repairerOptions + '</select>' +
+        '<span class="form-error" id="assign-repairer-error"></span>' +
+        '</div>' +
+        '<div class="modal-footer">' +
+        '<button class="btn btn-outline" id="assign-cancel-btn">取消</button>' +
+        '<button class="btn btn-primary" id="assign-submit-btn">确认分配</button>' +
+        '</div>';
+
+      var overlay = Modal.custom('分配维修人员', contentHTML);
+
+      overlay.querySelector('#assign-cancel-btn').addEventListener('click', function() {
+        Modal.close(overlay);
+      });
+
+      overlay.querySelector('#assign-submit-btn').addEventListener('click', async function() {
+        var assignedTo = overlay.querySelector('#assign-repairer-select').value;
+        var error = overlay.querySelector('#assign-repairer-error');
+        error.textContent = '';
+
+        if (!assignedTo) {
+          error.textContent = '请选择维修人员';
+          return;
+        }
+
+        var submitBtn = overlay.querySelector('#assign-submit-btn');
+        submitBtn.disabled = true;
+        submitBtn.textContent = '提交中...';
+
+        try {
+          await API.put('/repairs/' + repairId + '/assign', { assigned_to: parseInt(assignedTo) });
+          Toast.show('分配成功', 'success');
+          Modal.close(overlay);
+          loadAdminRepairs(currentPage);
+        } catch (error) {
+          Toast.show(error.message || '分配失败', 'error');
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = '确认分配';
+        }
+      });
+    }
+
+    // 确认完成
+    async function handleConfirmComplete(repairId) {
+      var confirmed = await Modal.confirm('确认完成', '确定该维修工单已完成吗？');
+      if (!confirmed) return;
+      try {
+        await API.put('/repairs/' + repairId + '/confirm');
+        Toast.show('工单已确认完成', 'success');
+        loadAdminRepairs(currentPage);
+      } catch (error) {
+        Toast.show(error.message || '操作失败', 'error');
+      }
+    }
+
+    loadAdminRepairs(1);
+  </script>
+</body>
+</html>

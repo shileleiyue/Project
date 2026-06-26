@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}站点地图 - {{ school_info.name }}{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/pages/sitemap.css' %}">{% endblock %}
+
+{% block content %}
+<div class="breadcrumb">
+  <div class="container">
+    <ol>
+      <li><a href="{% url 'core:home' %}">首页</a></li>
+      <li>站点地图</li>
+    </ol>
+  </div>
+</div>
+<section class="page-header" data-animate="fade-in">
+  <div class="container">
+    <h1>站点地图</h1>
+  </div>
+</section>
+
+<section class="sitemap-section container" data-animate="fade-up">
+  <div class="sitemap-tree">
+    <ul class="sitemap-root">
+      {% for page in pages %}
+        <li class="sitemap-category">
+          {% if page.url %}
+            <a href="{{ page.url }}" class="sitemap-link sitemap-root-link">{{ page.name }}</a>
+          {% else %}
+            <span class="sitemap-label sitemap-root-link">{{ page.name }}</span>
+          {% endif %}
+
+          {% if page.children %}
+            <ul class="sitemap-children">
+              {% for child in page.children %}
+                <li class="sitemap-item">
+                  {% if child.url and child.children is not defined %}
+                    <a href="{{ child.url }}" class="sitemap-link">{{ child.name }}</a>
+                  {% elif child.children is defined %}
+                    <span class="sitemap-label">{{ child.name }}</span>
+                    {% if child.children %}
+                      <ul class="sitemap-grandchildren">
+                        {% for sub in child.children %}
+                          <li class="sitemap-item">
+                            <a href="{{ sub.url }}" class="sitemap-link">{{ sub.name }}</a>
+                          </li>
+                        {% endfor %}
+                      </ul>
+                    {% endif %}
+                  {% else %}
+                    <span class="sitemap-label">{{ child.name }}</span>
+                  {% endif %}
+                </li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}{% if account %}编辑账户{% else %}添加账户{% endif %}{% endblock %}
+{% block page_title %}{% if account %}编辑账户{% else %}添加微信账户{% endif %}{% endblock %}
+{% block content %}
+<div class="card" style="max-width:600px;">
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label>账户名称</label>
+            <input type="text" name="name" value="{{ account.name|default:'' }}" required>
+        </div>
+        <div class="form-group">
+            <label>平台类型</label>
+            <select name="platform" {% if account %}disabled{% endif %}>
+                <option value="wechat_work" {% if account.platform == 'wechat_work' or not account %}selected{% endif %}>企业微信</option>
+                <option value="personal" {% if account.platform == 'personal' %}selected{% endif %}>个人微信</option>
+                <option value="official_account" {% if account.platform == 'official_account' %}selected{% endif %}>微信公众号</option>
+            </select>
+        </div>
+        {% if account.platform == 'wechat_work' or not account %}
+        <div id="wechat_work_config">
+            <div class="form-group">
+                <label>CorpID（企业ID）</label>
+                <input type="text" name="corp_id" value="{{ account.config.corp_id|default:'' }}" placeholder="企业微信管理后台 -> 我的企业 -> 企业ID">
+            </div>
+            <div class="form-group">
+                <label>Secret（应用密钥）</label>
+                <input type="text" name="corp_secret" value="{{ account.config.corp_secret|default:'' }}" placeholder="企业微信管理后台 -> 应用管理 -> 自建应用 -> Secret">
+            </div>
+        </div>
+        {% endif %}
+        {% if account.platform == 'official_account' %}
+        <div id="official_account_config">
+            <div class="form-group">
+                <label>AppID</label>
+                <input type="text" name="app_id" value="{{ account.config.app_id|default:'' }}" placeholder="微信公众平台 -> 开发 -> 基本配置">
+            </div>
+            <div class="form-group">
+                <label>AppSecret</label>
+                <input type="text" name="app_secret" value="{{ account.config.app_secret|default:'' }}" placeholder="微信公众平台 -> 开发 -> 基本配置">
+            </div>
+        </div>
+        {% endif %}
+        {% if account.platform == 'personal' %}
+        <div style="padding:12px;background:#fffbe6;border:1px solid #ffe58f;border-radius:4px;margin-bottom:16px;">
+            <p style="color:#d48806;font-size:14px;">个人微信需要安装额外组件（如 itchat-uos），并手动扫码登录。</p>
+        </div>
+        {% endif %}
+        <button type="submit" class="btn btn-primary">保存</button>
+        <a href="{% url 'wechat_bridge:account_list' %}" class="btn" style="background:#f0f0f0;color:#333;">取消</a>
+    </form>
+</div>
+{% endblock %}

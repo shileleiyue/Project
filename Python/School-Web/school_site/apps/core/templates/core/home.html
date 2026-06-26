@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ school_info.name }} - 首页{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/pages/home.css' %}">{% endblock %}
+
+{% block content %}
+<section class="hero" data-animate="fade-in">
+  <div class="hero-overlay"></div>
+  <div class="hero-content container">
+    <h1>{{ school_info.brief_intro|default:"厚德 博学 求实 创新" }}</h1>
+    <p class="hero-subtitle">{{ school_info.brief_intro|default:"青海省重点中学，化隆教育的摇篮" }}</p>
+    <a href="{% url 'pages:page_detail' slug='about' %}" class="btn btn-outline">走进化隆一中</a>
+  </div>
+</section>
+
+<section class="home-news container" data-animate="fade-up">
+  <div class="section-header">
+    <h2>校园动态</h2>
+    <a href="{% url 'news:article_list' %}" class="btn btn-sm btn-outline">查看全部</a>
+  </div>
+  <div class="news-grid">
+    {% for article in latest_news|slice:":4" %}
+    <article class="card">
+      {% if article.cover_image %}
+      <img src="{{ article.cover_image.url }}" alt="{{ article.title }}" class="card-img">
+      {% endif %}
+      <div class="card-body">
+        <span class="badge">{{ article.category.name|default:"新闻" }}</span>
+        <h3 class="card-title"><a href="{% url 'news:article_detail' slug=article.slug %}">{{ article.title }}</a></h3>
+        <p class="text-muted">{{ article.publish_date|date:"Y-m-d" }}</p>
+        <p>{{ article.excerpt|truncatewords:20 }}</p>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="quick-links container" data-animate="fade-up">
+  <div class="link-grid">
+    <a href="{% url 'admissions:brochures' %}" class="link-card">
+      <span class="link-icon">📘</span>
+      <h3>招生简章</h3>
+      <p>了解最新招生政策</p>
+    </a>
+    <a href="{% url 'organization:teachers' %}" class="link-card">
+      <span class="link-icon">👩‍🏫</span>
+      <h3>师资队伍</h3>
+      <p>雄厚的教师团队</p>
+    </a>
+    <a href="{% url 'gallery:album_list' %}" class="link-card">
+      <span class="link-icon">🏫</span>
+      <h3>校园风光</h3>
+      <p>优美的校园环境</p>
+    </a>
+    <a href="{% url 'contact:principal_mail' %}" class="link-card">
+      <span class="link-icon">✉️</span>
+      <h3>校长信箱</h3>
+      <p>直达校领导</p>
+    </a>
+  </div>
+</section>
+
+<section class="stats container" data-animate="count-up">
+  <div class="stat-item">
+    <span class="stat-number" data-target="68">0</span>
+    <span class="stat-label">建校历史(年)</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-number" data-target="230">0</span>
+    <span class="stat-label">在职教师</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-number" data-target="3200">0</span>
+    <span class="stat-label">在校学生</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-number" data-target="150">0</span>
+    <span class="stat-label">荣誉奖项</span>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/gallery.js' %}"></script>
+{% endblock %}

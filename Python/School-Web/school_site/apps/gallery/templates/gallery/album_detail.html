@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ album.title }} - {{ school_info.name }}{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/pages/inner.css' %}">{% endblock %}
+
+{% block content %}
+<div class="breadcrumb"><div class="container"><ol><li><a href="{% url 'core:home' %}">首页</a></li><li><a href="{% url 'gallery:album_list' %}">校园风光</a></li><li>{{ album.title }}</li></ol></div></div>
+<section class="container" data-animate="fade-up">
+  <h1>{{ album.title }}</h1>
+  <div class="gallery-grid">
+    {% for image in images %}
+    <a href="{{ image.image.url }}" data-lightbox="album" data-caption="{{ image.caption }}">
+      <img src="{{ image.image.url }}" alt="{{ image.caption }}" loading="lazy">
+    </a>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
+{% block extra_js %}<script src="{% static 'js/gallery.js' %}"></script>{% endblock %}

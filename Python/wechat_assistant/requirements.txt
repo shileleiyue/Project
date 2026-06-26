@@ -1,0 +1,8 @@
+Django==5.2.16
+mysqlclient==2.2.8
+Pillow==12.3.0
+apscheduler==3.11.3
+requests==2.34.2
+itchat-uos==1.4.1
+pyqrcode==1.2.1
+pypng==0.20220715.0

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}日程{% endblock %}
+{% block page_title %}日程管理{% endblock %}
+{% block content %}
+<div style="margin-bottom:16px;">
+    <a href="{% url 'scheduler:schedule_create' %}" class="btn btn-primary">新建日程</a>
+</div>
+<div class="card">
+    {% if schedules %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>标题</th>
+                <th>开始时间</th>
+                <th>结束时间</th>
+                <th>地点</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in schedules %}
+            <tr>
+                <td>{{ s.title }}</td>
+                <td style="font-size:13px;">{{ s.start_time|date:'Y-m-d H:i' }}</td>
+                <td style="font-size:13px;">{{ s.end_time|date:'Y-m-d H:i'|default:'-' }}</td>
+                <td>{{ s.location|default:'-' }}</td>
+                <td>{{ s.get_status_display }}</td>
+                <td style="white-space:nowrap;">
+                    <a href="{% url 'scheduler:schedule_edit' s.id %}" class="btn btn-sm btn-primary">编辑</a>
+                    <a href="{% url 'scheduler:schedule_delete' s.id %}" class="btn btn-sm btn-danger">删除</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state"><p>暂无日程安排</p></div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}{{ work.title }} - {% if node %}编辑节点{% else %}添加节点{% endif %}{% endblock %}
+
+{% block content %}
+<div style="max-width:600px;margin:0 auto;padding:20px;">
+    <a href="{% url 'tech_tree' work.id %}" class="back-link">← 返回科技树</a>
+    <div class="page-header">
+        <h2>{{ work.title }} - {% if node %}编辑节点{% else %}添加节点{% endif %}</h2>
+    </div>
+    <div class="glass-card">
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="name">节点名称 *</label>
+                <input type="text" id="name" name="name" value="{{ node.name|default:'' }}" required class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="description">描述</label>
+                <textarea id="description" name="description" class="form-control">{{ node.description|default:'' }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="parent_id">父节点</label>
+                <select id="parent_id" name="parent_id" class="form-control">
+                    <option value="">（无父节点 - 根节点）</option>
+                    {% for p in parents %}
+                        <option value="{{ p.id }}" {% if node and node.parent.id == p.id %}selected{% elif preselected_parent_id|stringformat:"s" == p.id|stringformat:"s" %}selected{% endif %}>{{ p.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:20px;">
+                <button type="submit" class="btn">保存</button>
+                <a href="{% url 'tech_tree' work.id %}" class="btn btn-secondary">取消</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

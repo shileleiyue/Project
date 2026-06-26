@@ -1,0 +1,40 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}{{ work.title }} - 角色管理{% endblock %}
+
+{% block content %}
+<div style="max-width:1200px;margin:0 auto;padding:20px;">
+    <a href="{% url 'work_detail' work.id %}" class="back-link">← 返回作品详情</a>
+    <div class="page-header">
+        <h2>{{ work.title }} - 角色管理</h2>
+        <a href="{% url 'character_add' work.id %}" class="btn">+ 添加角色</a>
+    </div>
+    {% if characters %}
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;">
+            {% for char in characters %}
+                <div class="glass-card">
+                    <h3 style="margin:0 0 8px 0;font-size:18px;">{{ char.name }}</h3>
+                    <div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px;">
+                        {% if char.alias %} <span style="margin-right:12px;">别名：{{ char.alias }}</span>{% endif %}
+                        {% if char.gender %} <span style="margin-right:12px;">性别：{{ char.gender }}</span>{% endif %}
+                        {% if char.age %} <span style="margin-right:12px;">年龄：{{ char.age }}</span>{% endif %}
+                    </div>
+                    {% if char.description %}
+                        <div style="font-size:14px;color:#555;line-height:1.5;">{{ char.description|linebreaksbr }}</div>
+                    {% endif %}
+                    <div style="margin-top:12px;display:flex;gap:8px;">
+                        <a href="{% url 'character_edit' work.id char.id %}" class="btn btn-sm">编辑</a>
+                        <form method="post" action="{% url 'character_delete' work.id char.id %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('确定删除角色「{{ char.name }}」？关联的关系和事件关联也将被清除。')">删除</button>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state"><p>暂无角色，点击上方"添加角色"开始创建。</p></div>
+    {% endif %}
+</div>
+{% endblock %}

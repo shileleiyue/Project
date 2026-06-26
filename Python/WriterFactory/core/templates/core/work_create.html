@@ -1,0 +1,50 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}新建作品{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'core/work_create.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="create-container glass-card">
+        <h2>新建作品</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>作品名称</label>
+                <input type="text" name="title" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label>简介</label>
+                <textarea name="description" class="form-control"></textarea>
+            </div>
+            <div class="form-group">
+                <label>分类</label>
+                <select name="category" class="form-control">
+                    <option value="">请选择分类</option>
+                    {% for cat in categories %}
+                        <option value="{{ cat.id }}">{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label>标签</label>
+                <div>
+                    {% for tag in tags %}
+                        <label style="margin-right: 10px;">
+                            <input type="checkbox" name="tags" value="{{ tag.id }}"> {{ tag.name }}
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="form-group">
+                <label>封面图</label>
+                <input type="file" name="cover_image" accept="image/*" class="form-control">
+            </div>
+            <button type="submit" class="btn btn-success" style="width: 100%;">创建</button>
+        </form>
+        <a href="{% url 'work_list' %}" class="btn btn-secondary" style="display: block; text-align: center; margin-top: 16px;">取消</a>
+    </div>
+{% endblock %}

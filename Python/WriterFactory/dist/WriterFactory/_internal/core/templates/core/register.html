@@ -1,0 +1,129 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注册 · 作家工厂</title>
+    <link rel="stylesheet" href="{% static 'core/nav.css' %}?v=20260910b">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background: linear-gradient(135deg, #5b7fff 0%, #7c5cfc 55%, #6d8dff 100%);
+            position: relative;
+            overflow: hidden;
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+        }
+        .blob {
+            position: absolute; border-radius: 50%;
+            filter: blur(60px); opacity: 0.45; pointer-events: none;
+        }
+        .blob-1 { width: 380px; height: 380px; background: #ffffff; top: -120px; left: -100px; }
+        .blob-2 { width: 320px; height: 320px; background: #b9a8ff; bottom: -120px; right: -80px; }
+        .blob-3 { width: 220px; height: 220px; background: #8fd3ff; top: 40%; right: 15%; opacity: .3; }
+
+        .auth-card {
+            position: relative; z-index: 1;
+            width: 100%; max-width: 420px;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            border-radius: 28px;
+            box-shadow: 0 24px 60px rgba(40, 40, 90, 0.28);
+            padding: 44px 40px 36px;
+            text-align: center;
+        }
+        .brand {
+            width: 64px; height: 64px; margin: 0 auto 14px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            display: flex; align-items: center; justify-content: center;
+            font-size: 32px;
+            box-shadow: 0 10px 24px rgba(91, 127, 255, 0.4);
+        }
+        .auth-title { font-size: 26px; font-weight: 700; color: #1a202c; margin-bottom: 6px; }
+        .auth-subtitle { font-size: 14px; color: #94a3b8; margin-bottom: 28px; }
+
+        .auth-card .form-group { text-align: left; margin-bottom: 16px; }
+        .auth-card .form-group label {
+            display: block; font-size: 13px; font-weight: 600;
+            color: #475569; margin-bottom: 7px;
+        }
+        .input-wrap { position: relative; }
+        .input-wrap .icon {
+            position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+            font-size: 15px; opacity: .55;
+        }
+        .input-wrap .form-control { padding-left: 42px; }
+
+        .btn-auth {
+            width: 100%; margin-top: 6px; padding: 13px;
+            font-size: 15px; font-weight: 600; border-radius: 14px;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            box-shadow: 0 8px 20px rgba(91, 127, 255, 0.35);
+        }
+        .btn-auth:hover { box-shadow: 0 12px 26px rgba(91, 127, 255, 0.45); }
+
+        .message {
+            padding: 11px 16px; border-radius: 12px; font-size: 13px;
+            margin-bottom: 16px; text-align: center;
+        }
+        .message.error { background: rgba(231, 76, 60, 0.12); color: #c0392b; }
+        .message.success { background: rgba(39, 174, 96, 0.12); color: #219a52; }
+
+        .auth-footer { margin-top: 22px; font-size: 13px; color: #94a3b8; }
+        .auth-footer a { color: var(--color-primary); text-decoration: none; font-weight: 600; }
+        .auth-footer a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+
+    <div class="auth-card">
+        <div class="brand">✍️</div>
+        <h2 class="auth-title">创建账号</h2>
+        <p class="auth-subtitle">加入作家工厂，开启你的创作之旅</p>
+
+        <form method="post">
+            {% csrf_token %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="message {{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+            <div class="form-group">
+                <label for="username">用户名</label>
+                <div class="input-wrap">
+                    <span class="icon">👤</span>
+                    <input type="text" id="username" name="username" class="form-control" placeholder="请设置用户名" required autofocus>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password">密码</label>
+                <div class="input-wrap">
+                    <span class="icon">🔒</span>
+                    <input type="password" id="password" name="password" class="form-control" placeholder="请设置密码" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password_confirm">确认密码</label>
+                <div class="input-wrap">
+                    <span class="icon">🔑</span>
+                    <input type="password" id="password_confirm" name="password_confirm" class="form-control" placeholder="请再次输入密码" required>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-auth">注 册</button>
+        </form>
+
+        <p class="auth-footer">已有账号？<a href="{% url 'login' %}">立即登录</a></p>
+    </div>
+</body>
+</html>

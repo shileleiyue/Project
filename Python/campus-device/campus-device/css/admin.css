@@ -1,0 +1,25 @@
+/* ========================================
+   Admin CSS - 管理后台页面样式
+   ======================================== */
+
+/* 操作按钮组 */
+.admin-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.admin-actions .btn {
+  padding: 4px 12px;
+  font-size: var(--font-size-sm);
+}
+
+/* 设备表单弹窗中的图片预览 */
+.admin-form-image {
+  width: 100%;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  margin-bottom: 12px;
+  background-color: var(--color-bg);
+}

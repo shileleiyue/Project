@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}发送成功 - {{ school_info.name }}{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/pages/inner.css' %}">{% endblock %}
+
+{% block content %}
+<div class="breadcrumb"><div class="container"><ol><li><a href="{% url 'core:home' %}">首页</a></li><li><a href="{% url 'contact:principal_mail' %}">校长信箱</a></li><li>发送成功</li></ol></div></div>
+<section class="container text-center" data-animate="fade-up" style="padding: 4rem 0;">
+  <h1>✅ 发送成功</h1>
+  <p class="lead">感谢您的来信，我们会尽快回复。</p>
+  <a href="{% url 'core:home' %}" class="btn btn-primary mt-2">返回首页</a>
+</section>
+{% endblock %}

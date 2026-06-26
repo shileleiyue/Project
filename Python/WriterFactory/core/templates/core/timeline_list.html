@@ -1,0 +1,45 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}{{ work.title }} - 时间线{% endblock %}
+
+{% block content %}
+<div style="max-width:1000px;margin:0 auto;padding:20px;">
+    <a href="{% url 'work_detail' work.id %}" class="back-link">← 返回作品详情</a>
+    <div class="page-header">
+        <h2>{{ work.title }} - 时间线</h2>
+        <a href="{% url 'timeline_add' work.id %}" class="btn">+ 添加事件</a>
+    </div>
+    {% if events %}
+        <div style="position:relative;padding-left:30px;">
+            <div style="position:absolute;left:10px;top:0;bottom:0;width:2px;background:var(--border-subtle);"></div>
+            {% for event in events %}
+                <div class="glass-card" style="position:relative;margin-bottom:24px;">
+                    <div style="position:absolute;left:-24px;top:20px;width:12px;height:12px;border-radius:50%;background:var(--color-primary);border:2px solid #fff;"></div>
+                    <div style="font-size:13px;color:var(--text-secondary);margin-bottom:4px;">{{ event.date|default:'日期未设置' }}</div>
+                    <h3 style="margin:0 0 8px 0;font-size:18px;">{{ event.title }}</h3>
+                    {% if event.description %}
+                        <div style="font-size:14px;color:#555;line-height:1.5;">{{ event.description|linebreaksbr }}</div>
+                    {% endif %}
+                    {% if event.characters.all %}
+                        <div style="font-size:13px;color:var(--text-secondary);margin-top:8px;">
+                            {% for char in event.characters.all %}
+                                <span style="display:inline-block;background:rgba(91,127,255,0.1);color:var(--color-primary);padding:2px 8px;border-radius:10px;margin-right:4px;">{{ char.name }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <div style="margin-top:12px;display:flex;gap:8px;">
+                        <a href="{% url 'timeline_edit' work.id event.id %}" class="btn btn-sm">编辑</a>
+                        <form method="post" action="{% url 'timeline_delete' work.id event.id %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('确定删除事件「{{ event.title }}」？')">删除</button>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state"><p>暂无时间线事件，点击上方"添加事件"开始创建。</p></div>
+    {% endif %}
+</div>
+{% endblock %}

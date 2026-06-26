@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}确认删除{% endblock %}
+{% block page_title %}确认删除{% endblock %}
+{% block content %}
+<div class="card" style="max-width:400px;text-align:center;">
+    <p style="margin-bottom:20px;font-size:16px;">确定要删除待办「{{ todo.title }}」吗？</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">确认删除</button>
+        <a href="{% url 'scheduler:todo_list' %}" class="btn" style="background:#f0f0f0;color:#333;">取消</a>
+    </form>
+</div>
+{% endblock %}

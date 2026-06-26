@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ article.title }} - {{ school_info.name }}{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/pages/inner.css' %}">{% endblock %}
+
+{% block content %}
+<div class="breadcrumb">
+  <div class="container"><ol><li><a href="{% url 'core:home' %}">首页</a></li><li><a href="{% url 'news:article_list' %}">新闻动态</a></li><li>{{ article.title }}</li></ol></div>
+</div>
+<article class="container article-detail" data-animate="fade-up">
+  <h1>{{ article.title }}</h1>
+  <div class="article-meta">
+    <span>{{ article.pub_date|date:"Y-m-d" }}</span>
+    <span>{{ article.category.name }}</span>
+  </div>
+  {% if article.cover_image %}<img src="{{ article.cover_image.url }}" alt="" class="featured-image">{% endif %}
+  <div class="content-body">{{ article.content|safe }}</div>
+  {% if related_articles %}
+  <section class="related-articles">
+    <h3>相关文章</h3>
+    <div class="card-grid">
+      {% for rel in related_articles %}
+      <div class="card"><div class="card-body"><a href="{% url 'news:article_detail' slug=rel.slug %}">{{ rel.title }}</a></div></div>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+</article>
+{% endblock %}

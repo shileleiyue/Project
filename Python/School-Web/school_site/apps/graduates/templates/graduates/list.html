@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}优秀毕业生 - {{ school_info.name }}{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/pages/inner.css' %}">{% endblock %}
+
+{% block content %}
+<div class="breadcrumb"><div class="container"><ol><li><a href="{% url 'core:home' %}">首页</a></li><li>优秀毕业生</li></ol></div></div>
+<section class="container" data-animate="fade-up">
+  <h1>优秀毕业生</h1>
+  <div class="timeline">
+    {% regroup graduates by graduate_year as year_list %}
+    {% for year in year_list %}
+    <div class="timeline-year"><h2>{{ year.grouper }} 届</h2></div>
+    <div class="card-grid">
+      {% for grad in year.list %}
+      <div class="card">
+        {% if grad.photo %}<img src="{{ grad.photo.url }}" alt="{{ grad.name }}">{% endif %}
+        <div class="card-body">
+          <h3>{{ grad.name }}</h3>
+          <p>{{ grad.achievement|truncatewords:25 }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

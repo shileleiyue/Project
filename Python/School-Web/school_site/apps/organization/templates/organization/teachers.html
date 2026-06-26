@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}师资队伍 - {{ school_info.name }}{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/pages/inner.css' %}">{% endblock %}
+
+{% block content %}
+<div class="breadcrumb">
+  <div class="container"><ol><li><a href="{% url 'core:home' %}">首页</a></li><li>师资队伍</li></ol></div>
+</div>
+<section class="container" data-animate="fade-up">
+  <h1 class="page-title">师资队伍</h1>
+  <div class="card-grid">
+    {% for teacher in teachers %}
+    <div class="card">
+      {% if teacher.photo %}<img src="{{ teacher.photo.url }}" alt="{{ teacher.name }}">{% endif %}
+      <div class="card-body">
+        <h3>{{ teacher.name }}</h3>
+        <p>{{ teacher.department.name|default:"" }} - {{ teacher.title|default:"教师" }}</p>
+        <p>{{ teacher.intro|truncatewords:20 }}</p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

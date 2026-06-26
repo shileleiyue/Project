@@ -1,0 +1,15 @@
+# 作家工厂（Writer Factory）桌面版依赖
+# Web 框架
+Django==4.2.30
+# ImageField 需要 Pillow
+Pillow>=10.0.0
+
+# 内嵌 WSGI 服务器（桌面后台服务，线程友好）
+waitress>=3.0.0
+# 原生窗口 + WebView
+pywebview>=5.0
+# Windows 下使用 Edge WebView2（Chromium 内核）渲染，需 pythonnet
+pythonnet>=3.0.0
+
+# 打包工具
+pyinstaller>=6.0.0

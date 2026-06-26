@@ -1,0 +1,25 @@
+/* ========================================
+   Repair CSS - 维修工单页面样式
+   ======================================== */
+
+/* 维修图片展示 */
+.repair-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.repair-images img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.repair-images img:hover {
+  transform: scale(1.05);
+}

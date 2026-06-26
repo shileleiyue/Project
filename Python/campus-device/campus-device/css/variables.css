@@ -1,0 +1,37 @@
+/* ========================================
+   CSS Variables - 主题变量定义
+   ======================================== */
+
+:root {
+  /* 主色调 */
+  --color-primary: #2563eb;
+  --color-primary-hover: #1d4ed8;
+  --color-danger: #dc2626;
+  --color-success: #16a34a;
+  --color-warning: #f59e0b;
+
+  /* 文字颜色 */
+  --color-text: #1a1a2e;
+  --color-text-secondary: #666;
+
+  /* 背景与卡片 */
+  --color-bg: #f5f7fa;
+  --color-card: #ffffff;
+  --color-border: #e5e7eb;
+
+  /* 圆角 */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+
+  /* 阴影 */
+  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+  /* 字号 */
+  --font-size-sm: 12px;
+  --font-size-base: 14px;
+  --font-size-lg: 16px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 28px;
+}

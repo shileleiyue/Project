@@ -1,0 +1,208 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}关于我们 - 作家工厂{% endblock %}
+
+{% block extra_css %}
+<style>
+    .about-wrapper {
+        max-width: 920px;
+        margin: 0 auto;
+        padding: 8px 20px 60px;
+    }
+
+    .about-card {
+        background: rgba(255,255,255,0.88);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-radius: 24px;
+        padding: 40px 44px;
+        box-shadow: 0 8px 32px rgba(30,41,59,0.06);
+        border: 1px solid rgba(148,163,184,0.15);
+    }
+
+    .about-card h1 {
+        font-size: 32px;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin: 0 0 18px;
+    }
+
+    .about-card h2 {
+        font-size: 19px;
+        color: var(--text-primary);
+        margin: 30px 0 16px;
+        font-weight: 600;
+    }
+
+    .about-card p {
+        font-size: 15px;
+        line-height: 1.8;
+        color: var(--text-secondary);
+        margin-bottom: 14px;
+    }
+
+    .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+        gap: 16px;
+        margin: 18px 0;
+    }
+
+    .feature-item {
+        background: rgba(91,127,255,0.05);
+        padding: 16px 18px;
+        border-radius: 14px;
+        border-left: 4px solid var(--color-primary);
+        transition: transform 0.2s, background 0.2s;
+    }
+    .feature-item:hover {
+        background: rgba(91,127,255,0.10);
+        transform: translateY(-3px);
+    }
+    .feature-item strong {
+        display: block;
+        font-size: 15px;
+        color: var(--text-primary);
+        margin-bottom: 4px;
+    }
+    .feature-item span {
+        font-size: 13px;
+        color: var(--text-secondary);
+    }
+
+    .tech-stack {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 16px 0;
+    }
+    .tech-tag {
+        background: #eef2f9;
+        padding: 7px 18px;
+        border-radius: 30px;
+        font-size: 13px;
+        color: var(--text-primary);
+        border: 1px solid rgba(148,163,184,0.2);
+    }
+
+    .developer-info {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        padding: 18px 22px;
+        background: rgba(124,92,252,0.06);
+        border-radius: 14px;
+        margin: 16px 0;
+    }
+    .developer-info .avatar { font-size: 40px; line-height: 1; }
+    .developer-info .name {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+    .developer-info .role {
+        color: var(--text-secondary);
+        font-size: 14px;
+    }
+    .developer-info .date {
+        color: #94a3b8;
+        font-size: 13px;
+        margin-top: 2px;
+    }
+
+    .contact {
+        margin-top: 28px;
+        padding-top: 18px;
+        border-top: 1px solid rgba(148,163,184,0.2);
+        color: #94a3b8;
+        font-size: 14px;
+    }
+    .contact a {
+        color: var(--color-primary);
+        text-decoration: none;
+    }
+    .contact a:hover { text-decoration: underline; }
+
+    @media (max-width: 768px) {
+        .about-card { padding: 26px 20px; }
+        .about-card h1 { font-size: 26px; }
+        .feature-grid { grid-template-columns: 1fr; }
+        .developer-info { flex-direction: column; align-items: flex-start; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <a href="{% url 'work_list' %}" class="back-link">← 返回作品列表</a>
+
+    <div class="about-wrapper">
+        <div class="about-card">
+            <h1>📖 关于作家工厂</h1>
+            <p>
+                <strong>作家工厂</strong> 是一款专为小说创作者设计的轻量级写作管理工具。
+                无论你是业余爱好者还是专业作家，这里都能帮你高效组织作品、章节和大纲，
+                让创作过程更加流畅、有序。
+            </p>
+            <p>
+                本项目诞生于 2026 年 4 月，旨在提供一个简洁、优雅、功能完备的创作平台，
+                让写作者专注于内容本身，而无需被复杂的工具所困扰。
+            </p>
+
+            <h2>✨ 核心功能</h2>
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <strong>📚 作品管理</strong>
+                    <span>创建、编辑、删除作品，支持封面图上传</span>
+                </div>
+                <div class="feature-item">
+                    <strong>📝 章节编辑</strong>
+                    <span>自动保存、实时预览，支持 Markdown 风格排版</span>
+                </div>
+                <div class="feature-item">
+                    <strong>🌳 大纲树</strong>
+                    <span>无限层级的大纲结构，轻松规划故事脉络</span>
+                </div>
+                <div class="feature-item">
+                    <strong>♻️ 回收站</strong>
+                    <span>软删除与恢复机制，误删也能轻松找回</span>
+                </div>
+                <div class="feature-item">
+                    <strong>🔍 智能搜索</strong>
+                    <span>快速定位作品与章节（预留功能）</span>
+                </div>
+                <div class="feature-item">
+                    <strong>📱 响应式设计</strong>
+                    <span>在电脑、平板、手机上皆可流畅使用</span>
+                </div>
+            </div>
+
+            <h2>🛠 技术栈</h2>
+            <div class="tech-stack">
+                <span class="tech-tag">Django 4.2</span>
+                <span class="tech-tag">Python 3.11</span>
+                <span class="tech-tag">SQLite</span>
+                <span class="tech-tag">HTML5 + CSS3</span>
+                <span class="tech-tag">Flexbox / Grid</span>
+                <span class="tech-tag">JavaScript (Vanilla)</span>
+            </div>
+
+            <h2>👨‍💻 开发者</h2>
+            <div class="developer-info">
+                <div class="avatar">🧑‍💻</div>
+                <div>
+                    <div class="name">石砳磊岳</div>
+                    <div class="role">全栈开发 · 产品设计</div>
+                    <div class="date">开发时间：2026年4月19日</div>
+                </div>
+            </div>
+
+            <div class="contact">
+                📬 如有建议或反馈，欢迎通过 <a href="mailto:shileleiyue@hotmail.com">shileleiyue@hotmail.com</a> 联系我们。
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}待办{% endblock %}
+{% block page_title %}待办事项{% endblock %}
+{% block content %}
+<div style="margin-bottom:16px;">
+    <a href="{% url 'scheduler:todo_create' %}" class="btn btn-primary">新建待办</a>
+</div>
+<div class="card">
+    <div class="filter-bar">
+        <a href="{% url 'scheduler:todo_list' %}" class="{% if not priority %}active{% endif %}">全部</a>
+        <a href="?priority=high" class="{% if priority == 'high' %}active{% endif %}">高优先级</a>
+        <a href="?priority=medium" class="{% if priority == 'medium' %}active{% endif %}">中优先级</a>
+        <a href="?priority=low" class="{% if priority == 'low' %}active{% endif %}">低优先级</a>
+    </div>
+    {% if todos %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>完成</th>
+                <th>内容</th>
+                <th>优先级</th>
+                <th>截止日期</th>
+                <th>创建时间</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for todo in todos %}
+            <tr>
+                <td>
+                    <a href="{% url 'scheduler:todo_toggle' todo.id %}" style="text-decoration:none;font-size:18px;">
+                        {% if todo.is_done %}✅{% else %}⬜{% endif %}
+                    </a>
+                </td>
+                <td style="{% if todo.is_done %}text-decoration:line-through;color:#888;{% endif %}">{{ todo.title }}</td>
+                <td><span class="priority-{{ todo.priority }}">{{ todo.get_priority_display }}</span></td>
+                <td style="font-size:13px;">{{ todo.due_date|date:'Y-m-d'|default:'-' }}</td>
+                <td style="font-size:12px;color:#888;">{{ todo.created_at|date:'Y-m-d' }}</td>
+                <td>
+                    <a href="{% url 'scheduler:todo_delete' todo.id %}" class="btn btn-sm btn-danger">删除</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state"><p>暂无待办事项</p></div>
+    {% endif %}
+</div>
+{% endblock %}
