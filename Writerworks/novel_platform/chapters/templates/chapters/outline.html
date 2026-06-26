@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="{% static 'chapters/outline.css' %}">
 </head>
 <body>
+<<<<<<< HEAD
     <a href="{% url 'work_detail' work.id %}" class="back-link">← 返回作品详情</a>
     <div class="outline-container">
         <h1>{{ work.title }} - 大纲</h1>
@@ -16,6 +17,17 @@
             <input type="text" name="title" placeholder="新建根节点标题" required>
             <button type="submit" class="btn-primary">新建根节点</button>
         </form>
+=======
+    <a href="{% url 'work_detail' work.id %}" class="back-link"> 返回作品详情</a>
+    <!-- 新建根节点表单 -->
+    <form method="post" action="{% url 'outline_add_root' work.id %}" style="margin-bottom: 10px;">
+        {% csrf_token %}
+        <input type="text" name="title" placeholder="新建根节点标题" required>
+        <button type="submit">新建根节点</button>
+    </form>
+    <div class="outline-container">
+        <h1>{{ work.title }} - 大纲</h1>
+>>>>>>> fed2d2f25572fcc98be1bb4b9a2f44d2b0ead31d
         {% if root_nodes %}
             <ul class="outline-tree">
                 {% for node in root_nodes %}
@@ -27,6 +39,7 @@
         {% endif %}
     </div>
     <script>
+<<<<<<< HEAD
         function getCookie(name) {
             let cookieValue = null;
             if (document.cookie && document.cookie !== '') {
@@ -47,6 +60,11 @@
         document.addEventListener('click', function(e) {
             if (e.target.classList.contains('toggle-child-form')) {
                 const form = e.target.closest('.node-header').nextElementSibling;
+=======
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('toggle-child-form')) {
+                const form = e.target.nextElementSibling;
+>>>>>>> fed2d2f25572fcc98be1bb4b9a2f44d2b0ead31d
                 if (form.style.display === 'none') {
                     form.style.display = 'block';
                     form.querySelector('input').focus();
@@ -55,6 +73,7 @@
                 }
             }
         });
+<<<<<<< HEAD
 
         // 大纲节点重命名（适配新结构）
         document.addEventListener('click', async (e) => {
@@ -114,6 +133,8 @@
                 displayDiv.style.display = 'block';
             }
         });
+=======
+>>>>>>> fed2d2f25572fcc98be1bb4b9a2f44d2b0ead31d
     </script>
 </body>
 </html>

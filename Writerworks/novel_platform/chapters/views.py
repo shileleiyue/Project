@@ -241,6 +241,7 @@ def outline_add_child(request, work_id, node_id):
         OutlineNode.objects.create(work=parent.work, title=title, parent=parent, order=last_order + 1)
     return redirect('outline', work_id=work_id)
 
+<<<<<<< HEAD
 @require_POST
 def outline_rename(request, work_id, node_id):
     node = get_object_or_404(OutlineNode, id=node_id, work_id=work_id)
@@ -261,3 +262,5 @@ def outline_delete(request, work_id, node_id):
 
 def about(request):
     return render(request, 'chapters/about.html')
+=======
+>>>>>>> fed2d2f25572fcc98be1bb4b9a2f44d2b0ead31d

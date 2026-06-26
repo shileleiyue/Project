@@ -1,5 +1,6 @@
 {% extends 'chapters/base.html' %}
 {% load static %}
+<<<<<<< HEAD
 
 {% block title %}作家工厂 - 我的作品{% endblock %}
 
@@ -60,10 +61,59 @@
                                     <p>[暂无封面]</p>
                                 {% endif %}
                             </div>
+=======
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>作家工厂</title>
+    <link rel="stylesheet" href="{% static 'chapters/work_list.css' %}">
+</head>
+<body>
+    <!-- ===== 头部 ===== -->
+    <header class="header">
+        <h1>作家工厂</h1>
+        <p class="header-meta">开发时间2026年4月19日 开发人：韩磊</p>
+        <p class="header-intro">欢迎来到作家工厂！在这里，你可以创建和管理你的小说作品。点击下方的“新建作品”按钮，开始你的创作之旅吧！</p>
+    </header>
+
+    <!-- ===== 主体 ===== -->
+    <div class="bodier">
+        <div class="dashboard">
+            <!-- 左侧导航 -->
+            <aside class="sidebar_left">
+                <nav>
+                    <ul>
+                        <li><a href="{% url 'work_list' %}">📚 我的作品</a></li>
+                        <li><a href="{% url 'trash' %}">🗑 回收站</a></li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- 中央作品列表 -->
+            <main class="content">
+                {% if works %}
+                    {% for work in works %}
+                        <article class="bookshelf">
+                            <!-- 封面区 -->
+                            <div class="book-cover">
+                                {% if work.cover_image %}
+                                    <img src="{{ work.cover_image.url }}" alt="{{ work.title }} 封面">
+                                {% else %}
+                                    <p>[暂无封面]</p>
+                                {% endif %}
+                            </div>
+                            <!-- 作品信息区 -->
+>>>>>>> fed2d2f25572fcc98be1bb4b9a2f44d2b0ead31d
                             <div class="book-info">
                                 <div class="work-meta">
                                     <h3 class="work-title">
                                         <span class="title-text">{{ work.title }}</span>
+<<<<<<< HEAD
+=======
+                                        <a href="{% url 'work_detail' work.id %}" class="detail-link">详情</a>
+>>>>>>> fed2d2f25572fcc98be1bb4b9a2f44d2b0ead31d
                                     </h3>
                                     <p class="work-date">创建于：{{ work.created_at }}</p>
                                     <p class="work-date">最后修改：{{ work.updated_at }}</p>
@@ -82,10 +132,24 @@
                 {% endif %}
             </main>
 
+<<<<<<< HEAD
             <!-- 右侧操作栏（新建作品按钮） -->
+=======
+            <!-- 右侧操作栏 -->
+>>>>>>> fed2d2f25572fcc98be1bb4b9a2f44d2b0ead31d
             <aside class="sidebar_right">
                 <a href="{% url 'work_create' %}" class="create-button">+ 新建作品</a>
             </aside>
         </div>
     </div>
+<<<<<<< HEAD
 {% endblock %}
+=======
+
+    <!-- ===== 底部 ===== -->
+    <footer class="footer">
+        <p>&copy; 2026 作家工厂. 保留所有权利.</p>
+    </footer>
+</body>
+</html>
+>>>>>>> fed2d2f25572fcc98be1bb4b9a2f44d2b0ead31d

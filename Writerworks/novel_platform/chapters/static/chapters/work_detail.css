@@ -204,6 +204,7 @@ input[type="text"]:focus { border-color: var(--color-primary); box-shadow: 0 0 0
     border: 1px solid var(--border-subtle);
     backdrop-filter: blur(8px);
     box-shadow: var(--shadow-sm);
+<<<<<<< HEAD
 }
 .sidebar h2 { font-size: 1.3rem; margin-bottom: 16px; }
 .sidebar input[type="text"] { width: 100%; margin: 8px 0; }
@@ -241,3 +242,30 @@ input[type="text"]:focus { border-color: var(--color-primary); box-shadow: 0 0 0
     .header { padding: 16px; }
     #work-title-text { font-size: 1.2rem; }
 }
+=======
+}
+.sidebar h2 { font-size: 1.3rem; margin-bottom: 16px; }
+.sidebar input[type="text"] { width: 100%; margin: 8px 0; }
+.sidebar button[type="submit"] {
+    width: 100%;
+    background: linear-gradient(135deg, #5b7fff, #7c5cfc);
+    color: white;
+    border: none;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(91,127,255,0.3);
+    transition: all var(--duration-fast);
+}
+.sidebar button[type="submit"]:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(91,127,255,0.45); }
+
+/* 响应式 */
+@media (max-width: 768px) {
+    .dashboard { grid-template-columns: 1fr; }
+    .sidebar { position: static; margin-top: 20px; }
+    #work-title-text { font-size: 1.4rem; }
+}
+@media (max-width: 480px) {
+    body { padding: 12px; }
+    .header { padding: 16px; }
+    #work-title-text { font-size: 1.2rem; }
+}
+>>>>>>> fed2d2f25572fcc98be1bb4b9a2f44d2b0ead31d

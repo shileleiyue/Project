@@ -8,7 +8,11 @@
     <link rel="stylesheet" href="{% static 'chapters/work_detail.css' %}">
 </head>
 <body>
+<<<<<<< HEAD
     <a href="{% url 'work_list' %}" class="back-link">← 返回作品列表</a>
+=======
+    <a href="{% url 'work_list' %}" class="back-link"> 返回作品列表</a>
+>>>>>>> fed2d2f25572fcc98be1bb4b9a2f44d2b0ead31d
     <div class="detail-container">
         <div class="header">
             <div id="work-title-area">
@@ -21,17 +25,27 @@
                 <button id="cancel-work-title-btn">取消</button>
             </div>
             <div>
+<<<<<<< HEAD
                 <a href="{% url 'outline' work.id %}">📋 查看大纲</a>
             </div>
             {% if work.cover_image %}
                 <img src="{{ work.cover_image.url }}" alt="{{ work.title }} 封面" class="cover-image">
+=======
+                <a href="{% url 'outline_view' work.id %}">📋 查看大纲</a>
+            </div>
+            {% if work.cover_image %}
+                <img src="{{ work.cover_image }}" alt="封面" class="cover-image">
+>>>>>>> fed2d2f25572fcc98be1bb4b9a2f44d2b0ead31d
             {% else %}
                 <p>[暂无封面]</p>
             {% endif %}
             <p>{{ work.description }}</p>
             <p>创建于：{{ work.created_at }}</p>
         </div>
+<<<<<<< HEAD
 
+=======
+>>>>>>> fed2d2f25572fcc98be1bb4b9a2f44d2b0ead31d
         <div class="dashboard">
             <main class="chapter-list">
                 <h2>章节列表</h2>
@@ -149,12 +163,21 @@
             workTitleEdit.style.display = 'none';
             workTitleArea.style.display = 'block';
         });
+<<<<<<< HEAD
 
         // 章节重命名（事件委托）
+=======
+        // ==================== 章节名称编辑（事件委托） ====================
+>>>>>>> fed2d2f25572fcc98be1bb4b9a2f44d2b0ead31d
         document.addEventListener('click', async (e) => {
             const btn = e.target;
             const item = btn.closest('.chapter-item');
             if (!item) return;
+<<<<<<< HEAD
+=======
+            const chapterId = item.dataset.chapterId;
+
+>>>>>>> fed2d2f25572fcc98be1bb4b9a2f44d2b0ead31d
             if (btn.classList.contains('edit-chapter-title-btn')) {
                 const area = item.querySelector('.chapter-title-area');
                 const edit = item.querySelector('.chapter-title-edit');
@@ -164,12 +187,20 @@
                 input.value = area.querySelector('a').textContent;
                 input.focus();
             }
+<<<<<<< HEAD
+=======
+
+>>>>>>> fed2d2f25572fcc98be1bb4b9a2f44d2b0ead31d
             if (btn.classList.contains('cancel-chapter-title-btn')) {
                 const area = item.querySelector('.chapter-title-area');
                 const edit = item.querySelector('.chapter-title-edit');
                 edit.style.display = 'none';
                 area.style.display = 'block';
             }
+<<<<<<< HEAD
+=======
+
+>>>>>>> fed2d2f25572fcc98be1bb4b9a2f44d2b0ead31d
             if (btn.classList.contains('save-chapter-title-btn')) {
                 const input = item.querySelector('.chapter-title-input');
                 const newTitle = input.value.trim();

@@ -14,7 +14,11 @@
     <div class="chapter-container">
         <div id="reading-area">
             <h3>{{ chapter.title }} <button id="edit-btn">编辑</button></h3>
+<<<<<<< HEAD
             <pre class="reading-content" id="reading-content">{{ chapter.content|default:"暂无正文" }}</pre>
+=======
+            <pre class="reading-content" id="reading-content"><br>{{ chapter.content }}</pre>
+>>>>>>> fed2d2f25572fcc98be1bb4b9a2f44d2b0ead31d
         </div>
         <div class="editing-area" id="editing-area" style="display: none;">
             <h3>{{ chapter.title }}</h3>
@@ -25,9 +29,17 @@
             <span id="save-status"></span>
         </div>
     </div>
+<<<<<<< HEAD
     <script>
         console.log('JS loaded');
         const SAVE_URL = "{% url 'chapter_save' work.id chapter.id %}";
+=======
+
+    <script>
+        console.log('JS loaded');
+        const SAVE_URL = "{% url 'chapter_save' work.id chapter.id %}";
+
+>>>>>>> fed2d2f25572fcc98be1bb4b9a2f44d2b0ead31d
         function getCookie(name) {
             let cookieValue = null;
             if (document.cookie && document.cookie !== '') {
@@ -53,6 +65,7 @@
         const readingContent = document.getElementById('reading-content');
         const saveStatus = document.getElementById('save-status');
 
+<<<<<<< HEAD
         // 从服务器拉取最新内容并刷新阅读区
         async function refreshContent() {
             try {
@@ -75,15 +88,29 @@
             readingArea.style.display = 'none';
             editingArea.style.display = 'block';
             // 编辑区内使用当前阅读区的内容（已经是最新）
+=======
+        function showEditor() {
+            readingArea.style.display = 'none';
+            editingArea.style.display = 'block';
+>>>>>>> fed2d2f25572fcc98be1bb4b9a2f44d2b0ead31d
             contentEditor.value = readingContent.textContent === '暂无正文' ? '' : readingContent.textContent;
             saveStatus.textContent = '';
         }
 
+<<<<<<< HEAD
         async function showReader() {
             // 取消编辑：放弃本地修改，从服务器重新获取
             await refreshContent();
             editingArea.style.display = 'none';
             readingArea.style.display = 'block';
+=======
+        function showReader() {
+            editingArea.style.display = 'none';
+            readingArea.style.display = 'block';
+            const newContent = contentEditor.value.trim();
+            const htmlContent = (newContent || '暂无正文').replace(/ /g, '\u00A0');
+            readingContent.innerHTML = htmlContent;
+>>>>>>> fed2d2f25572fcc98be1bb4b9a2f44d2b0ead31d
         }
 
         editBtn.addEventListener('click', showEditor);
@@ -106,7 +133,13 @@
                     const data = await response.json();
                     if (data.success) {
                         saveStatus.textContent = '已保存';
+<<<<<<< HEAD
                         readingContent.textContent = content || '暂无正文';
+=======
+                        const newContent = contentEditor.value.trim();
+                        const htmlContent = (newContent || '暂无正文').replace(/ /g, '\u00A0');
+                        readingContent.innerHTML = htmlContent;
+>>>>>>> fed2d2f25572fcc98be1bb4b9a2f44d2b0ead31d
                     } else {
                         saveStatus.textContent = '保存失败：' + (data.error || '未知错误');
                     }
@@ -127,9 +160,22 @@
             saveStatus.textContent = '保存中...';
             if (autoSaveTimer) clearTimeout(autoSaveTimer);
             autoSaveTimer = setTimeout(() => {
+<<<<<<< HEAD
                 saveContent();
             }, AUTO_SAVE_DELAY);
         });
+=======
+                saveContent().then(() => {});
+            }, AUTO_SAVE_DELAY);
+        });
+
+        saveBtn.addEventListener('click', () => {
+            if (autoSaveTimer) {
+                clearTimeout(autoSaveTimer);
+                autoSaveTimer = null;
+            }
+        });
+>>>>>>> fed2d2f25572fcc98be1bb4b9a2f44d2b0ead31d
     </script>
 </body>
 </html>

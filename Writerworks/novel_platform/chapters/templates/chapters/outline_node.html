@@ -1,4 +1,5 @@
 {% load static %}
+<<<<<<< HEAD
 <li class="outline-node" data-node-id="{{ node.id }}" data-rename-url="{% url 'outline_rename' work.id node.id %}">
     <div class="node-header">
         <div class="node-title-display">
@@ -23,6 +24,20 @@
         <input type="text" name="title" placeholder="子节点标题" required>
         <button type="submit" class="btn-sm">添加</button>
     </form>
+=======
+<li class="outline-node">
+    <div class="node-content">
+        <strong>{{ node.title }}</strong>
+        <!-- 后续可在此添加“改名”、“删除”、“新建子节点”按钮 -->
+        <!-- 新建子节点表单，默认隐藏，通过按钮切换显示 -->
+        <button class="toggle-child-form">＋</button>
+        <form class="child-form" style="display: none;" method="post" action="{% url 'outline_add_child' work.id node.id %}">
+            {% csrf_token %}
+            <input type="text" name="title" placeholder="子节点标题" required>
+            <button type="submit">添加</button>
+        </form>
+    </div>
+>>>>>>> fed2d2f25572fcc98be1bb4b9a2f44d2b0ead31d
     {% if node.children.exists %}
         <ul>
             {% for child in node.children.all %}

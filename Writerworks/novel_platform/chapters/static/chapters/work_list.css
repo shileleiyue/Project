@@ -181,19 +181,29 @@ body {
 /* ---------- 主体区域 ---------- */
 .bodier {
     width: 100%;
+<<<<<<< HEAD
     max-width: 100%;
+=======
+    max-width: 1200px;
+>>>>>>> fed2d2f25572fcc98be1bb4b9a2f44d2b0ead31d
     margin: 0 auto;
     flex: 1;
 }
 
 .dashboard {
     display: grid;
+<<<<<<< HEAD
     grid-template-columns: 200px 1fr 200px;  /* 左右侧边栏稍宽 */
     gap: 24px;
     align-items: start;
     max-width: 100%;     /* 占满父容器 */
     padding: 0 20px;     /* 仅保留少量内边距 */
     margin: 0 auto;
+=======
+    grid-template-columns: 200px 1fr 160px;
+    gap: 24px;
+    align-items: start;
+>>>>>>> fed2d2f25572fcc98be1bb4b9a2f44d2b0ead31d
 }
 
 /* ---------- 左侧导航栏 ---------- */
@@ -807,7 +817,10 @@ body {
     .bookshelf {
         padding: 14px;
         border-radius: var(--radius-md);
+<<<<<<< HEAD
         position: relative;
+=======
+>>>>>>> fed2d2f25572fcc98be1bb4b9a2f44d2b0ead31d
     }
 
     .book-cover {
@@ -891,6 +904,7 @@ button:focus-visible {
 
 ::-webkit-scrollbar-thumb:hover {
     background: rgba(148, 163, 184, 0.65);
+<<<<<<< HEAD
 }
 
 .card-link {
@@ -1009,4 +1023,6 @@ button:focus-visible {
 .day-bar:hover {
     color: var(--text-primary);
     background: var(--color-primary);
+=======
+>>>>>>> fed2d2f25572fcc98be1bb4b9a2f44d2b0ead31d
 }

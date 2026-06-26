@@ -19,7 +19,10 @@ from django.urls import path,include
 from django.conf import settings
 from django.conf.urls.static import static
 from chapters.views import work_list,work_detail,chapter_read,chapter_save,work_delete,chapter_delete,trash_view,work_restore,chapter_restore,work_hard_delete,chapter_hard_delete,work_rename,chapter_rename,work_create,outline_add_root,outline_add_child,outline_view
+<<<<<<< HEAD
 from chapters.views import outline_rename,outline_delete,about
+=======
+>>>>>>> fed2d2f25572fcc98be1bb4b9a2f44d2b0ead31d
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', work_list, name='work_list'),
@@ -39,9 +42,12 @@ urlpatterns = [
     path('work/create/', work_create, name='work_create'),
     path('work/<int:work_id>/outline/add_root/', outline_add_root, name='outline_add_root'),
     path('work/<int:work_id>/outline/<int:node_id>/add_child/', outline_add_child, name='outline_add_child'),
+<<<<<<< HEAD
     path('work/<int:work_id>/outline/<int:node_id>/rename/', outline_rename, name='outline_rename'),
     path('work/<int:work_id>/outline/<int:node_id>/delete/', outline_delete, name='outline_delete'),
     path('about/', about, name='about'),
+=======
+>>>>>>> fed2d2f25572fcc98be1bb4b9a2f44d2b0ead31d
 
 ]
 if settings.DEBUG:
