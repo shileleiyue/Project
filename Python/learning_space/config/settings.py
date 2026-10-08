@@ -66,7 +66,8 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 
-# ─── 数据库（先 SQLite 跑通，改一行即切 MySQL） ────────────────────────────────
+# ─── MySQL 配置 ────────────────────────────────────────────────────────────────
+# 密码不对就改下面 PASSWORD
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -75,9 +76,7 @@ DATABASES = {
         'PASSWORD': 'hanlei.20060412',
         'HOST': '127.0.0.1',
         'PORT': '3306',
-        'OPTIONS': {
-            'charset': 'utf8mb4',
-        },
+        'OPTIONS': {'charset': 'utf8mb4'},
     }
 }
 

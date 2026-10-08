@@ -20,10 +20,11 @@ Write-Host "[3] 导入种子数据..." -ForegroundColor Yellow
 & .\venv\Scripts\python.exe manage.py shell -c "exec(open('seed.py', encoding='utf-8').read())"
 
 Write-Host "[4] 启动 Django 后端 http://127.0.0.1:8000" -ForegroundColor Green
-Start-Process -FilePath $venvPython -ArgumentList "manage.py runserver 0.0.0.0:8000" -WorkingDirectory $PSScriptRoot
+Start-Process -FilePath $venvPython -ArgumentList "manage.py runserver 0.0.0.0:8000 --noreload" -WorkingDirectory $PSScriptRoot
+Start-Sleep 3
 
 Write-Host "[5] 启动前端静态服务器 http://127.0.0.1:8080" -ForegroundColor Green
-Start-Process -FilePath $venvPython -ArgumentList "-m http.server 8080" -WorkingDirectory "$PSScriptRoot\frontend"
+Start-Process -FilePath $venvPython -ArgumentList "-m http.server 8080 --bind 127.0.0.1" -WorkingDirectory "$PSScriptRoot\frontend"
 
 Write-Host ""
 Write-Host "✅ 启动完成！浏览器打开 http://127.0.0.1:8080" -ForegroundColor Green

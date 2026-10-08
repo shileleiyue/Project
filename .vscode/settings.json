@@ -2,9 +2,9 @@
     "files.associations": {
         "max": "c"
     },
-    "python-envs.defaultEnvManager": "ms-python.python:conda",
+    "python-envs.defaultEnvManager": "ms-python.python:system",
     "C_Cpp.errorSquiggles": "disabled",
     "liveServer.settings.port": 5501,
-    "python-envs.defaultPackageManager": "ms-python.python:conda",
+    "python-envs.defaultPackageManager": "ms-python.python:pip",
     "git.ignoreLimitWarning": true
 }

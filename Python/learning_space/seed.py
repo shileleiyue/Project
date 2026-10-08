@@ -18,7 +18,7 @@ from materials.models import Material
 User = get_user_model()
 
 print('=== 清理旧数据 ===')
-User.objects.filter(username__in=['admin', 'teacher', 'student1']).delete()
+User.objects.filter(username__in=['admin', 'teacher', 'student']).delete()
 Course.objects.all().delete()
 Question.objects.all().delete()
 Exam.objects.all().delete()
